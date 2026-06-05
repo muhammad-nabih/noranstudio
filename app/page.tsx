@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils'
 import AboutStrip from '@/components/AboutStrip'
 import Loader from '@/components/common/Loader'
 import ServiceCard from '@/components/ServiceCard'
+import WorkSection from '@/components/WorkSection'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -885,175 +886,108 @@ function CampaignCard({ campaign, index }: { campaign: Campaign; index: number }
   )
 }
 
-function WorkSection({ campaigns }: { campaigns: Campaign[] }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [filter, setFilter] = useState<string | null>(null)
-
-  // Get unique services from campaigns
-  const serviceFilters = Array.from(
-    new Map(campaigns.filter(c => c.service).map(c => [c.service._id, c.service])).values()
-  )
-
-  const filtered = filter ? campaigns.filter(c => c.service?._id === filter) : campaigns
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo('.work-heading',
-        { y: 50, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1, ease: 'power3.out',
-          scrollTrigger: { trigger: ref.current, start: 'top 80%' } }
-      )
-    }, ref)
-    return () => ctx.revert()
-  }, [])
-
-  return (
-    <section id="work" ref={ref} className="py-32 px-8 md:px-20 max-w-[1600px] mx-auto">
-      {/* Header */}
-      <div className="work-heading mb-16">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-          <div>
-            <div className="flex items-center gap-3 mb-5">
-              <span className="w-10 h-px bg-[#C9A96E]" />
-              <span className="text-[#C9A96E] text-xs tracking-[0.4em] uppercase font-['Cormorant_Garamond']">Portfolio</span>
-            </div>
-            <h2 className="text-5xl md:text-7xl font-['Playfair_Display'] font-bold text-white leading-tight">
-              Selected<br />Work
-            </h2>
-          </div>
-
-          {/* Filter pills */}
-          {serviceFilters.length > 1 && (
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => setFilter(null)}
-                className={cn(
-                  'px-4 py-2 text-xs tracking-[0.2em] uppercase border transition-all duration-300 font-["Cormorant_Garamond"]',
-                  !filter
-                    ? 'bg-[#C9A96E] text-[#0D0D0D] border-[#C9A96E]'
-                    : 'border-[#C9A96E]/20 text-[#E8DCC8]/40 hover:border-[#C9A96E]/50 hover:text-[#C9A96E]'
-                )}
-              >
-                All
-              </button>
-              {serviceFilters.map(svc => (
-                <button
-                  key={svc._id}
-                  onClick={() => setFilter(svc._id)}
-                  className={cn(
-                    'px-4 py-2 text-xs tracking-[0.2em] uppercase border transition-all duration-300 font-["Cormorant_Garamond"]',
-                    filter === svc._id
-                      ? 'bg-[#C9A96E] text-[#0D0D0D] border-[#C9A96E]'
-                      : 'border-[#C9A96E]/20 text-[#E8DCC8]/40 hover:border-[#C9A96E]/50 hover:text-[#C9A96E]'
-                  )}
-                >
-                  {svc.title}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Grid */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={filter || 'all'}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={  { opacity: 0, y: -10 }}
-          transition={{ duration: 0.5 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[320px]"
-        >
-          {filtered.map((c, i) => (
-            <CampaignCard key={c._id} campaign={c} index={i} />
-          ))}
-        </motion.div>
-      </AnimatePresence>
-
-      {/* View all CTA */}
-      {campaigns.length > 6 && (
-        <div className="mt-16 text-center">
-          <Link
-            href="/campaigns"
-            className="inline-flex items-center gap-4 border border-[#C9A96E]/30 text-[#C9A96E] text-xs tracking-[0.3em] uppercase px-10 py-4 hover:bg-[#C9A96E] hover:text-[#0D0D0D] transition-all duration-400 font-['Cormorant_Garamond']"
-          >
-            View All Campaigns ({campaigns.length})
-          </Link>
-        </div>
-      )}
-    </section>
-  )
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// ABOUT STRIP
-// ═══════════════════════════════════════════════════════════════════════════════
-
-// function AboutStrip() {
+// function WorkSection({ campaigns }: { campaigns: Campaign[] }) {
 //   const ref = useRef<HTMLDivElement>(null)
-//   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
-//   const xLeft  = useTransform(scrollYProgress, [0, 1], ['-8%', '0%'])
-//   const xRight = useTransform(scrollYProgress, [0, 1], ['8%', '0%'])
+//   const [filter, setFilter] = useState<string | null>(null)
+
+//   // Get unique services from campaigns
+//   const serviceFilters = Array.from(
+//     new Map(campaigns.filter(c => c.service).map(c => [c.service._id, c.service])).values()
+//   )
+
+//   const filtered = filter ? campaigns.filter(c => c.service?._id === filter) : campaigns
 
 //   useEffect(() => {
 //     const ctx = gsap.context(() => {
-//       gsap.fromTo('.about-content',
-//         { opacity: 0, y: 40 },
-//         { opacity: 1, y: 0, duration: 1.1, ease: 'power3.out',
-//           scrollTrigger: { trigger: ref.current, start: 'top 75%' } }
+//       gsap.fromTo('.work-heading',
+//         { y: 50, opacity: 0 },
+//         { y: 0, opacity: 1, duration: 1, ease: 'power3.out',
+//           scrollTrigger: { trigger: ref.current, start: 'top 80%' } }
 //       )
 //     }, ref)
 //     return () => ctx.revert()
 //   }, [])
 
 //   return (
-//     <section id="about" ref={ref} className="py-32 overflow-hidden">
-//       <div className="max-w-[1600px] mx-auto px-8 md:px-20">
-//         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-32 items-center">
-
-//           {/* Left — large quote */}
-//           <motion.div style={{ x: xLeft }} className="about-content">
-//             <div className="flex items-center gap-3 mb-6">
+//     <section id="work" ref={ref} className="py-32 px-8 md:px-20 max-w-[1600px] mx-auto">
+//       {/* Header */}
+//       <div className="work-heading mb-16">
+//         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+//           <div>
+//             <div className="flex items-center gap-3 mb-5">
 //               <span className="w-10 h-px bg-[#C9A96E]" />
-//               <span className="text-[#C9A96E] text-xs tracking-[0.4em] uppercase font-['Cormorant_Garamond']">Philosophy</span>
+//               <span className="text-[#C9A96E] text-xs tracking-[0.4em] uppercase font-['Cormorant_Garamond']">Portfolio</span>
 //             </div>
-//             <blockquote className="text-3xl md:text-4xl font-['Playfair_Display'] font-bold text-white leading-tight mb-8">
-//               "Every frame holds<br />
-//               <span className="text-[#C9A96E]">a universe</span> waiting<br />
-//               to be revealed."
-//             </blockquote>
-//             <p className="text-[#E8DCC8]/50 text-sm leading-relaxed font-['Cormorant_Garamond'] font-light max-w-sm">
-//               Founded on the belief that photography is not merely documentation but transformation — turning fleeting moments into permanent truths.
-//             </p>
-//           </motion.div>
+//             <h2 className="text-5xl md:text-7xl font-['Playfair_Display'] font-bold text-white leading-tight">
+//               Selected<br />Work
+//             </h2>
+//           </div>
 
-//           {/* Right — decorative grid */}
-//           <motion.div style={{ x: xRight }} className="about-content grid grid-cols-2 gap-4">
-//             {[
-//               { num: '∞', label: 'Possibilities' },
-//               { num: '01', label: 'Vision' },
-//               { num: '↑',  label: 'Excellence' },
-//               { num: '◈',  label: 'Craft' },
-//             ].map((item, i) => (
-//               <div
-//                 key={i}
-//                 className="border border-[#C9A96E]/10 p-6 flex flex-col justify-between aspect-square hover:border-[#C9A96E]/30 transition-colors duration-400 group"
+//           {/* Filter pills */}
+//           {serviceFilters.length > 1 && (
+//             <div className="flex flex-wrap gap-2">
+//               <button
+//                 onClick={() => setFilter(null)}
+//                 className={cn(
+//                   'px-4 py-2 text-xs tracking-[0.2em] uppercase border transition-all duration-300 font-["Cormorant_Garamond"]',
+//                   !filter
+//                     ? 'bg-[#C9A96E] text-[#0D0D0D] border-[#C9A96E]'
+//                     : 'border-[#C9A96E]/20 text-[#E8DCC8]/40 hover:border-[#C9A96E]/50 hover:text-[#C9A96E]'
+//                 )}
 //               >
-//                 <div className="text-4xl text-[#C9A96E]/30 group-hover:text-[#C9A96E]/60 transition-colors duration-400 font-['Playfair_Display']">
-//                   {item.num}
-//                 </div>
-//                 <div className="text-[#E8DCC8]/30 text-xs tracking-[0.25em] uppercase font-['Cormorant_Garamond']">
-//                   {item.label}
-//                 </div>
-//               </div>
-//             ))}
-//           </motion.div>
+//                 All
+//               </button>
+//               {serviceFilters.map(svc => (
+//                 <button
+//                   key={svc._id}
+//                   onClick={() => setFilter(svc._id)}
+//                   className={cn(
+//                     'px-4 py-2 text-xs tracking-[0.2em] uppercase border transition-all duration-300 font-["Cormorant_Garamond"]',
+//                     filter === svc._id
+//                       ? 'bg-[#C9A96E] text-[#0D0D0D] border-[#C9A96E]'
+//                       : 'border-[#C9A96E]/20 text-[#E8DCC8]/40 hover:border-[#C9A96E]/50 hover:text-[#C9A96E]'
+//                   )}
+//                 >
+//                   {svc.title}
+//                 </button>
+//               ))}
+//             </div>
+//           )}
 //         </div>
 //       </div>
+
+//       {/* Grid */}
+//       <AnimatePresence mode="wait">
+//         <motion.div
+//           key={filter || 'all'}
+//           initial={{ opacity: 0, y: 20 }}
+//           animate={{ opacity: 1, y: 0 }}
+//           exit={  { opacity: 0, y: -10 }}
+//           transition={{ duration: 0.5 }}
+//           className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[320px]"
+//         >
+//           {filtered.map((c, i) => (
+//             <CampaignCard key={c._id} campaign={c} index={i} />
+//           ))}
+//         </motion.div>
+//       </AnimatePresence>
+
+//       {/* View all CTA */}
+//       {campaigns.length > 6 && (
+//         <div className="mt-16 text-center">
+//           <Link
+//             href="/campaigns"
+//             className="inline-flex items-center gap-4 border border-[#C9A96E]/30 text-[#C9A96E] text-xs tracking-[0.3em] uppercase px-10 py-4 hover:bg-[#C9A96E] hover:text-[#0D0D0D] transition-all duration-400 font-['Cormorant_Garamond']"
+//           >
+//             View All Campaigns ({campaigns.length})
+//           </Link>
+//         </div>
+//       )}
 //     </section>
 //   )
 // }
+
+
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // CONTACT CTA
