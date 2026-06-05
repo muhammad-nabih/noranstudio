@@ -675,7 +675,7 @@ function BackNav() {
       )}
     >
       <Link
-        href="/campaigns"
+        href="/"
         className="flex items-center gap-3 text-[#E8DCC8]/60 hover:text-[#C9A96E] transition-colors duration-300 text-sm tracking-[0.15em] uppercase group"
       >
         <span className="group-hover:-translate-x-1 transition-transform duration-300">←</span>
@@ -743,8 +743,8 @@ export default function CampaignSlugPage({ params }: PageProps) {
         <div className="text-center">
           <h1 className="text-6xl font-['Playfair_Display'] text-white mb-4">404</h1>
           <p className="text-[#C9A96E]">Campaign not found</p>
-          <Link href="/campaigns" className="mt-8 inline-block text-[#E8DCC8]/60 hover:text-[#C9A96E] transition-colors">
-            ← Back to Campaigns
+          <Link href="/" className="mt-8 inline-block text-[#E8DCC8]/60 hover:text-[#C9A96E] transition-colors">
+            ← Back to Portfolio
           </Link>
         </div>
       </div>

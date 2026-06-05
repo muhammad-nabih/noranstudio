@@ -136,8 +136,10 @@ export function ServiceCard({ service, campaigns, index, project }: ServiceCardP
           >
             {/* Square-style buttons with arrows */}
             <Link
-              href={`/campaigns?service=${service._id}`}
+              href={`/campaigns/${project?.slug?.current}`}
+         
               className="group/btn w-56 flex items-center justify-between px-6 py-3 border border-[#C9A96E]/40 bg-transparent hover:bg-[#C9A96E]/10 transition-all duration-300 rounded-sm text-[#E8DCC8] text-sm uppercase tracking-[0.15em] font-['Cormorant_Garamond']"
+         
             >
               <span>View Portfolio</span>
               <svg 
