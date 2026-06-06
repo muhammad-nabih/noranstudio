@@ -3,7 +3,7 @@
 import type { Service } from '@/lib/types'
 export default function Footer({ services }: { services: Service[] }) {
     return (
-      <footer className="border-t border-[#C9A96E]/10 py-16 px-8 md:px-20">
+      <footer className="border-t border-[#C9A96E]/10 py-16 px-8 md:px-20 bg-black">
         <div className="max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
           {/* Brand */}
           <div>

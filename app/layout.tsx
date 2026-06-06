@@ -22,23 +22,23 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: 'Creative Campaign Showcase',
   description: 'Immersive campaign and project showcase with advanced animations',
-  generator: 'v0.app',
+  generator: 'mohamed nabih Dev',
   icons: {
     icon: [
       {
-        url: '/icon-light-32x32.png',
+        url: '/logo.png',
         media: '(prefers-color-scheme: light)',
       },
       {
-        url: '/icon-dark-32x32.png',
+        url: '/logo.png',
         media: '(prefers-color-scheme: dark)',
       },
       {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
+        url: '/logo.png',
+        type: 'image/png',
       },
     ],
-    apple: '/apple-icon.png',
+    apple: '/logo.png',
   },
 }
 

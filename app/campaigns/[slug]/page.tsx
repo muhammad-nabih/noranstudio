@@ -767,18 +767,7 @@ export default function CampaignSlugPage({ params }: PageProps) {
         <GallerySection campaign={campaign} />
         <CTASection campaign={campaign} />
 
-        {/* Footer */}
-        <footer className="border-t border-[#C9A96E]/10 py-12 px-8 md:px-20 bg-[#1c1a17]">
-          <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="text-[#E8DCC8]/30 text-xs tracking-[0.2em] uppercase">
-              © {new Date().getFullYear()} — All rights reserved
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-4 h-[1px] bg-[#C9A96E]/30" />
-              <span className="text-[#C9A96E]/40 text-xs tracking-[0.3em] uppercase">Photography Portfolio</span>
-            </div>
-          </div>
-        </footer>
+ 
       </main>
     </>
   )
