@@ -6,7 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { cn } from '@/lib/utils'
 
 import type { Service, Campaign } from '@/lib/types'
-import ServiceCard from './ServiceCard'
+import ServiceCard from '@/components/ServiceCard'
 
 interface ServicesSectionProps {
   services: Service[]

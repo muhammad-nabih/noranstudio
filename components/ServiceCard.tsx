@@ -5,7 +5,6 @@ import Image from 'next/image'
 import { useRef, useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { getOptimizedImageUrl } from '@/lib/image-optimization'
 import type { Service, Campaign } from '@/lib/types'
 
