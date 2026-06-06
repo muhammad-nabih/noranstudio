@@ -1,3 +1,4 @@
+'use client'
 import { motion } from "framer-motion"
 
 
@@ -27,4 +28,6 @@ function LoadingSkeleton() {
       </div>
     )
   }
+
+  export default LoadingSkeleton
   

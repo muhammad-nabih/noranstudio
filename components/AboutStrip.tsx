@@ -14,8 +14,6 @@ export default function AboutStrip() {
   const frameRef    = useRef<HTMLDivElement>(null);
   const imgRef      = useRef<HTMLDivElement>(null);
   const canvasRef   = useRef<HTMLCanvasElement>(null);
-  const cursorRef   = useRef<HTMLDivElement>(null);
-  const followerRef = useRef<HTMLDivElement>(null);
   const tlRef       = useRef<gsap.core.Timeline | null>(null);
   const rafRef      = useRef<number>(0);
 
@@ -26,31 +24,6 @@ export default function AboutStrip() {
 
   const xLeft  = useTransform(scrollYProgress, [0, 1], ['-6%', '0%']);
   const xRight = useTransform(scrollYProgress, [0, 1], ['6%', '0%']);
-
-  /* ── Custom cursor ── */
-  useEffect(() => {
-    const cur = cursorRef.current;
-    const fol = followerRef.current;
-    if (!cur || !fol) return;
-
-    let mx = 0, my = 0, fx = 0, fy = 0;
-
-    const onMove = (e: MouseEvent) => {
-      mx = e.clientX; my = e.clientY;
-      gsap.to(cur, { x: mx, y: my, duration: 0.1 });
-    };
-    document.addEventListener('mousemove', onMove);
-
-    const tick = () => {
-      fx += (mx - fx) * 0.08;
-      fy += (my - fy) * 0.08;
-      gsap.set(fol, { x: fx, y: fy });
-      requestAnimationFrame(tick);
-    };
-    tick();
-
-    return () => document.removeEventListener('mousemove', onMove);
-  }, []);
 
   /* ── Three.js particle field ── */
   useEffect(() => {
@@ -99,8 +72,8 @@ export default function AboutStrip() {
           pos.z       += repel;
           vAlpha = 0.15 + 0.35 * abs(sin(uTime * 0.5 + position.x));
           vec4 mv = modelViewMatrix * vec4(pos, 1.0);
-          gl_Position  = projectionMatrix * mv;
           gl_PointSize = size * (300.0 / -mv.z);
+          gl_Position  = projectionMatrix * mv;
         }
       `,
       fragmentShader: /* glsl */`
@@ -244,130 +217,124 @@ export default function AboutStrip() {
   }, []);
 
   return (
-    <>
-      {/* Custom cursor */}
-      <div ref={cursorRef}    className="fixed w-2 h-2 bg-[#C9A96E] rounded-full pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2 transition-[width,height] duration-300" />
-      <div ref={followerRef}  className="fixed w-9 h-9 border border-[#C9A96E]/50 rounded-full pointer-events-none z-[9998] -translate-x-1/2 -translate-y-1/2 transition-[width,height,border-color] duration-400" />
+    <section
+      id="about"
+      ref={sectionRef}
+      className="relative min-h-screen grid grid-cols-1 md:grid-cols-2 overflow-hidden bg-[#0a0805]"
+    >
+      {/* Background layers */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_70%_50%,rgba(201,169,110,0.07)_0%,transparent_70%)] pointer-events-none" />
+      <div className="absolute inset-0 pointer-events-none"
+           style={{ backgroundImage: 'repeating-linear-gradient(0deg,transparent,transparent 80px,rgba(201,169,110,0.02) 80px,rgba(201,169,110,0.02) 81px)' }} />
 
-      <section
-        id="about"
-        ref={sectionRef}
-        className="relative min-h-screen grid grid-cols-1 md:grid-cols-2 overflow-hidden bg-[#0a0805] cursor-none"
+      {/* ── LEFT: Text ── */}
+      <motion.div
+        style={{ x: xLeft }}
+        className="flex flex-col justify-center px-16 md:px-20 py-24 relative z-10"
       >
-        {/* Background layers */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_70%_50%,rgba(201,169,110,0.07)_0%,transparent_70%)] pointer-events-none" />
-        <div className="absolute inset-0 pointer-events-none"
-             style={{ backgroundImage: 'repeating-linear-gradient(0deg,transparent,transparent 80px,rgba(201,169,110,0.02) 80px,rgba(201,169,110,0.02) 81px)' }} />
+        {/* Eyebrow */}
+        <div className="about-eyebrow flex items-center gap-3 mb-8 opacity-0 translate-y-6">
+          <span className="w-10 h-px bg-[#C9A96E]" />
+          <span className="text-[#C9A96E] text-[10px] tracking-[0.5em] uppercase font-['Cormorant_Garamond']">
+            a little about me...
+          </span>
+        </div>
 
-        {/* ── LEFT: Text ── */}
-        <motion.div
-          style={{ x: xLeft }}
-          className="flex flex-col justify-center px-16 md:px-20 py-24 relative z-10"
-        >
-          {/* Eyebrow */}
-          <div className="about-eyebrow flex items-center gap-3 mb-8 opacity-0 translate-y-6">
-            <span className="w-10 h-px bg-[#C9A96E]" />
-            <span className="text-[#C9A96E] text-[10px] tracking-[0.5em] uppercase font-['Cormorant_Garamond']">
-              a little about me...
-            </span>
-          </div>
+        {/* Heading */}
+        <div className="overflow-hidden mb-1">
+          <span className="about-h1 block font-['Playfair_Display'] font-bold text-5xl text-[#F5EDD6] leading-[1.1] opacity-0 translate-y-full">
+            Hi, I'm
+          </span>
+        </div>
+        <div className="overflow-hidden mb-8">
+          <span className="about-h2 block font-['Playfair_Display'] font-bold text-5xl italic text-[#C9A96E] leading-[1.1] opacity-0 translate-y-full">
+            Noran Elgeneady.
+          </span>
+        </div>
 
-          {/* Heading */}
-          <div className="overflow-hidden mb-1">
-            <span className="about-h1 block font-['Playfair_Display'] font-bold text-5xl text-[#F5EDD6] leading-[1.1] opacity-0 translate-y-full">
-              Hi, I'm
-            </span>
-          </div>
-          <div className="overflow-hidden mb-8">
-            <span className="about-h2 block font-['Playfair_Display'] font-bold text-5xl italic text-[#C9A96E] leading-[1.1] opacity-0 translate-y-full">
-              Noran Elgeneady.
-            </span>
-          </div>
+        {/* Divider */}
+        <div className="about-divider w-0 h-px bg-gradient-to-r from-[#C9A96E] to-transparent mb-8" />
 
-          {/* Divider */}
-          <div className="about-divider w-0 h-px bg-gradient-to-r from-[#C9A96E] to-transparent mb-8" />
+        {/* Body */}
+        <p className="about-body font-['Cormorant_Garamond'] font-light text-lg leading-relaxed text-[#E8DCC8]/75 opacity-0 translate-y-5 mb-5 max-w-[440px]">
+          I don't create designs just for art or aesthetics. I craft visuals that bring brand identity to life,
+          communicate marketing messages clearly, and transform ideas into impactful designs that truly support goals.
+        </p>
 
-          {/* Body */}
-          <p className="about-body font-['Cormorant_Garamond'] font-light text-lg leading-relaxed text-[#E8DCC8]/75 opacity-0 translate-y-5 mb-5 max-w-[440px]">
-            I don't create designs just for art or aesthetics. I craft visuals that bring brand identity to life,
-            communicate marketing messages clearly, and transform ideas into impactful designs that truly support goals.
-          </p>
+        <p className="about-tagline font-['Playfair_Display'] italic text-sm text-[#C9A96E] tracking-widest opacity-0 translate-y-4 mb-12">
+          Let the design tell your story.
+        </p>
 
-          <p className="about-tagline font-['Playfair_Display'] italic text-sm text-[#C9A96E] tracking-widest opacity-0 translate-y-4 mb-12">
-            Let the design tell your story.
-          </p>
-
-          {/* Stats */}
-          <div className="about-stats flex gap-10 opacity-0 translate-y-5">
-            {[
-              { num: '∞', label: 'Possibilities' },
-              { num: '01', label: 'Vision' },
-              { num: '↑',  label: 'Excellence' },
-              { num: '◈',  label: 'Craft' },
-            ].map((s, i) => (
-              <div key={i} className="flex flex-col gap-1 group">
-                <span className="font-['Playfair_Display'] text-3xl text-[#C9A96E] group-hover:scale-110 transition-transform duration-300">
-                  {s.num}
-                </span>
-                <span className="text-[10px] tracking-[0.35em] uppercase text-[#E8DCC8]/40">
-                  {s.label}
-                </span>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* ── RIGHT: Portrait + Three.js ── */}
-        <motion.div
-          style={{ x: xRight }}
-          className="relative flex items-center justify-center z-10 overflow-hidden min-h-[600px]"
-        >
-          {/* Three.js particle canvas */}
-          <canvas
-            ref={canvasRef}
-            className="absolute inset-0 w-full h-full"
-          />
-
-          {/* Decorative rings */}
-          <div className="about-ring absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[520px] border border-[#C9A96E]/[0.08] opacity-0" />
-          <div className="about-ring absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[460px] h-[560px] border border-[#C9A96E]/[0.04] opacity-0" />
-
-          {/* Portrait frame */}
-          <div
-            ref={frameRef}
-            className="relative z-[5] w-[380px] h-[480px]"
-            style={{ transformStyle: 'preserve-3d' }}
-          >
-            {/* Glow */}
-            <div className="about-glow absolute inset-[-2px] opacity-0"
-                 style={{ boxShadow: '0 0 60px rgba(201,169,110,0.15), inset 0 0 40px rgba(201,169,110,0.05)' }} />
-
-            {/* Image */}
-            <div ref={imgRef} className="w-full h-full">
-              <Image
-                src="/NORAN.png"   // ← put your image here
-                alt="Noran Elgeneady"
-                fill
-                className="about-portrait object-cover object-top opacity-0"
-                priority
-              />
+        {/* Stats */}
+        <div className="about-stats flex gap-10 opacity-0 translate-y-5">
+          {[
+            { num: '∞', label: 'Possibilities' },
+            { num: '01', label: 'Vision' },
+            { num: '↑',  label: 'Excellence' },
+            { num: '◈',  label: 'Craft' },
+          ].map((s, i) => (
+            <div key={i} className="flex flex-col gap-1 group">
+              <span className="font-['Playfair_Display'] text-3xl text-[#C9A96E] group-hover:scale-110 transition-transform duration-300">
+                {s.num}
+              </span>
+              <span className="text-[10px] tracking-[0.35em] uppercase text-[#E8DCC8]/40">
+                {s.label}
+              </span>
             </div>
+          ))}
+        </div>
+      </motion.div>
 
-            {/* Corner borders */}
-            <div className="about-corner-tl absolute -top-3 -left-3 w-14 h-14 border-t border-l border-[#C9A96E] z-[6] opacity-0 -translate-x-2 -translate-y-2" />
-            <div className="about-corner-br absolute -bottom-3 -right-3 w-14 h-14 border-b border-r border-[#C9A96E] z-[6] opacity-0 translate-x-2 translate-y-2" />
+      {/* ── RIGHT: Portrait + Three.js ── */}
+      <motion.div
+        style={{ x: xRight }}
+        className="relative flex items-center justify-center z-10 overflow-hidden min-h-[600px]"
+      >
+        {/* Three.js particle canvas */}
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 w-full h-full"
+        />
 
-            {/* Shimmer sweep */}
-            <div className="about-shimmer absolute left-0 w-full h-px bg-gradient-to-r from-transparent via-[#C9A96E] to-transparent z-[9]" style={{ top: '-2px' }} />
+        {/* Decorative rings */}
+        <div className="about-ring absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[520px] border border-[#C9A96E]/[0.08] opacity-0" />
+        <div className="about-ring absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[460px] h-[560px] border border-[#C9A96E]/[0.04] opacity-0" />
+
+        {/* Portrait frame */}
+        <div
+          ref={frameRef}
+          className="relative z-[5] w-[380px] h-[480px]"
+          style={{ transformStyle: 'preserve-3d' }}
+        >
+          {/* Glow */}
+          <div className="about-glow absolute inset-[-2px] opacity-0"
+               style={{ boxShadow: '0 0 60px rgba(201,169,110,0.15), inset 0 0 40px rgba(201,169,110,0.05)' }} />
+
+          {/* Image */}
+          <div ref={imgRef} className="w-full h-full">
+            <Image
+              src="/NORAN.png"   // ← put your image here
+              alt="Noran Elgeneady"
+              fill
+              className="about-portrait object-cover object-top opacity-0"
+              priority
+            />
           </div>
 
-          {/* Floating badge */}
-          <div className="about-badge absolute right-8 bottom-24 bg-[rgba(12,9,5,0.9)] border border-[#C9A96E]/20 p-4 z-[8] opacity-0 translate-x-5 backdrop-blur-sm">
-            <div className="font-['Playfair_Display'] italic text-xs text-[#C9A96E] tracking-widest">Visual Designer</div>
-            <div className="text-[9px] text-[#E8DCC8]/40 tracking-[0.3em] uppercase mt-1">Brand & Identity</div>
-          </div>
-        </motion.div>
-      </section>
-    </>
+          {/* Corner borders */}
+          <div className="about-corner-tl absolute -top-3 -left-3 w-14 h-14 border-t border-l border-[#C9A96E] z-[6] opacity-0 -translate-x-2 -translate-y-2" />
+          <div className="about-corner-br absolute -bottom-3 -right-3 w-14 h-14 border-b border-r border-[#C9A96E] z-[6] opacity-0 translate-x-2 translate-y-2" />
+
+          {/* Shimmer sweep */}
+          <div className="about-shimmer absolute left-0 w-full h-px bg-gradient-to-r from-transparent via-[#C9A96E] to-transparent z-[9]" style={{ top: '-2px' }} />
+        </div>
+
+        {/* Floating badge */}
+        <div className="about-badge absolute right-8 bottom-24 bg-[rgba(12,9,5,0.9)] border border-[#C9A96E]/20 p-4 z-[8] opacity-0 translate-x-5 backdrop-blur-sm">
+          <div className="font-['Playfair_Display'] italic text-xs text-[#C9A96E] tracking-widest">Visual Designer</div>
+          <div className="text-[9px] text-[#E8DCC8]/40 tracking-[0.3em] uppercase mt-1">Brand & Identity</div>
+        </div>
+      </motion.div>
+    </section>
   );
 }

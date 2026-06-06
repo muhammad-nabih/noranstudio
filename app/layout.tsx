@@ -5,7 +5,7 @@ import './globals.css'
 import { BarbaProvider } from '@/components/providers/BarbaProvider'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import { LoadingProvider } from '@/components/providers/LoadingProvider'
-
+import MagicWandCursor from '@/components/common/Magicwandcursor'
 
 const cinzel = Cinzel({
   subsets: ['latin'],
@@ -48,12 +48,24 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning className={`${cinzel.variable} ${poppins.variable}`} >
-      <body className="font-poppins antialiased">
+    <html
+      lang="en"
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
+      className={`${cinzel.variable} ${poppins.variable}`}
+    >
+      {/*
+        cursor-none hides the system cursor globally.
+        MagicWandCursor renders its own fixed-position wand above everything.
+        To restore the system cursor on a specific element, add className="cursor-auto".
+      */}
+      <body className="font-poppins antialiased cursor-none">
         <LoadingProvider>
           <ThemeProvider>
             <BarbaProvider>
-        
+              {/* ── Magic wand cursor — sits above all content ── */}
+              <MagicWandCursor />
+
               <main>{children}</main>
             </BarbaProvider>
           </ThemeProvider>

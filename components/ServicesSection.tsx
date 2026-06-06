@@ -4,8 +4,9 @@ import { useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { cn } from '@/lib/utils'
-import ServiceCard from './ServiceCard' // عدل المسار حسب مشروعك
+
 import type { Service, Campaign } from '@/lib/types'
+import ServiceCard from './ServiceCard'
 
 interface ServicesSectionProps {
   services: Service[]

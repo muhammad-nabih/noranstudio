@@ -11,7 +11,8 @@ export default function Footer({ services }: { services: Service[] }) {
               <div className="w-7 h-7 border border-[#C9A96E]/60 rotate-45 flex items-center justify-center">
                 <div className="w-1.5 h-1.5 bg-[#C9A96E] rotate-45" />
               </div>
-              <span className="text-white font-['Playfair_Display'] text-lg">Studio</span>
+              <span className="text-white font-['Playfair_Display'] text-lg">
+              Noran Studio</span>
             </div>
             <p className="text-[#E8DCC8]/30 text-xs leading-relaxed font-['Cormorant_Garamond'] font-light max-w-[200px]">
               Visual artistry crafted with purpose and passion.

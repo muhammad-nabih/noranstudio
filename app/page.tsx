@@ -17,6 +17,8 @@ import ServiceCard from '@/components/ServiceCard'
 import WorkSection from '@/components/WorkSection'
 import ServicesSection from '@/components/ServicesSection'
 import Footer from '@/components/Footer'
+import HeroSection from '@/components/HeroSection'
+import Navbar from '@/components/Navbar'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -128,49 +130,8 @@ function ThreeBackground() {
   return <canvas ref={canvasRef} className="fixed inset-0 w-full h-full pointer-events-none z-0" style={{ opacity: 0.65 }} />
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// CUSTOM CURSOR
-// ═══════════════════════════════════════════════════════════════════════════════
 
-function MagneticCursor() {
-  const dotRef  = useRef<HTMLDivElement>(null)
-  const ringRef = useRef<HTMLDivElement>(null)
-  const [hov, setHov] = useState(false)
 
-  useEffect(() => {
-    const dot = dotRef.current; const ring = ringRef.current
-    if (!dot || !ring) return
-    let cx = 0, cy = 0, dx = 0, dy = 0
-
-    const move = (e: MouseEvent) => {
-      dx = e.clientX; dy = e.clientY
-      dot.style.transform = `translate(${dx - 4}px, ${dy - 4}px)`
-    }
-    window.addEventListener('mousemove', move)
-
-    const loop = () => {
-      cx += (dx - cx) * 0.1; cy += (dy - cy) * 0.1
-      ring.style.transform = `translate(${cx - 20}px, ${cy - 20}px)`
-      requestAnimationFrame(loop)
-    }
-    loop()
-
-    const els = document.querySelectorAll('a, button, [data-hover]')
-    els.forEach(el => {
-      el.addEventListener('mouseenter', () => setHov(true))
-      el.addEventListener('mouseleave', () => setHov(false))
-    })
-
-    return () => window.removeEventListener('mousemove', move)
-  }, [])
-
-  return (
-    <>
-      <div ref={dotRef}  className="fixed top-0 left-0 w-2 h-2 bg-[#C9A96E] rounded-full pointer-events-none z-[9999] mix-blend-difference" />
-      <div ref={ringRef} className={cn('fixed top-0 left-0 rounded-full pointer-events-none z-[9998] border border-[#C9A96E] transition-all duration-300 mix-blend-difference', hov ? 'w-14 h-14 bg-[#C9A96E]/10' : 'w-10 h-10')} />
-    </>
-  )
-}
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // PAGE REVEAL
@@ -188,293 +149,7 @@ function PageReveal() {
   )
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// NAVIGATION
-// ═══════════════════════════════════════════════════════════════════════════════
 
-function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
-
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 60)
-    window.addEventListener('scroll', fn)
-    return () => window.removeEventListener('scroll', fn)
-  }, [])
-
-  const navLinks = [
-    { label: 'Work',     href: '#work' },
-    { label: 'Services', href: '#services' },
-    { label: 'About',    href: '#about' },
-    { label: 'Contact',  href: '#contact' },
-  ]
-
-  return (
-    <>
-      <motion.nav
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0,   opacity: 1 }}
-        transition={{ delay: 1.2, duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
-        className={cn(
-          'fixed top-0 left-0 right-0 z-[100] px-8 md:px-20 py-5 flex items-center justify-between transition-all duration-500',
-          scrolled ? 'bg-[#0D0D0D]/85 backdrop-blur-2xl border-b border-[#C9A96E]/10' : ''
-        )}
-      >
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-8 h-8 border border-[#C9A96E]/60 rotate-45 group-hover:rotate-[135deg] transition-transform duration-700 flex items-center justify-center">
-            <div className="w-2 h-2 bg-[#C9A96E] rotate-45" />
-          </div>
-          <span className="text-white font-['Playfair_Display'] text-lg tracking-wide">Studio</span>
-        </Link>
-
-        {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-10">
-          {navLinks.map((l, i) => (
-            <a
-              key={i}
-              href={l.href}
-              className="text-[#E8DCC8]/50 hover:text-[#C9A96E] text-xs tracking-[0.25em] uppercase transition-colors duration-300 font-['Cormorant_Garamond']"
-            >
-              {l.label}
-            </a>
-          ))}
-        </div>
-
-        {/* CTA */}
-        <Link
-          href="#contact"
-          className="hidden md:flex items-center gap-2 text-xs tracking-[0.25em] uppercase text-[#C9A96E] border border-[#C9A96E]/40 px-5 py-2.5 hover:bg-[#C9A96E] hover:text-[#0D0D0D] transition-all duration-300 font-['Cormorant_Garamond']"
-        >
-          Get in touch
-        </Link>
-
-        {/* Mobile hamburger */}
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="md:hidden flex flex-col gap-1.5 p-2"
-        >
-          <motion.span animate={{ rotate: menuOpen ? 45 : 0, y: menuOpen ? 8 : 0 }} className="w-6 h-px bg-[#C9A96E] block transition-all" />
-          <motion.span animate={{ opacity: menuOpen ? 0 : 1 }} className="w-6 h-px bg-[#C9A96E] block" />
-          <motion.span animate={{ rotate: menuOpen ? -45 : 0, y: menuOpen ? -8 : 0 }} className="w-6 h-px bg-[#C9A96E] block transition-all" />
-        </button>
-      </motion.nav>
-
-      {/* Mobile menu */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
-            animate={{ opacity: 1, clipPath: 'inset(0 0 0% 0)' }}
-            exit={  { opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
-            transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
-            className="fixed inset-0 z-[99] bg-[#0D0D0D]/97 backdrop-blur-2xl flex flex-col items-center justify-center gap-8"
-          >
-            {navLinks.map((l, i) => (
-              <motion.a
-                key={i}
-                href={l.href}
-                onClick={() => setMenuOpen(false)}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.08 + 0.2 }}
-                className="text-4xl font-['Playfair_Display'] text-white hover:text-[#C9A96E] transition-colors duration-300"
-              >
-                {l.label}
-              </motion.a>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
-  )
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// HERO SECTION
-// ═══════════════════════════════════════════════════════════════════════════════
-
-function HeroSection({ featured }: { featured: Campaign[] }) {
-  const heroRef   = useRef<HTMLDivElement>(null)
-  const titleRef  = useRef<HTMLDivElement>(null)
-  const imageRef  = useRef<HTMLDivElement>(null)
-  const [activeIdx, setActiveIdx] = useState(0)
-
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
-  const yParallax = useTransform(scrollYProgress, [0, 1], ['0%', '35%'])
-  const opacity   = useTransform(scrollYProgress, [0, 0.8], [1, 0])
-
-  // ── GSAP hero entrance ─────────────────────────────────────────────────────
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ delay: 1.3 })
-
-      tl.fromTo('.hero-eyebrow', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' })
-        .fromTo('.hero-char',
-          { y: 140, opacity: 0, rotateX: -90 },
-          { y: 0, opacity: 1, rotateX: 0, duration: 1.3, stagger: 0.03, ease: 'power4.out' },
-          '-=0.4'
-        )
-        .fromTo('.hero-sub',  { y: 25, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out' }, '-=0.6')
-        .fromTo('.hero-ctas', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, '-=0.5')
-        .fromTo('.hero-scroll-line', { scaleY: 0 }, { scaleY: 1, duration: 1.2, ease: 'power3.inOut' }, '-=0.4')
-    }, heroRef)
-    return () => ctx.revert()
-  }, [])
-
-  // ── Auto-rotate featured images ────────────────────────────────────────────
-  useEffect(() => {
-    if (!featured.length) return
-    const id = setInterval(() => setActiveIdx(i => (i + 1) % featured.length), 4000)
-    return () => clearInterval(id)
-  }, [featured])
-
-  const heroLine1 = 'Visual'
-  const heroLine2 = 'Artistry'
-
-  return (
-    <section ref={heroRef} className="relative min-h-screen overflow-hidden flex items-center">
-
-      {/* ── Background slideshow ────────────────────────────────────────────── */}
-      <div className="absolute inset-0 z-[1]">
-        <AnimatePresence mode="wait">
-          {featured.map((c, i) =>
-            i === activeIdx && c.heroImage ? (
-              <motion.div
-                key={c._id}
-                initial={{ opacity: 0, scale: 1.05 }}
-                animate={{ opacity: 1,  scale: 1 }}
-                exit={{   opacity: 0,  scale: 0.98 }}
-                transition={{ duration: 1.6, ease: 'easeInOut' }}
-                className="absolute inset-0"
-              >
-                <Image
-                  src={getOptimizedImageUrl(c.heroImage, { width: 1920, height: 1080 })}
-                  alt={c.title}
-                  fill priority
-                  className="object-cover"
-                  sizes="100vw"
-                />
-              </motion.div>
-            ) : null
-          )}
-        </AnimatePresence>
-
-        {/* Layered overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t  from-[#0D0D0D] via-[#0D0D0D]/55 to-[#0D0D0D]/10" />
-        <div className="absolute inset-0 bg-gradient-to-r  from-[#0D0D0D]/80 via-transparent to-transparent" />
-        <div className="absolute inset-0 bg-[#0D0D0D]/20" />
-      </div>
-
-      {/* ── Slide indicators ───────────────────────────────────────────────── */}
-      {featured.length > 1 && (
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-[3] flex gap-2">
-          {featured.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setActiveIdx(i)}
-              className={cn('h-px transition-all duration-500', i === activeIdx ? 'w-10 bg-[#C9A96E]' : 'w-4 bg-[#E8DCC8]/30')}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* ── Content ────────────────────────────────────────────────────────── */}
-      <motion.div
-        style={{ opacity }}
-        className="relative z-[2] w-full px-8 md:px-20 max-w-[1600px] mx-auto pt-32"
-      >
-        {/* Eyebrow */}
-        <div className="hero-eyebrow flex items-center gap-3 mb-8">
-          <span className="w-10 h-px bg-[#C9A96E]" />
-          <span className="text-[#C9A96E] text-xs tracking-[0.4em] uppercase font-['Cormorant_Garamond']">
-            Photography & Creative Direction
-          </span>
-        </div>
-
-        {/* Main title — split chars */}
-        <div ref={titleRef} className="mb-10" style={{ perspective: '1000px' }}>
-          <div className="overflow-hidden">
-            <h1 className="text-[clamp(4rem,12vw,12rem)] font-['Playfair_Display'] font-black leading-[0.85] text-white">
-              {heroLine1.split('').map((ch, i) => (
-                <span key={i} className="hero-char inline-block" style={{ transformOrigin: 'bottom center' }}>{ch}</span>
-              ))}
-            </h1>
-          </div>
-          <div className="overflow-hidden">
-            <h1 className="text-[clamp(4rem,12vw,12rem)] font-['Playfair_Display'] font-black leading-[0.85]"
-                style={{ WebkitTextStroke: '1px #C9A96E', color: 'transparent' }}>
-              {heroLine2.split('').map((ch, i) => (
-                <span key={i} className="hero-char inline-block" style={{ transformOrigin: 'bottom center' }}>{ch}</span>
-              ))}
-            </h1>
-          </div>
-        </div>
-
-        {/* Sub + CTA row */}
-        <div className="flex flex-col md:flex-row items-start md:items-end gap-10 md:gap-20">
-          <p className="hero-sub text-[#E8DCC8]/60 text-base md:text-lg leading-relaxed max-w-sm font-['Cormorant_Garamond'] font-light">
-            Crafting visual narratives that transcend the ordinary — where light, form, and emotion converge into timeless imagery.
-          </p>
-          <div className="hero-ctas flex flex-wrap items-center gap-4">
-            <Link
-              href="#work"
-              className="group flex items-center gap-3 bg-[#C9A96E] text-[#0D0D0D] text-xs tracking-[0.3em] uppercase px-8 py-4 font-['Cormorant_Garamond'] hover:bg-[#E8DCC8] transition-colors duration-300"
-            >
-              View Work
-              <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
-            </Link>
-            <Link
-              href="#services"
-              className="flex items-center gap-3 border border-[#C9A96E]/40 text-[#C9A96E] text-xs tracking-[0.3em] uppercase px-8 py-4 font-['Cormorant_Garamond'] hover:border-[#C9A96E] transition-colors duration-300"
-            >
-              Our Services
-            </Link>
-          </div>
-        </div>
-
-        {/* Active campaign title */}
-        {featured[activeIdx] && (
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeIdx}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{   opacity: 0, x: -20 }}
-              transition={{ duration: 0.5 }}
-              className="mt-16 flex items-center gap-4"
-            >
-              <span className="text-[#C9A96E]/40 text-xs tracking-[0.3em] uppercase">Now viewing</span>
-              <span className="text-[#E8DCC8]/60 text-sm font-['Cormorant_Garamond']">{featured[activeIdx].title}</span>
-              <Link
-                href={`/campaigns/${typeof featured[activeIdx].slug === 'string' ? featured[activeIdx].slug : featured[activeIdx].slug?.current}`}
-                className="text-[#C9A96E] text-xs hover:underline underline-offset-4"
-              >
-                Open →
-              </Link>
-            </motion.div>
-          </AnimatePresence>
-        )}
-      </motion.div>
-
-      {/* Scroll indicator */}
-      <div className="absolute right-8 bottom-20 z-[2] flex flex-col items-center gap-3">
-        <span className="text-[#C9A96E]/40 text-[9px] tracking-[0.4em] uppercase" style={{ writingMode: 'vertical-rl' }}>Scroll</span>
-        <div className="hero-scroll-line w-px h-20 bg-gradient-to-b from-[#C9A96E]/50 to-transparent origin-top relative overflow-hidden">
-          <motion.div
-            className="absolute top-0 left-0 w-full bg-[#C9A96E]"
-            animate={{ height: ['0%', '100%'], opacity: [1, 0] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-          />
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// STATS STRIP
-// ═══════════════════════════════════════════════════════════════════════════════
 
 function StatsStrip({ totalCampaigns }: { totalCampaigns: number }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -542,7 +217,7 @@ const SERVICE_ACCENTS = [
 
 
 function MarqueeStrip() {
-  const text = 'PHOTOGRAPHY — CREATIVE DIRECTION — VISUAL STORYTELLING — CAMPAIGNS — EDITORIAL — PORTRAITS —'
+  const text = 'MASTER KV — CREATIVE DIRECTION — PRINTING — CAMPAIGNS — RETOUCH — LUXURY —'
   return (
     <div className="relative py-5 overflow-hidden border-y border-[#C9A96E]/15">
       <div className="absolute inset-0 bg-[#1A1008]/20" />
@@ -810,11 +485,7 @@ export default function HomePage() {
       {/* ── Page reveal ───────────────────────────────────────────────────── */}
       <PageReveal />
 
-      {/* ── Custom cursor (desktop only) ──────────────────────────────────── */}
-      <div className="hidden md:block">
-        <MagneticCursor />
-      </div>
-
+   
       {/* ── Three.js background ───────────────────────────────────────────── */}
       <ThreeBackground />
 
@@ -823,7 +494,7 @@ export default function HomePage() {
 
       {/* ── Content ───────────────────────────────────────────────────────── */}
       <main className="relative z-[10]">
-        <HeroSection featured={featured} />
+        <HeroSection  />
 
         <StatsStrip totalCampaigns={campaigns.length} />
 

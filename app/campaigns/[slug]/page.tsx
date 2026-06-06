@@ -12,6 +12,7 @@ import { getOptimizedImageUrl } from '@/lib/image-optimization'
 import type { Campaign } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import Loader from '@/components/common/Loader'
+import BackNav from '@/components/common/BackNav'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -543,7 +544,7 @@ function GallerySection({ campaign }: { campaign: Campaign }) {
   }
 
   return (
-    <section ref={sectionRef} className="py-20 px-8 md:px-20 max-w-[1600px] mx-auto">
+    <section ref={sectionRef} className="py-20 w-full md:px-20  mx-auto bg-black">
       {/* Header */}
       <div className="gallery-header mb-16 flex items-end justify-between">
         <div>
@@ -655,39 +656,6 @@ function CTASection({ campaign }: { campaign: Campaign }) {
 
 // ─── Navigation ───────────────────────────────────────────────────────────────
 
-function BackNav() {
-  const [scrolled, setScrolled] = useState(false)
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50)
-    window.addEventListener('scroll', onScroll)
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
-  return (
-    <motion.nav
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ delay: 0.2, duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className={cn(
-        'fixed top-0 left-0 right-0 z-[100] px-8 md:px-20 py-6 flex items-center justify-between transition-all duration-500',
-        scrolled ? 'bg-[#0D0D0D]/80 backdrop-blur-xl border-b border-[#C9A96E]/10' : ''
-      )}
-    >
-      <Link
-        href="/"
-        className="flex items-center gap-3 text-[#E8DCC8]/60 hover:text-[#C9A96E] transition-colors duration-300 text-sm tracking-[0.15em] uppercase group"
-      >
-        <span className="group-hover:-translate-x-1 transition-transform duration-300">←</span>
-        Back
-      </Link>
-
-      <div className="text-[#C9A96E]/40 text-xs tracking-[0.4em] uppercase font-['Cormorant_Garamond']">
-        Portfolio
-      </div>
-    </motion.nav>
-  )
-}
 
 // ─── Loading Skeleton ─────────────────────────────────────────────────────────
 
@@ -708,7 +676,7 @@ function PageReveal() {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function CampaignSlugPage({ params }: PageProps) {
-  // ✅ Next.js 15+ — params is a Promise, must unwrap with React.use()
+
   const { slug } = use(params)
 
   const [campaign, setCampaign] = useState<Campaign | null>(null)
@@ -795,12 +763,12 @@ export default function CampaignSlugPage({ params }: PageProps) {
       <main className="relative z-[10] bg-transparent">
         <HeroSection campaign={campaign} />
         <DescriptionSection campaign={campaign} />
-        <MarqueeStrip text={`${campaign.title.toUpperCase()} — VISUAL EXCELLENCE — CREATIVE DIRECTION — PHOTOGRAPHY —`} />
+        {/* <MarqueeStrip text={`${campaign.title.toUpperCase()} — VISUAL EXCELLENCE — CREATIVE DIRECTION — PHOTOGRAPHY —`} /> */}
         <GallerySection campaign={campaign} />
         <CTASection campaign={campaign} />
 
         {/* Footer */}
-        <footer className="border-t border-[#C9A96E]/10 py-12 px-8 md:px-20">
+        <footer className="border-t border-[#C9A96E]/10 py-12 px-8 md:px-20 bg-[#1c1a17]">
           <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="text-[#E8DCC8]/30 text-xs tracking-[0.2em] uppercase">
               © {new Date().getFullYear()} — All rights reserved

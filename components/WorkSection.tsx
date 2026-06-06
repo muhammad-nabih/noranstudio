@@ -344,50 +344,58 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
         {/* description */}
         <p
           ref={descRef}
-          className="font-['Cormorant_Garamond'] font-light text-[16px] leading-[1.8] text-[rgba(232,220,200,0.62)] mb-9 max-w-[440px]"
+          className="font-['Cormorant_Garamond'] font-light text-[16px] leading-[1.8] text-[rgba(232,220,200,0.62)]  max-w-[440px]"
           style={{ opacity: 0, transform: "translateY(22px)" }}
         >
           {campaign.shortDescription}
         </p>
 
         {/* CTA row */}
-        <div className="flex items-center gap-8">
-          <Link
-            ref={ctaRef}
-            href={`/campaigns/${campaign.slug.current}`}
-            className={cn(
-              "inline-flex items-center gap-4",
-              "font-mono text-[9px] tracking-[0.4em] uppercase text-[#C9A96E]",
-              "border-b border-[rgba(201,169,110,0.28)] pb-1.5",
-              "hover:gap-6 hover:border-[#C9A96E]",
-              "transition-[gap,border-color] duration-500",
-              "group",
-            )}
-            style={{ opacity: 0, transform: "translateY(18px)" }}
-          >
-            View project
-            <span className="text-base transition-transform duration-500 group-hover:translate-x-1.5">
-              →
-            </span>
-          </Link>
+     {/* CTA row */}
+<div className="flex flex-wrap items-center gap-8 my-4 ">
+  <Link
+    ref={ctaRef}
+    href={`/campaigns/${campaign.slug.current}`}
+    className={cn(
+      "group relative inline-flex items-center gap-3",
+      "font-mono text-xs font-medium tracking-[0.3em] uppercase",
+      "text-white/90", // نص أبيض لتباين أفضل
+      "bg-black/30 backdrop-blur-sm", // خلفية خفيفة تزيد الوضوح
+      "border border-white/20 rounded-full",
+      "px-6 py-3",
+      "transition-all duration-500 ease-out",
+      "hover:border-[#C9A96E] hover:bg-[#C9A96E]/20 hover:text-white hover:shadow-lg hover:shadow-[#C9A96E]/20",
+      "hover:gap-5", // تحريك السهم
+      "focus:outline-none focus:ring-2 focus:ring-[#C9A96E]/50"
+    )}
+    style={{ opacity: 0, transform: "translateY(18px)" }}
+  >
+    <span>View project</span>
+    <span className="text-lg transition-transform duration-500 group-hover:translate-x-1.5 group-hover:scale-110">
+      →
+    </span>
+  </Link>
 
-          {campaign.behanceUrl && (
-            <a
-              href={campaign.behanceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={cn(
-                "inline-flex items-center gap-3",
-                "font-mono text-[9px] tracking-[0.4em] uppercase",
-                "text-[rgba(201,169,110,0.35)] hover:text-[rgba(201,169,110,0.75)]",
-                "transition-colors duration-400",
-              )}
-              style={{ opacity: 0, transform: "translateY(18px)" }}
-            >
-              Behance ↗
-            </a>
-          )}
-        </div>
+  {campaign.behanceUrl && (
+    <a
+      href={campaign.behanceUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cn(
+        "inline-flex items-center gap-2",
+        "font-mono text-[11px] font-medium tracking-[0.3em] uppercase",
+        "text-white/60 hover:text-white",
+        "transition-all duration-300",
+        "border-b border-white/20 hover:border-[#C9A96E]",
+        "pb-1"
+      )}
+      style={{ opacity: 0, transform: "translateY(18px)" }}
+    >
+      Behance
+      <span className="text-sm transition-transform duration-300 group-hover:translate-x-1">↗</span>
+    </a>
+  )}
+</div>
       </div>
 
       {/* ── Right-side meta stack ── */}
@@ -427,16 +435,9 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
 export default function WorkSection({ campaigns }: WorkSectionProps) {
   const reelRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
-  const cursorRef = useRef<HTMLDivElement>(null);
-  const ringRef = useRef<HTMLDivElement>(null);
   const isAnimating = useRef(false);
   const wheelCooldown = useRef(false);
   const touchStart = useRef(0);
-  const curMx = useRef(0);
-  const curMy = useRef(0);
-  const curRx = useRef(0);
-  const curRy = useRef(0);
-  const rafId = useRef<number>(0);
 
   const [current, setCurrent] = useState(0);
   const [filterId, setFilterId] = useState<string | null>(null);
@@ -458,31 +459,6 @@ export default function WorkSection({ campaigns }: WorkSectionProps) {
     [campaigns, filterId],
   );
   const total = filtered.length;
-
-  // ── cursor follow ──
-  useEffect(() => {
-    const onMove = (e: MouseEvent) => {
-      curMx.current = e.clientX;
-      curMy.current = e.clientY;
-    };
-    document.addEventListener("mousemove", onMove);
-
-    const tick = () => {
-      curRx.current += (curMx.current - curRx.current) * 0.07;
-      curRy.current += (curMy.current - curRy.current) * 0.07;
-      cursorRef.current?.style.setProperty("left", curMx.current + "px");
-      cursorRef.current?.style.setProperty("top", curMy.current + "px");
-      ringRef.current?.style.setProperty("left", curRx.current + "px");
-      ringRef.current?.style.setProperty("top", curRy.current + "px");
-      rafId.current = requestAnimationFrame(tick);
-    };
-    rafId.current = requestAnimationFrame(tick);
-
-    return () => {
-      document.removeEventListener("mousemove", onMove);
-      cancelAnimationFrame(rafId.current);
-    };
-  }, []);
 
   // ── translate reel ──
   const updateReel = useCallback(
@@ -572,28 +548,10 @@ export default function WorkSection({ campaigns }: WorkSectionProps) {
   return (
     <section
       id="work"
-      className="relative w-full overflow-hidden bg-[#050402] cursor-none"
+      className="relative w-full overflow-hidden bg-[#050402]"
       style={{ height: "100svh" }}
       aria-label="Selected work"
     >
-      {/* ── custom cursor ── */}
-      <div
-        ref={cursorRef}
-        aria-hidden
-        className="fixed z-[9999] pointer-events-none rounded-full bg-[#C9A96E] -translate-x-1/2 -translate-y-1/2"
-        style={{ width: 8, height: 8, mixBlendMode: "screen" }}
-      />
-      <div
-        ref={ringRef}
-        aria-hidden
-        className="fixed z-[9998] pointer-events-none rounded-full -translate-x-1/2 -translate-y-1/2 transition-[width,height] duration-500"
-        style={{
-          width: 38,
-          height: 38,
-          border: "1px solid rgba(201,169,110,0.38)",
-        }}
-      />
-
       {/* ── grain texture ── */}
       <div
         aria-hidden
@@ -604,51 +562,39 @@ export default function WorkSection({ campaigns }: WorkSectionProps) {
         }}
       />
 
-      {/* ── section label (top-left) ── */}
-      <div className="fixed top-8 left-9 z-[200] pointer-events-none">
-        <span
-          className="font-['Playfair_Display'] italic text-[12px] tracking-[0.18em]"
-          style={{ color: "rgba(232,220,200,0.32)" }}
-        >
-          Selected Work
-        </span>
-      </div>
-
-
       <div className="flex justify-center items-center w-full my-8 px-4">
-  {services.length > 0 && (
-    <nav
-      className="relative z-[200] flex flex-wrap justify-center gap-1 md:gap-2 rounded-full border border-[#C9A96E]/20 bg-[#0D0D0D]/40 backdrop-blur-xl p-1 shadow-lg shadow-[#C9A96E]/5"
-      aria-label="Filter by service"
-    >
-      {(["All", ...services.map((s) => s.title)] as string[]).map(
-        (label, i) => {
-          const id = i === 0 ? null : services[i - 1]._id;
-          const active = id === filterId;
-          return (
-            <button
-              key={label}
-              onClick={() => applyFilter(id)}
-              className={cn(
-                "relative px-5 md:px-6 py-2.5 text-[10px] md:text-[11px] font-mono font-medium tracking-[0.2em] uppercase transition-all duration-300 rounded-full",
-                "hover:tracking-[0.25em]",
-                active
-                  ? "text-[#0D0D0D] bg-[#C9A96E] shadow-md shadow-[#C9A96E]/30"
-                  : "text-[#E8DCC8]/60 hover:text-[#C9A96E] hover:bg-[#C9A96E]/10"
-              )}
-            >
-              {label}
-              {active && (
-                <span className="absolute inset-0 rounded-full bg-[#C9A96E] -z-10 animate-pulse opacity-20" />
-              )}
-            </button>
-          );
-        }
-      )}
-    </nav>
-  )}
-</div>
-  
+        {services.length > 0 && (
+          <nav
+            className="relative z-[200] flex flex-wrap justify-center gap-1 md:gap-2 rounded-full border border-[#C9A96E]/20 bg-[#0D0D0D]/40 backdrop-blur-xl p-1 shadow-lg shadow-[#C9A96E]/5"
+            aria-label="Filter by service"
+          >
+            {(["All", ...services.map((s) => s.title)] as string[]).map(
+              (label, i) => {
+                const id = i === 0 ? null : services[i - 1]._id;
+                const active = id === filterId;
+                return (
+                  <button
+                    key={label}
+                    onClick={() => applyFilter(id)}
+                    className={cn(
+                      "relative px-5 md:px-6 py-2.5 text-[10px] md:text-[11px] font-mono font-medium tracking-[0.2em] uppercase transition-all duration-300 rounded-full",
+                      "hover:tracking-[0.25em]",
+                      active
+                        ? "text-[#0D0D0D] bg-[#C9A96E] shadow-md shadow-[#C9A96E]/30"
+                        : "text-[#E8DCC8]/60 hover:text-[#C9A96E] hover:bg-[#C9A96E]/10"
+                    )}
+                  >
+                    {label}
+                    {active && (
+                      <span className="absolute inset-0 rounded-full bg-[#C9A96E] -z-10 animate-pulse opacity-20" />
+                    )}
+                  </button>
+                );
+              }
+            )}
+          </nav>
+        )}
+      </div>
 
       {/* ── nav dots ── */}
       <div
