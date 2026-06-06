@@ -20,8 +20,8 @@ const poppins = Poppins({
 })
 
 export const metadata: Metadata = {
-  title: 'Creative Campaign Showcase',
-  description: 'Immersive campaign and project showcase with advanced animations',
+  title: 'NORAN STUDIO',
+  description: `I don't create designs just for art or aesthetics. I craft visuals that bring brand identity to life, communicate marketing messages clearly, and transform ideas into impactful designs that truly support goals.`,
   generator: 'mohamed nabih Dev',
   icons: {
     icon: [

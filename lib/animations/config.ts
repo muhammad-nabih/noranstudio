@@ -1,4 +1,3 @@
-import anime from 'animejs'
 
 // GSAP Timeline configuration
 export const GSAP_CONFIG = {
@@ -22,16 +21,7 @@ export const FRAMER_CONFIG = {
 }
 
 // Anime.js keyframe animations
-export const createKeyframeAnimation = (targets: any, keyframes: any[], options?: any) => {
-  return anime({
-    targets,
-    keyframes,
-    duration: 3000,
-    easing: 'easeInOutQuad',
-    loop: true,
-    ...options,
-  })
-}
+
 
 // Motion.dev scroll-linked animation helper
 export const createScrollLinkedAnimation = (
