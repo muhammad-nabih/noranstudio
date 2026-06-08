@@ -500,11 +500,11 @@ export default function HomePage() {
 
         <MarqueeStrip />
 
-        <ServicesSection services={services} campaigns={campaigns} />
-
+        <WorkSection campaigns={campaigns} />
         <MarqueeStrip />
 
-        <WorkSection campaigns={campaigns} />
+        <ServicesSection services={services} campaigns={campaigns} />
+
 
         <AboutStrip />
 
