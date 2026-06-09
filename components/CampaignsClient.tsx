@@ -1342,7 +1342,7 @@ export default function CampaignsClient({ campaigns }: Props) {
         </div>
       </section>
 
-      {/* ── Lightbox ── */}
+      ── Lightbox ──
       {lightbox !== null && (
         <Lightbox
           items={filteredItems}

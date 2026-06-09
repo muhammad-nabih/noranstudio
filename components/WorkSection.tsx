@@ -356,7 +356,7 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
               "transition-all duration-500 ease-out",
               "hover:border-primary hover:bg-primary/20 hover:text-white hover:shadow-lg hover:shadow-primary/20",
               "hover:gap-5",
-              "focus:outline-none focus:ring-2 focus:ring-primary/50"
+              "focus:outline-none focus:ring-2 focus:ring-primary/50 mb-8"
             )}
             style={{ opacity: 0, transform: "translateY(18px)" }}
           >
