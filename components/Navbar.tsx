@@ -43,7 +43,7 @@ function Navbar() {
           <div className="w-8 h-8 border border-primary/60 rotate-45 group-hover:rotate-[135deg] transition-transform duration-700 flex items-center justify-center">
             <div className="w-2 h-2 bg-primary rotate-45" />
           </div>
-          <span className="text-white font-['Playfair_Display'] text-lg tracking-wide">Noran Studio</span>
+          <span className="text-white font-['Playfair_Display'] text-lg tracking-wide">NORAN GENEDY</span>
         </Link>
 
         {/* Desktop links */}

@@ -13,7 +13,7 @@ export default function Footer({ services }: { services: Service[] }) {
               <div className="w-1.5 h-1.5 bg-primary rotate-45" />
             </div>
             <span className="text-white font-['Playfair_Display'] text-lg">
-              Noran Studio
+              NORAN GENEDY
             </span>
           </div>
           <p className="text-foreground/30 text-xs leading-relaxed font-['Cormorant_Garamond'] font-light max-w-[200px]">

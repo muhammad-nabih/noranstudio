@@ -20,7 +20,7 @@ const poppins = Poppins({
 })
 
 export const metadata: Metadata = {
-  title: 'NORAN STUDIO',
+  title: 'NORAN GENEDY',
   description: `I don't create designs just for art or aesthetics. I craft visuals that bring brand identity to life, communicate marketing messages clearly, and transform ideas into impactful designs that truly support goals.`,
   generator: 'mohamed nabih Dev',
   icons: {
