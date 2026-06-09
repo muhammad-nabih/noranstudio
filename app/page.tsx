@@ -32,7 +32,7 @@ if (typeof window !== "undefined") {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// THREE.JS BACKGROUND
+// THREE.JS BACKGROUND (Pink Theme)
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function ThreeBackground() {
@@ -59,16 +59,16 @@ function ThreeBackground() {
     );
     camera.position.z = 6;
 
-    // ── Particles ──────────────────────────────────────────────────────────────
+    // ── Particles (pink palette) ──────────────────────────────────────────────
     const count = 1800;
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
 
     const palette = [
-      new THREE.Color("#C9A96E"),
-      new THREE.Color("#8B7355"),
-      new THREE.Color("#E8DCC8"),
-      new THREE.Color("#1A1A2E"),
+      new THREE.Color("#f379a7"), // primary
+      new THREE.Color("#f8a9c9"), // secondary
+      new THREE.Color("#ffbfcd"), // accent/light
+      new THREE.Color("#030202"), // dark background
     ];
 
     for (let i = 0; i < count; i++) {
@@ -94,24 +94,24 @@ function ThreeBackground() {
     const particles = new THREE.Points(pGeo, pMat);
     scene.add(particles);
 
-    // ── Wireframe Icosahedron ──────────────────────────────────────────────────
+    // ── Wireframe Icosahedron (pink) ──────────────────────────────────────────
     const icoGeo = new THREE.IcosahedronGeometry(2.5, 1);
     const icoMat = new THREE.MeshBasicMaterial({
-      color: "#C9A96E",
+      color: "#f379a7",
       wireframe: true,
       transparent: true,
-      opacity: 0.04,
+      opacity: 0.06,
     });
     const ico = new THREE.Mesh(icoGeo, icoMat);
     ico.position.set(-5, 2, -4);
     scene.add(ico);
 
-    // ── Ring ──────────────────────────────────────────────────────────────────
+    // ── Ring (pink) ──────────────────────────────────────────────────────────
     const ringGeo = new THREE.TorusGeometry(3, 0.02, 16, 100);
     const ringMat = new THREE.MeshBasicMaterial({
-      color: "#C9A96E",
+      color: "#f8a9c9",
       transparent: true,
-      opacity: 0.06,
+      opacity: 0.05,
     });
     const ring = new THREE.Mesh(ringGeo, ringMat);
     ring.position.set(6, -3, -5);
@@ -165,7 +165,7 @@ function ThreeBackground() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// PAGE REVEAL
+// PAGE REVEAL (Pink Theme)
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function PageReveal() {
@@ -173,7 +173,7 @@ function PageReveal() {
     <motion.div
       className="fixed inset-0 z-[200] origin-top"
       style={{
-        background: "linear-gradient(180deg, #0D0D0D 0%, #1A1008 100%)",
+        background: "linear-gradient(180deg, #030202 0%, #1a0b12 100%)",
       }}
       initial={{ scaleY: 1 }}
       animate={{ scaleY: 0 }}
@@ -228,20 +228,20 @@ function StatsStrip({ totalCampaigns }: { totalCampaigns: number }) {
   return (
     <section
       ref={ref}
-      className="relative py-16 border-y border-[#C9A96E]/10 overflow-hidden"
+      className="relative py-16 border-y border-primary/10 overflow-hidden"
     >
       {/* Background grain */}
-      <div className="absolute inset-0 bg-[#1A1008]/30" />
+      <div className="absolute inset-0 bg-[#1a0b12]/30" />
       <div className="relative max-w-[1600px] mx-auto px-8 md:px-20">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {stats.map((s, i) => (
             <div key={i} className="stat-item text-center md:text-left">
               <div
-                className={`stat-num-${i} text-5xl md:text-6xl font-['Playfair_Display'] font-bold text-[#C9A96E]`}
+                className={`stat-num-${i} text-5xl md:text-6xl font-['Playfair_Display'] font-bold text-primary`}
               >
                 0
               </div>
-              <div className="text-[#E8DCC8]/40 text-xs tracking-[0.25em] uppercase mt-1 font-['Cormorant_Garamond']">
+              <div className="text-foreground/40 text-xs tracking-[0.25em] uppercase mt-1 font-['Cormorant_Garamond']">
                 {s.label}
               </div>
             </div>
@@ -252,24 +252,12 @@ function StatsStrip({ totalCampaigns }: { totalCampaigns: number }) {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// SERVICES SECTION  ← الجزء الأهم — كل service بشخصيتها
-// ═══════════════════════════════════════════════════════════════════════════════
-
-const SERVICE_ACCENTS = [
-  { color: "#C9A96E", dim: "#8B7355", number: "01" },
-  { color: "#E8DCC8", dim: "#A89880", number: "02" },
-  { color: "#8B7355", dim: "#6B5840", number: "03" },
-  { color: "#C9A96E", dim: "#8B7355", number: "04" },
-  { color: "#E8DCC8", dim: "#A89880", number: "05" },
-];
-
 function MarqueeStrip() {
   const text =
     "MASTER KV — CREATIVE DIRECTION — PRINTING — CAMPAIGNS — RETOUCH — LUXURY —";
   return (
-    <div className="relative py-5 overflow-hidden border-y border-[#C9A96E]/15">
-      <div className="absolute inset-0 bg-[#1A1008]/20" />
+    <div className="relative py-5 overflow-hidden border-y border-primary/15">
+      <div className="absolute inset-0 bg-[#1a0b12]/20" />
       <motion.div
         className="flex gap-0 whitespace-nowrap relative"
         animate={{ x: ["0%", "-50%"] }}
@@ -278,148 +266,13 @@ function MarqueeStrip() {
         {[...Array(4)].map((_, i) => (
           <span
             key={i}
-            className="text-[#C9A96E]/25 text-xs tracking-[0.45em] uppercase font-['Cormorant_Garamond'] flex-shrink-0 px-8"
+            className="text-primary/25 text-xs tracking-[0.45em] uppercase font-['Cormorant_Garamond'] flex-shrink-0 px-8"
           >
             {text}
           </span>
         ))}
       </motion.div>
     </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// WORK / CAMPAIGNS GRID
-// ═══════════════════════════════════════════════════════════════════════════════
-
-function CampaignCard({
-  campaign,
-  index,
-}: {
-  campaign: Campaign;
-  index: number;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [loaded, setLoaded] = useState(false);
-  const slug =
-    typeof campaign.slug === "string" ? campaign.slug : campaign.slug?.current;
-
-  // Alternating sizes for visual rhythm
-  const isLarge = index % 5 === 0;
-  const isMedium = index % 5 === 2;
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ref.current,
-        { opacity: 0, y: 50, scale: 0.97 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 1,
-          ease: "power3.out",
-          scrollTrigger: { trigger: ref.current, start: "top 88%" },
-          delay: (index % 3) * 0.1,
-        },
-      );
-    });
-    return () => ctx.revert();
-  }, [index]);
-
-  return (
-    <motion.div
-      ref={ref}
-      className={cn(
-        "group relative overflow-hidden cursor-pointer",
-        isLarge ? "md:col-span-2 md:row-span-2" : "",
-        isMedium ? "md:col-span-1 md:row-span-2" : "",
-      )}
-    >
-      <Link href={`/campaigns/${slug}`}>
-        <div
-          className="relative overflow-hidden bg-[#1A1008]"
-          style={{ aspectRatio: isLarge ? "16/9" : isMedium ? "3/4" : "4/5" }}
-        >
-          {/* Image */}
-          {campaign.heroImage && (
-            <Image
-              src={getOptimizedImageUrl(campaign.heroImage, {
-                width: isLarge ? 1200 : 700,
-                height: isLarge ? 675 : 900,
-              })}
-              alt={campaign.title}
-              fill
-              className={cn(
-                "object-cover transition-all duration-700 group-hover:scale-106",
-                loaded ? "opacity-100" : "opacity-0",
-              )}
-              sizes={
-                isLarge
-                  ? "(max-width:768px) 100vw, 66vw"
-                  : "(max-width:768px) 100vw, 33vw"
-              }
-              onLoad={() => setLoaded(true)}
-            />
-          )}
-
-          {/* Overlays */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D]/90 via-[#0D0D0D]/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500" />
-
-          {/* Service badge */}
-          {campaign.service?.title && (
-            <div className="absolute top-4 left-4 bg-[#0D0D0D]/70 backdrop-blur-sm border border-[#C9A96E]/20 px-3 py-1">
-              <span className="text-[#C9A96E] text-[10px] tracking-[0.3em] uppercase font-['Cormorant_Garamond']">
-                {campaign.service.title}
-              </span>
-            </div>
-          )}
-
-          {/* Featured star */}
-          {campaign.featured && (
-            <div className="absolute top-4 right-4 w-7 h-7 bg-[#C9A96E] flex items-center justify-center">
-              <span className="text-[#0D0D0D] text-xs">★</span>
-            </div>
-          )}
-
-          {/* Bottom info */}
-          <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-            <div className="flex items-end justify-between">
-              <div>
-                <h3 className="text-white font-['Playfair_Display'] font-bold text-lg leading-tight mb-1">
-                  {campaign.title}
-                </h3>
-                <p className="text-[#E8DCC8]/50 text-xs font-['Cormorant_Garamond'] line-clamp-1">
-                  {campaign.shortDescription}
-                </p>
-              </div>
-              <div className="flex-shrink-0 w-9 h-9 border border-[#C9A96E]/50 flex items-center justify-center text-[#C9A96E] opacity-0 group-hover:opacity-100 transition-all duration-400 group-hover:bg-[#C9A96E] group-hover:text-[#0D0D0D]">
-                →
-              </div>
-            </div>
-          </div>
-
-          {/* Gold scan line on hover */}
-          <motion.div
-            className="absolute left-0 right-0 h-px bg-[#C9A96E]/40 pointer-events-none"
-            initial={{ top: "0%" }}
-            whileHover={{ top: "100%" }}
-            transition={{ duration: 0.8, ease: "linear" }}
-          />
-        </div>
-
-        {/* Bottom meta */}
-        <div className="flex items-center justify-between pt-3 px-1">
-          <span className="text-[#E8DCC8]/30 text-[10px] tracking-[0.2em] uppercase font-['Cormorant_Garamond']">
-            {campaign.clientName || "Client"}
-            {campaign.year && ` · ${campaign.year}`}
-          </span>
-          <span className="text-[#C9A96E]/40 text-[10px] font-['Cormorant_Garamond']">
-            {String(index + 1).padStart(2, "0")}
-          </span>
-        </div>
-      </Link>
-    </motion.div>
   );
 }
 
@@ -447,7 +300,7 @@ function ContactSection() {
   return (
     <section id="contact" ref={ref} className="py-40 px-8 md:px-20">
       <div className="max-w-[1600px] mx-auto">
-        <div className="relative border border-[#C9A96E]/15 p-12 md:p-24 overflow-hidden">
+        <div className="relative border border-primary/15 p-12 md:p-24 overflow-hidden">
           {/* Corner decorations */}
           {[
             "top-0 left-0",
@@ -457,10 +310,10 @@ function ContactSection() {
           ].map((p, i) => (
             <div key={i} className={`absolute ${p} w-10 h-10`}>
               <div
-                className={`absolute w-full h-px bg-[#C9A96E] ${i < 2 ? "top-0" : "bottom-0"}`}
+                className={`absolute w-full h-px bg-primary ${i < 2 ? "top-0" : "bottom-0"}`}
               />
               <div
-                className={`absolute h-full w-px bg-[#C9A96E] ${i % 2 === 0 ? "left-0" : "right-0"}`}
+                className={`absolute h-full w-px bg-primary ${i % 2 === 0 ? "left-0" : "right-0"}`}
               />
             </div>
           ))}
@@ -474,11 +327,11 @@ function ContactSection() {
 
           <div className="relative z-10 text-center">
             <div className="contact-el flex items-center justify-center gap-3 mb-6">
-              <span className="w-12 h-px bg-[#C9A96E]" />
-              <span className="text-[#C9A96E] text-xs tracking-[0.4em] uppercase font-['Cormorant_Garamond']">
+              <span className="w-12 h-px bg-primary" />
+              <span className="text-primary text-xs tracking-[0.4em] uppercase font-['Cormorant_Garamond']">
                 Get In Touch
               </span>
-              <span className="w-12 h-px bg-[#C9A96E]" />
+              <span className="w-12 h-px bg-primary" />
             </div>
 
             <h2 className="contact-el text-5xl md:text-7xl font-['Playfair_Display'] font-bold text-white leading-tight mb-4">
@@ -486,7 +339,7 @@ function ContactSection() {
               <br />
               <span
                 style={{
-                  WebkitTextStroke: "1px #C9A96E",
+                  WebkitTextStroke: "1px var(--primary)",
                   color: "transparent",
                 }}
               >
@@ -494,7 +347,7 @@ function ContactSection() {
               </span>
             </h2>
 
-            <p className="contact-el text-[#E8DCC8]/50 text-base font-['Cormorant_Garamond'] font-light mb-12 max-w-sm mx-auto">
+            <p className="contact-el text-foreground/50 text-base font-['Cormorant_Garamond'] font-light mb-12 max-w-sm mx-auto">
               Ready to tell your story? Let's discuss how we can bring your
               vision to life.
             </p>
@@ -502,7 +355,7 @@ function ContactSection() {
             <div className="contact-el flex flex-wrap gap-4 justify-center">
               <a
                 href="mailto:hello@studio.com"
-                className="group flex items-center gap-3 bg-[#C9A96E] text-[#0D0D0D] text-xs tracking-[0.3em] uppercase px-10 py-4 font-['Cormorant_Garamond'] hover:bg-[#E8DCC8] transition-colors duration-300"
+                className="group flex items-center gap-3 bg-primary text-background text-xs tracking-[0.3em] uppercase px-10 py-4 font-['Cormorant_Garamond'] hover:bg-secondary transition-colors duration-300"
               >
                 Send a Message
                 <span className="group-hover:translate-x-1 transition-transform duration-300">
@@ -511,7 +364,7 @@ function ContactSection() {
               </a>
               <a
                 href="tel:+1234567890"
-                className="flex items-center gap-3 border border-[#C9A96E]/40 text-[#C9A96E] text-xs tracking-[0.3em] uppercase px-10 py-4 font-['Cormorant_Garamond'] hover:border-[#C9A96E] transition-colors duration-300"
+                className="flex items-center gap-3 border border-primary/40 text-primary text-xs tracking-[0.3em] uppercase px-10 py-4 font-['Cormorant_Garamond'] hover:border-primary transition-colors duration-300"
               >
                 Call Us
               </a>

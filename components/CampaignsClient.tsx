@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getOptimizedImageUrl, getBlurDataUrl } from "@/lib/image-optimization";
 import type { Campaign } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -135,14 +136,14 @@ function FilterBar({
               style={{
                 fontFamily: "'Cormorant Garamond', serif",
                 border: isActive
-                  ? "1px solid rgba(201,169,110,0.6)"
-                  : "1px solid rgba(201,169,110,0.12)",
-                color: isActive ? "#C9A96E" : "rgba(232,220,200,0.35)",
-                background: isActive ? "rgba(201,169,110,0.08)" : "transparent",
+                  ? "1px solid rgba(243,121,167,0.6)"
+                  : "1px solid rgba(243,121,167,0.12)",
+                color: isActive ? "var(--primary)" : "rgba(255,191,205,0.35)",
+                background: isActive ? "rgba(243,121,167,0.08)" : "transparent",
               }}
             >
               <span
-                className="absolute inset-0 bg-[#C9A96E]/[0.06] translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-500"
+                className="absolute inset-0 bg-primary/6 -translate-x-full group-hover:translate-x-0 transition-transform duration-500"
                 style={{ display: isActive ? "none" : "block" }}
               />
               <span className="relative z-10">{svc}</span>
@@ -151,10 +152,10 @@ function FilterBar({
         })}
       </div>
       <div
-        className="filter-item flex items-center gap-2 text-[9px] tracking-[0.4em] uppercase text-[#E8DCC8]/20"
+        className="filter-item flex items-center gap-2 text-[9px] tracking-[0.4em] uppercase text-foreground/20"
         style={{ fontFamily: "'Cormorant Garamond', serif" }}
       >
-        <span className="text-[#C9A96E]/60">{filtered}</span>
+        <span className="text-primary/60">{filtered}</span>
         <span>/</span>
         <span>{total} visuals</span>
       </div>
@@ -218,7 +219,7 @@ function Lightbox({
       style={{ isolation: "isolate" }}
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-[#030200]/95 backdrop-blur-xl" />
+      <div className="absolute inset-0 bg-background/95 backdrop-blur-xl" />
 
       {/* Top bar */}
       <div
@@ -231,14 +232,14 @@ function Lightbox({
         {/* Counter */}
         <div className="flex items-center gap-3">
           <span
-            className="text-[10px] tracking-[0.4em] uppercase text-[#C9A96E]"
+            className="text-[10px] tracking-[0.4em] uppercase text-primary"
             style={{ fontFamily: "'Cormorant Garamond', serif" }}
           >
             {String(index + 1).padStart(2, "0")}
           </span>
-          <div className="w-px h-3 bg-[#C9A96E]/30" />
+          <div className="w-px h-3 bg-primary/30" />
           <span
-            className="text-[10px] tracking-[0.4em] uppercase text-[#E8DCC8]/20"
+            className="text-[10px] tracking-[0.4em] uppercase text-foreground/20"
             style={{ fontFamily: "'Cormorant Garamond', serif" }}
           >
             {String(total).padStart(2, "0")}
@@ -248,14 +249,14 @@ function Lightbox({
         {/* Close */}
         <button
           onClick={close}
-          className="group w-10 h-10 flex items-center justify-center border border-[#C9A96E]/10 hover:border-[#C9A96E]/40 transition-colors duration-300"
+          className="group w-10 h-10 flex items-center justify-center border border-primary/10 hover:border-primary/40 transition-colors duration-300"
         >
           <svg
             width="14"
             height="14"
             viewBox="0 0 14 14"
             fill="none"
-            className="text-[#E8DCC8]/30 group-hover:text-[#C9A96E] transition-colors duration-300"
+            className="text-foreground/30 group-hover:text-primary transition-colors duration-300"
           >
             <path
               d="M1 1L13 13M13 1L1 13"
@@ -278,27 +279,23 @@ function Lightbox({
             className="object-contain max-h-[72vh] w-auto shadow-2xl"
             priority
           />
-
-          {/* Subtle border frame */}
-          <div className="absolute inset-0 border border-[#C9A96E]/10 pointer-events-none" />
+          <div className="absolute inset-0 border border-primary/10 pointer-events-none" />
         </div>
 
-        {/* ── Info panel below image ── */}
+        {/* Info panel below image */}
         <div className="mt-8 flex items-end justify-between gap-6">
           <div>
-            {/* Service */}
             <div className="flex items-center gap-2 mb-2">
-              <span className="w-5 h-px bg-[#C9A96E]/60" />
+              <span className="w-5 h-px bg-primary/60" />
               <p
-                className="text-[9px] tracking-[0.45em] uppercase text-[#C9A96E]"
+                className="text-[9px] tracking-[0.45em] uppercase text-primary"
                 style={{ fontFamily: "'Cormorant Garamond', serif" }}
               >
                 {(item.campaign as any).service?.title ?? "Campaign"}
               </p>
             </div>
-            {/* Title */}
             <h3
-              className="text-[#F5EDD6] font-semibold leading-tight"
+              className="text-foreground font-semibold leading-tight"
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontSize: "clamp(1.1rem, 2vw, 1.6rem)",
@@ -306,11 +303,10 @@ function Lightbox({
             >
               {item.campaign.title}
             </h3>
-            {/* Meta */}
             <div className="flex items-center gap-4 mt-2">
               {(item.campaign as any).clientName && (
                 <span
-                  className="text-[#E8DCC8]/35 text-[10px] tracking-[0.3em] uppercase"
+                  className="text-foreground/35 text-[10px] tracking-[0.3em] uppercase"
                   style={{ fontFamily: "'Cormorant Garamond', serif" }}
                 >
                   {(item.campaign as any).clientName}
@@ -318,7 +314,7 @@ function Lightbox({
               )}
               {(item.campaign as any).year && (
                 <span
-                  className="text-[#8B7355] text-[10px] tracking-[0.3em] uppercase"
+                  className="text-primary/50 text-[10px] tracking-[0.3em] uppercase"
                   style={{ fontFamily: "'Cormorant Garamond', serif" }}
                 >
                   {(item.campaign as any).year}
@@ -327,16 +323,15 @@ function Lightbox({
             </div>
           </div>
 
-          {/* ── Action buttons ── */}
+          {/* Action buttons */}
           <div className="flex items-center gap-3 flex-shrink-0">
-            {/* Behance link */}
             {(item.campaign as any).behanceUrl && (
               <a
                 href={(item.campaign as any).behanceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-2 px-5 py-2.5 border border-[#C9A96E]/20 text-[#C9A96E]/60 hover:text-[#C9A96E] hover:border-[#C9A96E]/50 transition-all duration-300"
+                className="flex items-center gap-2 px-5 py-2.5 border border-primary/20 text-primary/60 hover:text-primary hover:border-primary/50 transition-all duration-300"
                 style={{ fontFamily: "'Cormorant Garamond', serif" }}
               >
                 <span className="text-[9px] tracking-[0.35em] uppercase">
@@ -354,12 +349,11 @@ function Lightbox({
               </a>
             )}
 
-            {/* View full campaign */}
             {slug && (
               <Link
                 href={`/campaigns/${slug}`}
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-3 px-6 py-2.5 bg-[#C9A96E] text-[#080604] hover:bg-[#E8DCC8] transition-colors duration-300 group"
+                className="flex items-center gap-3 px-6 py-2.5 bg-primary text-background hover:bg-secondary transition-colors duration-300 group"
                 style={{ fontFamily: "'Cormorant Garamond', serif" }}
               >
                 <span className="text-[9px] tracking-[0.35em] uppercase font-semibold">
@@ -401,8 +395,8 @@ function Lightbox({
           }}
           className={`absolute ${pos} top-1/2 -translate-y-1/2 z-20
                       w-10 h-10 flex items-center justify-center
-                      border border-[#C9A96E]/10 bg-[#080604]/80 backdrop-blur-sm
-                      text-[#E8DCC8]/25 hover:text-[#C9A96E] hover:border-[#C9A96E]/40
+                      border border-primary/10 bg-background/80 backdrop-blur-sm
+                      text-foreground/25 hover:text-primary hover:border-primary/40
                       transition-all duration-300`}
         >
           <svg width="14" height="18" viewBox="0 0 14 18" fill="none">
@@ -499,7 +493,7 @@ function Card({
       duration: 0.45,
       ease: "power3.out",
     });
-    gsap.to(numRef.current, { color: "#C9A96E", duration: 0.3 });
+    gsap.to(numRef.current, { color: "var(--primary)", duration: 0.3 });
     gsap.fromTo(
       shimRef.current,
       { top: "-2px", autoAlpha: 0 },
@@ -522,7 +516,7 @@ function Card({
       duration: 0.35,
       ease: "power2.in",
     });
-    gsap.to(numRef.current, { color: "rgba(232,220,200,0.12)", duration: 0.3 });
+    gsap.to(numRef.current, { color: "rgba(255,191,205,0.12)", duration: 0.3 });
   }, []);
 
   return (
@@ -536,9 +530,8 @@ function Card({
         gridRow: `span ${item.rowSpan}`,
       }}
     >
-      {/* ── Clickable image area → opens lightbox ── */}
+      {/* Clickable image area */}
       <div className="absolute inset-0 z-[1] cursor-pointer" onClick={onOpen}>
-        {/* Image */}
         <div ref={imgRef} className="absolute inset-0 will-change-transform">
           <Image
             src={item.imgSrc}
@@ -564,8 +557,8 @@ function Card({
           className="absolute inset-0 pointer-events-none transition-opacity duration-500"
           style={{
             background: `
-              linear-gradient(to top, rgba(8,6,4,0.95) 0%, rgba(8,6,4,0.15) 45%, transparent 70%),
-              linear-gradient(to right, rgba(8,6,4,0.4) 0%, transparent 40%)
+              linear-gradient(to top, rgba(3,2,2,0.95) 0%, rgba(3,2,2,0.15) 45%, transparent 70%),
+              linear-gradient(to right, rgba(3,2,2,0.4) 0%, transparent 40%)
             `,
             opacity: hov ? 1 : 0.55,
           }}
@@ -577,36 +570,36 @@ function Card({
           className="absolute left-0 w-full h-[1px] pointer-events-none"
           style={{
             background:
-              "linear-gradient(90deg, transparent, #C9A96E, transparent)",
+              "linear-gradient(90deg, transparent, var(--primary), transparent)",
             top: "-2px",
           }}
         />
       </div>
 
-      {/* ── Index number ── */}
+      {/* Index number */}
       <span
         ref={numRef}
         className="absolute top-5 left-5 z-[2] font-bold leading-none select-none pointer-events-none"
         style={{
           fontFamily: "'Playfair Display', serif",
           fontSize: "clamp(28px, 3.5vw, 48px)",
-          color: "rgba(232,220,200,0.12)",
+          color: "rgba(255,191,205,0.12)",
           lineHeight: 1,
         }}
       >
         {String(index + 1).padStart(2, "0")}
       </span>
 
-      {/* ── Service tag ── */}
+      {/* Service tag */}
       <div
-        className="absolute top-5 right-5 z-[2] px-3 py-1.5 border border-[#C9A96E]/20 bg-[#080604]/70 backdrop-blur-sm transition-all duration-400 pointer-events-none"
+        className="absolute top-5 right-5 z-[2] px-3 py-1.5 border border-primary/20 bg-background/70 backdrop-blur-sm transition-all duration-400 pointer-events-none"
         style={{
           opacity: hov ? 1 : 0,
           transform: hov ? "translateX(0)" : "translateX(10px)",
         }}
       >
         <span
-          className="text-[8px] tracking-[0.4em] uppercase text-[#C9A96E]"
+          className="text-[8px] tracking-[0.4em] uppercase text-primary"
           style={{ fontFamily: "'Cormorant Garamond', serif" }}
         >
           {(item.campaign as any).service?.title ?? "Campaign"}
@@ -615,39 +608,37 @@ function Card({
 
       {/* Corner accents */}
       <div
-        className="absolute top-3 left-3 w-5 h-5 border-t border-l border-[#C9A96E]/40 transition-opacity duration-300 pointer-events-none z-[2]"
+        className="absolute top-3 left-3 w-5 h-5 border-t border-l border-primary/40 transition-opacity duration-300 pointer-events-none z-[2]"
         style={{ opacity: hov ? 1 : 0 }}
       />
       <div
-        className="absolute bottom-3 right-3 w-5 h-5 border-b border-r border-[#C9A96E]/40 transition-opacity duration-300 pointer-events-none z-[2]"
+        className="absolute bottom-3 right-3 w-5 h-5 border-b border-r border-primary/40 transition-opacity duration-300 pointer-events-none z-[2]"
         style={{ opacity: hov ? 1 : 0 }}
       />
 
-      {/* ── Bottom info panel ── */}
+      {/* Bottom info panel */}
       <div className="absolute bottom-0 left-0 right-0 z-[3] p-5">
-        {/* Animated meta - fades in on hover */}
         <div
           ref={infoRef}
           style={{ opacity: 0, transform: "translateY(10px)" }}
           className="mb-2"
         >
-          {/* Client + year */}
           {(clientName || year) && (
             <div className="flex items-center gap-3 mb-3">
               {clientName && (
                 <span
-                  className="text-[8px] tracking-[0.45em] uppercase text-[#C9A96E]"
+                  className="text-[8px] tracking-[0.45em] uppercase text-primary"
                   style={{ fontFamily: "'Cormorant Garamond', serif" }}
                 >
                   {clientName}
                 </span>
               )}
               {clientName && year && (
-                <span className="w-px h-3 bg-[#C9A96E]/25" />
+                <span className="w-px h-3 bg-primary/25" />
               )}
               {year && (
                 <span
-                  className="text-[8px] tracking-[0.3em] uppercase text-[#8B7355]"
+                  className="text-[8px] tracking-[0.3em] uppercase text-primary/50"
                   style={{ fontFamily: "'Cormorant Garamond', serif" }}
                 >
                   {year}
@@ -656,14 +647,12 @@ function Card({
             </div>
           )}
 
-          {/* ── Action buttons — z-[4] so they're above the click layer ── */}
           <div className="flex items-center gap-2 relative z-[4]">
-            {/* View full project */}
             {slug && (
               <Link
                 href={`/campaigns/${slug}`}
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-2 px-4 py-2 bg-[#C9A96E] text-[#080604] hover:bg-[#E8DCC8] transition-colors duration-300 group/btn"
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-background hover:bg-secondary transition-colors duration-300 group/btn"
                 style={{ fontFamily: "'Cormorant Garamond', serif" }}
               >
                 <span className="text-[8px] tracking-[0.3em] uppercase font-semibold">
@@ -687,16 +676,15 @@ function Card({
               </Link>
             )}
 
-            {/* Behance */}
             {behanceUrl && (
               <a
                 href={behanceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-1.5 px-4 py-2 border border-[#C9A96E]/25 text-[#C9A96E]/60 hover:text-[#C9A96E] hover:border-[#C9A96E]/50 transition-all duration-300 backdrop-blur-sm"
+                className="flex items-center gap-1.5 px-4 py-2 border border-primary/25 text-primary/60 hover:text-primary hover:border-primary/50 transition-all duration-300 backdrop-blur-sm"
                 style={{
-                  background: "rgba(8,6,4,0.6)",
+                  background: "rgba(3,2,2,0.6)",
                   fontFamily: "'Cormorant Garamond', serif",
                 }}
               >
@@ -715,13 +703,12 @@ function Card({
               </a>
             )}
 
-            {/* Expand — opens lightbox */}
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 onOpen();
               }}
-              className="w-8 h-8 flex items-center justify-center border border-[#C9A96E]/15 bg-[#080604]/60 backdrop-blur-sm text-[#E8DCC8]/30 hover:text-[#C9A96E] hover:border-[#C9A96E]/40 transition-all duration-300"
+              className="w-8 h-8 flex items-center justify-center border border-primary/15 bg-background/60 backdrop-blur-sm text-foreground/30 hover:text-primary hover:border-primary/40 transition-all duration-300"
               title="Quick view"
             >
               <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
@@ -737,9 +724,8 @@ function Card({
           </div>
         </div>
 
-        {/* Title — always visible */}
         <h3
-          className="font-semibold leading-tight tracking-tight text-[#F5EDD6] pointer-events-none"
+          className="font-semibold leading-tight tracking-tight text-foreground pointer-events-none"
           style={{
             fontFamily: "'Playfair Display', serif",
             fontSize: "clamp(13px, 1.1vw, 17px)",
@@ -748,10 +734,9 @@ function Card({
           {item.campaign.title}
         </h3>
 
-        {/* Gold underline */}
         <div
           ref={lineRef}
-          className="mt-2.5 h-px bg-gradient-to-r from-[#C9A96E] via-[#8B7355] to-transparent scale-x-0 pointer-events-none"
+          className="mt-2.5 h-px bg-gradient-to-r from-primary via-secondary to-transparent scale-x-0 pointer-events-none"
           style={{ transformOrigin: "left center" }}
         />
       </div>
@@ -777,17 +762,17 @@ function PlaceholderGrid() {
           style={{
             gridColumn: `span ${p.col}`,
             gridRow: `span ${p.row}`,
-            background: `hsl(35,12%,${6 + (i % 3) * 2}%)`,
-            animation: `pulseGold 2.4s ease-in-out ${i * 0.18}s infinite`,
+            background: `hsl(340, 40%, ${6 + (i % 3) * 2}%)`,
+            animation: `pulsePink 2.4s ease-in-out ${i * 0.18}s infinite`,
           }}
         >
           <div className="absolute bottom-4 left-4">
-            <div className="w-14 h-1 rounded-full bg-[#C9A96E]/[0.07] mb-2" />
-            <div className="w-9  h-0.5 rounded-full bg-[#C9A96E]/[0.05]" />
+            <div className="w-14 h-1 rounded-full bg-primary/7 mb-2" />
+            <div className="w-9 h-0.5 rounded-full bg-primary/5" />
           </div>
         </div>
       ))}
-      <style>{`@keyframes pulseGold{0%,100%{opacity:.55}50%{opacity:1}}`}</style>
+      <style>{`@keyframes pulsePink{0%,100%{opacity:.55}50%{opacity:1}}`}</style>
     </div>
   );
 }
@@ -827,125 +812,125 @@ export default function CampaignsClient({ campaigns }: Props) {
     [allGrid, visibleSet],
   );
 
-  /* Three.js particle field */
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const renderer = new THREE.WebGLRenderer({
-      canvas,
-      alpha: true,
-      antialias: true,
-    });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(
-      55,
-      canvas.offsetWidth / canvas.offsetHeight,
-      0.1,
-      100,
-    );
-    camera.position.z = 6;
+  /* Three.js particle field (pink theme) */
+  // useEffect(() => {
+  //   const canvas = canvasRef.current;
+  //   if (!canvas) return;
+  //   const renderer = new THREE.WebGLRenderer({
+  //     canvas,
+  //     alpha: true,
+  //     antialias: true,
+  //   });
+  //   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  //   renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
+  //   const scene = new THREE.Scene();
+  //   const camera = new THREE.PerspectiveCamera(
+  //     55,
+  //     canvas.offsetWidth / canvas.offsetHeight,
+  //     0.1,
+  //     100,
+  //   );
+  //   camera.position.z = 6;
 
-    const COUNT = 220;
-    const pos = new Float32Array(COUNT * 3);
-    const sz = new Float32Array(COUNT);
-    for (let i = 0; i < COUNT; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 14;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 14;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 5;
-      sz[i] = Math.random() * 2.5 + 0.5;
-    }
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-    geo.setAttribute("size", new THREE.BufferAttribute(sz, 1));
+  //   const COUNT = 220;
+  //   const pos = new Float32Array(COUNT * 3);
+  //   const sz = new Float32Array(COUNT);
+  //   for (let i = 0; i < COUNT; i++) {
+  //     pos[i * 3] = (Math.random() - 0.5) * 14;
+  //     pos[i * 3 + 1] = (Math.random() - 0.5) * 14;
+  //     pos[i * 3 + 2] = (Math.random() - 0.5) * 5;
+  //     sz[i] = Math.random() * 2.5 + 0.5;
+  //   }
+  //   const geo = new THREE.BufferGeometry();
+  //   geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+  //   geo.setAttribute("size", new THREE.BufferAttribute(sz, 1));
 
-    const mat = new THREE.ShaderMaterial({
-      uniforms: {
-        uTime: { value: 0 },
-        uColor: { value: new THREE.Color(0xc9a96e) },
-        uMouse: { value: new THREE.Vector2(0, 0) },
-      },
-      vertexShader: /* glsl */ `
-        attribute float size; uniform float uTime; uniform vec2 uMouse; varying float vAlpha;
-        void main() {
-          vec3 p = position;
-          p.y += sin(uTime * 0.35 + position.x * 0.7) * 0.18;
-          p.x += cos(uTime * 0.25 + position.y * 0.5) * 0.12;
-          float dist = length(p.xy - uMouse * 5.0);
-          p.z += smoothstep(2.2, 0.0, dist) * 0.5;
-          vAlpha = 0.1 + 0.3 * abs(sin(uTime * 0.4 + position.z));
-          vec4 mv = modelViewMatrix * vec4(p, 1.0);
-          gl_PointSize = size * (280.0 / -mv.z);
-          gl_Position = projectionMatrix * mv;
-        }
-      `,
-      fragmentShader: /* glsl */ `
-        uniform vec3 uColor; varying float vAlpha;
-        void main() {
-          float d = length(gl_PointCoord - 0.5) * 2.0;
-          gl_FragColor = vec4(uColor, smoothstep(1.0, 0.2, d) * vAlpha);
-        }
-      `,
-      transparent: true,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending,
-    });
+  //   const mat = new THREE.ShaderMaterial({
+  //     uniforms: {
+  //       uTime: { value: 0 },
+  //       uColor: { value: new THREE.Color(0xf379a7) }, // primary pink
+  //       uMouse: { value: new THREE.Vector2(0, 0) },
+  //     },
+  //     vertexShader: /* glsl */ `
+  //       attribute float size; uniform float uTime; uniform vec2 uMouse; varying float vAlpha;
+  //       void main() {
+  //         vec3 p = position;
+  //         p.y += sin(uTime * 0.35 + position.x * 0.7) * 0.18;
+  //         p.x += cos(uTime * 0.25 + position.y * 0.5) * 0.12;
+  //         float dist = length(p.xy - uMouse * 5.0);
+  //         p.z += smoothstep(2.2, 0.0, dist) * 0.5;
+  //         vAlpha = 0.1 + 0.3 * abs(sin(uTime * 0.4 + position.z));
+  //         vec4 mv = modelViewMatrix * vec4(p, 1.0);
+  //         gl_PointSize = size * (280.0 / -mv.z);
+  //         gl_Position = projectionMatrix * mv;
+  //       }
+  //     `,
+  //     fragmentShader: /* glsl */ `
+  //       uniform vec3 uColor; varying float vAlpha;
+  //       void main() {
+  //         float d = length(gl_PointCoord - 0.5) * 2.0;
+  //         gl_FragColor = vec4(uColor, smoothstep(1.0, 0.2, d) * vAlpha);
+  //       }
+  //     `,
+  //     transparent: true,
+  //     depthWrite: false,
+  //     blending: THREE.AdditiveBlending,
+  //   });
 
-    const points = new THREE.Points(geo, mat);
-    scene.add(points);
+  //   const points = new THREE.Points(geo, mat);
+  //   scene.add(points);
 
-    const mkRing = (r: number, op: number, px: number, py: number) => {
-      const m = new THREE.Mesh(
-        new THREE.TorusGeometry(r, 0.004, 16, 120),
-        new THREE.MeshBasicMaterial({
-          color: 0xc9a96e,
-          transparent: true,
-          opacity: op,
-        }),
-      );
-      m.position.set(px, py, 0);
-      scene.add(m);
-      return m;
-    };
-    const ring1 = mkRing(2.2, 0.07, -3, 0);
-    const ring2 = mkRing(3.0, 0.04, -3, 0);
+  //   const mkRing = (r: number, op: number, px: number, py: number) => {
+  //     const m = new THREE.Mesh(
+  //       new THREE.TorusGeometry(r, 0.004, 16, 120),
+  //       new THREE.MeshBasicMaterial({
+  //         color: 0xf379a7,
+  //         transparent: true,
+  //         opacity: op,
+  //       }),
+  //     );
+  //     m.position.set(px, py, 0);
+  //     scene.add(m);
+  //     return m;
+  //   };
+  //   const ring1 = mkRing(2.2, 0.07, -3, 0);
+  //   const ring2 = mkRing(3.0, 0.04, -3, 0);
 
-    let mouse = { x: 0, y: 0 };
-    const onMouse = (e: MouseEvent) => {
-      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-      mat.uniforms.uMouse.value.set(mouse.x, mouse.y);
-    };
-    document.addEventListener("mousemove", onMouse);
+  //   let mouse = { x: 0, y: 0 };
+  //   const onMouse = (e: MouseEvent) => {
+  //     mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  //     mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  //     mat.uniforms.uMouse.value.set(mouse.x, mouse.y);
+  //   };
+  //   document.addEventListener("mousemove", onMouse);
 
-    const animate = (t: number) => {
-      rafRef.current = requestAnimationFrame(animate);
-      mat.uniforms.uTime.value = t * 0.001;
-      points.rotation.y = mouse.x * 0.03;
-      points.rotation.x = mouse.y * 0.03;
-      ring1.rotation.z += 0.0008;
-      ring2.rotation.z -= 0.0005;
-      renderer.render(scene, camera);
-    };
-    rafRef.current = requestAnimationFrame(animate);
+  //   const animate = (t: number) => {
+  //     rafRef.current = requestAnimationFrame(animate);
+  //     mat.uniforms.uTime.value = t * 0.001;
+  //     points.rotation.y = mouse.x * 0.03;
+  //     points.rotation.x = mouse.y * 0.03;
+  //     ring1.rotation.z += 0.0008;
+  //     ring2.rotation.z -= 0.0005;
+  //     renderer.render(scene, camera);
+  //   };
+  //   rafRef.current = requestAnimationFrame(animate);
 
-    const onResize = () => {
-      const w = canvas.offsetWidth,
-        h = canvas.offsetHeight;
-      renderer.setSize(w, h);
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-    };
-    window.addEventListener("resize", onResize);
+  //   const onResize = () => {
+  //     const w = canvas.offsetWidth,
+  //       h = canvas.offsetHeight;
+  //     renderer.setSize(w, h);
+  //     camera.aspect = w / h;
+  //     camera.updateProjectionMatrix();
+  //   };
+  //   window.addEventListener("resize", onResize);
 
-    return () => {
-      cancelAnimationFrame(rafRef.current);
-      document.removeEventListener("mousemove", onMouse);
-      window.removeEventListener("resize", onResize);
-      renderer.dispose();
-    };
-  }, []);
+  //   return () => {
+  //     cancelAnimationFrame(rafRef.current);
+  //     document.removeEventListener("mousemove", onMouse);
+  //     window.removeEventListener("resize", onResize);
+  //     renderer.dispose();
+  //   };
+  // }, []);
 
   /* GSAP entrance */
   useEffect(() => {
@@ -1049,11 +1034,11 @@ export default function CampaignsClient({ campaigns }: Props) {
 
   return (
     <>
-      {/* ── Hero header ── */}
+      {/* Hero header */}
       <section
         ref={sectionRef}
         id="campaigns"
-        className="relative min-h-[65vh] w-full overflow-hidden bg-[#0D0D0D] flex flex-col"
+        className="relative min-h-[65vh] w-full overflow-hidden bg-background flex flex-col"
       >
         <canvas
           ref={canvasRef}
@@ -1064,16 +1049,16 @@ export default function CampaignsClient({ campaigns }: Props) {
         <div className="absolute inset-0 pointer-events-none">
           <div
             className="absolute top-0 left-0 w-[55%] h-full
-                          bg-[radial-gradient(ellipse_60%_70%_at_20%_40%,rgba(201,169,110,0.06)_0%,transparent_65%)]"
+                          bg-[radial-gradient(ellipse_60%_70%_at_20%_40%,rgba(243,121,167,0.06)_0%,transparent_65%)]"
           />
           <div
             className="absolute inset-0 opacity-[0.015]"
             style={{
               backgroundImage:
-                "repeating-linear-gradient(0deg,transparent,transparent 60px,rgba(201,169,110,1) 60px,rgba(201,169,110,1) 61px)",
+                "repeating-linear-gradient(0deg,transparent,transparent 60px,rgba(243,121,167,1) 60px,rgba(243,121,167,1) 61px)",
             }}
           />
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0D0D0D] to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
         </div>
 
         <motion.div
@@ -1081,10 +1066,10 @@ export default function CampaignsClient({ campaigns }: Props) {
           className="relative z-10 px-8 md:px-20 pt-36 pb-10"
         >
           <div className="camp-eyebrow flex items-center gap-4 mb-10">
-            <span className="w-8 h-px bg-[#C9A96E]/70" />
-            <div className="w-1 h-1 rounded-full bg-[#C9A96E]" />
+            <span className="w-8 h-px bg-primary/70" />
+            <div className="w-1 h-1 rounded-full bg-primary" />
             <span
-              className="text-[#C9A96E]/80 text-[10px] tracking-[0.5em] uppercase"
+              className="text-primary/80 text-[10px] tracking-[0.5em] uppercase"
               style={{ fontFamily: "'Cormorant Garamond', serif" }}
             >
               Selected Work
@@ -1093,7 +1078,7 @@ export default function CampaignsClient({ campaigns }: Props) {
 
           <div className="overflow-hidden mb-1">
             <h1
-              className="camp-title block font-bold leading-[0.9] tracking-[-0.02em] text-[#F5EDD6]"
+              className="camp-title block font-bold leading-[0.9] tracking-[-0.02em] text-foreground"
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontSize: "clamp(60px,10vw,120px)",
@@ -1107,21 +1092,21 @@ export default function CampaignsClient({ campaigns }: Props) {
             className="camp-divider relative w-full max-w-xl h-px mt-8 mb-8 overflow-hidden"
             style={{
               background:
-                "linear-gradient(90deg,#C9A96E 0%,rgba(201,169,110,0.3) 60%,transparent 100%)",
+                "linear-gradient(90deg,var(--primary) 0%,rgba(243,121,167,0.3) 60%,transparent 100%)",
             }}
           >
             <div
               className="camp-div-shimmer absolute top-0 w-8 h-full pointer-events-none"
               style={{
                 background:
-                  "linear-gradient(90deg,transparent,rgba(201,169,110,0.9),transparent)",
+                  "linear-gradient(90deg,transparent,var(--primary),transparent)",
               }}
             />
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <p
-              className="camp-sub text-[#E8DCC8]/55 text-lg leading-relaxed max-w-[400px]"
+              className="camp-sub text-foreground/55 text-lg leading-relaxed max-w-[400px]"
               style={{
                 fontFamily: "'Cormorant Garamond', serif",
                 fontWeight: 300,
@@ -1133,7 +1118,7 @@ export default function CampaignsClient({ campaigns }: Props) {
             </p>
             {allGrid.length > 0 && (
               <span
-                className="camp-count text-[9px] tracking-[0.45em] uppercase text-[#E8DCC8]/20"
+                className="camp-count text-[9px] tracking-[0.45em] uppercase text-foreground/20"
                 style={{ fontFamily: "'Cormorant Garamond', serif" }}
               >
                 {allGrid.length} visuals · {campaigns.length} projects
@@ -1143,7 +1128,7 @@ export default function CampaignsClient({ campaigns }: Props) {
         </motion.div>
 
         {/* Marquee */}
-        <div className="camp-marquee relative z-10 border-t border-[#C9A96E]/[0.07] py-4 overflow-hidden bg-[#0D0D0D]/60 backdrop-blur-sm mb-1">
+        <div className="camp-marquee relative z-10 border-t border-primary/7 py-4 overflow-hidden bg-background/60 backdrop-blur-sm mb-1">
           <div
             className="flex items-center gap-8 whitespace-nowrap"
             style={{ animation: "marquee 24s linear infinite" }}
@@ -1153,8 +1138,8 @@ export default function CampaignsClient({ campaigns }: Props) {
                 key={i}
                 className={
                   w === "✦"
-                    ? "text-[#C9A96E]/50 text-[8px]"
-                    : "text-[#E8DCC8]/18 text-[11px] tracking-[0.35em] uppercase"
+                    ? "text-primary/50 text-[8px]"
+                    : "text-foreground/18 text-[11px] tracking-[0.35em] uppercase"
                 }
                 style={{ fontFamily: "'Cormorant Garamond', serif" }}
               >
@@ -1166,8 +1151,8 @@ export default function CampaignsClient({ campaigns }: Props) {
         </div>
       </section>
 
-      {/* ── Gallery ── */}
-      <section className="relative bg-[#0D0D0D]">
+      {/* Gallery */}
+      <section className="relative bg-background">
         {services.length > 1 && (
           <FilterBar
             services={services}
@@ -1207,24 +1192,24 @@ export default function CampaignsClient({ campaigns }: Props) {
         </div>
 
         {/* Footer CTA */}
-        <div className="relative px-8 md:px-20 py-28 border-t border-[#C9A96E]/[0.07] mt-1">
+        <div className="relative px-8 md:px-20 py-28 border-t border-primary/7 mt-1">
           <div
             className="absolute inset-0 pointer-events-none
-                          bg-[radial-gradient(ellipse_60%_60%_at_50%_100%,rgba(201,169,110,0.04)_0%,transparent_70%)]"
+                          bg-[radial-gradient(ellipse_60%_60%_at_50%_100%,rgba(243,121,167,0.04)_0%,transparent_70%)]"
           />
           <div className="relative max-w-[1400px] mx-auto flex flex-col md:flex-row items-start md:items-end justify-between gap-10">
             <div>
               <div className="flex items-center gap-3 mb-5">
-                <span className="w-6 h-px bg-[#C9A96E]/60" />
+                <span className="w-6 h-px bg-primary/60" />
                 <span
-                  className="text-[9px] tracking-[0.5em] uppercase text-[#C9A96E]/70"
+                  className="text-[9px] tracking-[0.5em] uppercase text-primary/70"
                   style={{ fontFamily: "'Cormorant Garamond', serif" }}
                 >
                   Ready to collaborate?
                 </span>
               </div>
               <h2
-                className="font-bold leading-[1] tracking-tight text-[#F5EDD6]"
+                className="font-bold leading-[1] tracking-tight text-foreground"
                 style={{
                   fontFamily: "'Playfair Display', serif",
                   fontSize: "clamp(36px,5vw,72px)",
@@ -1232,15 +1217,15 @@ export default function CampaignsClient({ campaigns }: Props) {
               >
                 Let's build something
                 <br />
-                <span className="italic text-[#C9A96E]">remarkable.</span>
+                <span className="italic text-primary">remarkable.</span>
               </h2>
             </div>
             <Link
               href="/#contact"
-              className="group relative flex items-center gap-4 px-8 py-4 border border-[#C9A96E]/25 text-[#C9A96E] hover:border-[#C9A96E]/60 transition-all duration-500 overflow-hidden"
+              className="group relative flex items-center gap-4 px-8 py-4 border border-primary/25 text-primary hover:border-primary/60 transition-all duration-500 overflow-hidden"
               style={{ fontFamily: "'Cormorant Garamond', serif" }}
             >
-              <div className="absolute inset-0 bg-[#C9A96E]/[0.06] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute inset-0 bg-primary/6 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <span className="relative z-10 text-[10px] tracking-[0.35em] uppercase">
                 Start a project
               </span>
@@ -1262,7 +1247,7 @@ export default function CampaignsClient({ campaigns }: Props) {
         </div>
       </section>
 
-      {/* ── Lightbox ── */}
+      {/* Lightbox */}
       {lightbox !== null && (
         <Lightbox
           items={visibleItems}

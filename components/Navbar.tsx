@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// NAVIGATION
+// NAVIGATION (PINK THEME)
 // ═══════════════════════════════════════════════════════════════════════════════
 
 import React, { useState, useEffect } from 'react';
@@ -33,13 +33,15 @@ function Navbar() {
         transition={{ delay: 1.2, duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
         className={cn(
           'fixed top-0 left-0 right-0 z-[100] px-8 md:px-20 py-5 flex items-center justify-between transition-all duration-500',
-          scrolled ? 'bg-[#0D0D0D]/85 backdrop-blur-2xl border-b border-[#C9A96E]/10' : ''
+          scrolled
+            ? 'bg-background/85 backdrop-blur-2xl border-b border-primary/10'
+            : ''
         )}
       >
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-8 h-8 border border-[#C9A96E]/60 rotate-45 group-hover:rotate-[135deg] transition-transform duration-700 flex items-center justify-center">
-            <div className="w-2 h-2 bg-[#C9A96E] rotate-45" />
+          <div className="w-8 h-8 border border-primary/60 rotate-45 group-hover:rotate-[135deg] transition-transform duration-700 flex items-center justify-center">
+            <div className="w-2 h-2 bg-primary rotate-45" />
           </div>
           <span className="text-white font-['Playfair_Display'] text-lg tracking-wide">Noran Studio</span>
         </Link>
@@ -50,7 +52,7 @@ function Navbar() {
             <a
               key={i}
               href={l.href}
-              className="text-[#E8DCC8]/50 hover:text-[#C9A96E] text-xs tracking-[0.25em] uppercase transition-colors duration-300 font-['Cormorant_Garamond']"
+              className="text-foreground/50 hover:text-primary text-xs tracking-[0.25em] uppercase transition-colors duration-300 font-['Cormorant_Garamond']"
             >
               {l.label}
             </a>
@@ -60,7 +62,7 @@ function Navbar() {
         {/* CTA */}
         <Link
           href="#contact"
-          className="hidden md:flex items-center gap-2 text-xs tracking-[0.25em] uppercase text-[#C9A96E] border border-[#C9A96E]/40 px-5 py-2.5 hover:bg-[#C9A96E] hover:text-[#0D0D0D] transition-all duration-300 font-['Cormorant_Garamond']"
+          className="hidden md:flex items-center gap-2 text-xs tracking-[0.25em] uppercase text-primary border border-primary/40 px-5 py-2.5 hover:bg-primary hover:text-background transition-all duration-300 font-['Cormorant_Garamond']"
         >
           Get in touch
         </Link>
@@ -72,9 +74,18 @@ function Navbar() {
           aria-label="Open menu"
           type="button"
         >
-          <motion.span animate={{ rotate: menuOpen ? 45 : 0, y: menuOpen ? 8 : 0 }} className="w-6 h-px bg-[#C9A96E] block transition-all" />
-          <motion.span animate={{ opacity: menuOpen ? 0 : 1 }} className="w-6 h-px bg-[#C9A96E] block" />
-          <motion.span animate={{ rotate: menuOpen ? -45 : 0, y: menuOpen ? -8 : 0 }} className="w-6 h-px bg-[#C9A96E] block transition-all" />
+          <motion.span
+            animate={{ rotate: menuOpen ? 45 : 0, y: menuOpen ? 8 : 0 }}
+            className="w-6 h-px bg-primary block transition-all"
+          />
+          <motion.span
+            animate={{ opacity: menuOpen ? 0 : 1 }}
+            className="w-6 h-px bg-primary block"
+          />
+          <motion.span
+            animate={{ rotate: menuOpen ? -45 : 0, y: menuOpen ? -8 : 0 }}
+            className="w-6 h-px bg-primary block transition-all"
+          />
         </button>
       </motion.nav>
 
@@ -86,7 +97,7 @@ function Navbar() {
             animate={{ opacity: 1, clipPath: 'inset(0 0 0% 0)' }}
             exit={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
             transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
-            className="fixed inset-0 z-[99] bg-[#0D0D0D]/97 backdrop-blur-2xl flex flex-col items-center justify-center gap-8"
+            className="fixed inset-0 z-[99] bg-background/97 backdrop-blur-2xl flex flex-col items-center justify-center gap-8"
           >
             {navLinks.map((l, i) => (
               <motion.a
@@ -97,7 +108,7 @@ function Navbar() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
                 transition={{ delay: i * 0.08 + 0.2 }}
-                className="text-4xl font-['Playfair_Display'] text-white hover:text-[#C9A96E] transition-colors duration-300"
+                className="text-4xl font-['Playfair_Display'] text-white hover:text-primary transition-colors duration-300"
               >
                 {l.label}
               </motion.a>

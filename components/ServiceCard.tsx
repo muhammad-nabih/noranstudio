@@ -15,11 +15,12 @@ interface ServiceCardProps {
   project?: Campaign
 }
 
+// Pink accent shades (from light to deeper pink)
 const SERVICE_ACCENTS = [
-  { number: '01', color: '#C9A96E', dim: '#C9A96E80' },
-  { number: '02', color: '#D4B97A', dim: '#D4B97A80' },
-  { number: '03', color: '#BF9E5F', dim: '#BF9E5F80' },
-  { number: '04', color: '#A8884D', dim: '#A8884D80' },
+  { number: '01', color: '#f379a7', dim: '#f379a7cc' },
+  { number: '02', color: '#f48eb4', dim: '#f48eb4cc' },
+  { number: '03', color: '#f5a3c1', dim: '#f5a3c1cc' },
+  { number: '04', color: '#f6b8ce', dim: '#f6b8cecc' },
 ]
 
 export function ServiceCard({ service, campaigns, index, project }: ServiceCardProps) {
@@ -69,7 +70,7 @@ export function ServiceCard({ service, campaigns, index, project }: ServiceCardP
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
-      className="group relative rounded-sm bg-[#1A1008]/40 border border-[#C9A96E]/10 hover:border-[#C9A96E]/30 transition-all duration-500 overflow-hidden"
+      className="group relative rounded-sm bg-[#1a0b12]/40 border border-primary/10 hover:border-primary/30 transition-all duration-500 overflow-hidden"
     >
       {/* Top accent line */}
       <div className="absolute top-0 left-0 h-px w-0 group-hover:w-full transition-all duration-700 z-20" style={{ background: accent.color }} />
@@ -87,7 +88,7 @@ export function ServiceCard({ service, campaigns, index, project }: ServiceCardP
             />
           </div>
         ) : (
-          <div className="w-full h-full bg-[#0D0D0D]" />
+          <div className="w-full h-full bg-background" />
         )}
       </div>
 
@@ -101,7 +102,7 @@ export function ServiceCard({ service, campaigns, index, project }: ServiceCardP
                 Service
               </span>
             </div>
-            <h3 className="text-xl md:text-2xl font-['Playfair_Display'] font-bold text-white">
+            <h3 className="text-xl md:text-2xl font-['Playfair_Display'] font-bold text-foreground">
               {service.title}
             </h3>
           </div>
@@ -115,7 +116,7 @@ export function ServiceCard({ service, campaigns, index, project }: ServiceCardP
           </div>
         </div>
 
-        <p className="text-[#E8DCC8]/60 text-sm leading-relaxed font-['Cormorant_Garamond'] font-light line-clamp-2">
+        <p className="text-foreground/60 text-sm leading-relaxed font-['Cormorant_Garamond'] font-light line-clamp-2">
           {service.description}
         </p>
       </div>
@@ -131,14 +132,12 @@ export function ServiceCard({ service, campaigns, index, project }: ServiceCardP
             animate={{ opacity: 1, backdropFilter: 'blur(6px)' }}
             exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
             transition={{ duration: 0.25 }}
-            className="absolute inset-0 bg-[#0D0D0D]/80 flex flex-col items-center justify-center gap-5 z-30"
+            className="absolute inset-0 bg-background/80 flex flex-col items-center justify-center gap-5 z-30"
           >
             {/* Square-style buttons with arrows */}
             <Link
               href={`/campaigns/${project?.slug?.current}`}
-         
-              className="group/btn w-56 flex items-center justify-between px-6 py-3 border border-[#C9A96E]/40 bg-transparent hover:bg-[#C9A96E]/10 transition-all duration-300 rounded-sm text-[#E8DCC8] text-sm uppercase tracking-[0.15em] font-['Cormorant_Garamond']"
-         
+              className="group/btn w-60 flex items-center justify-between px-6 py-3 border border-primary/40 bg-transparent hover:bg-primary/10 transition-all duration-300 rounded-sm text-foreground text-sm uppercase tracking-[0.15em] font-['Cormorant_Garamond']"
             >
               <span>View Portfolio</span>
               <svg 
@@ -156,7 +155,7 @@ export function ServiceCard({ service, campaigns, index, project }: ServiceCardP
                 href={project.behanceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group/btn w-56 flex items-center justify-between px-6 py-3 border border-[#C9A96E]/40 bg-transparent hover:bg-[#C9A96E]/10 transition-all duration-300 rounded-sm text-[#E8DCC8] text-sm uppercase tracking-[0.15em] font-['Cormorant_Garamond']"
+                className="group/btn w-60 flex items-center justify-between px-6 py-3 border border-primary/40 bg-transparent hover:bg-primary/10 transition-all duration-300 rounded-sm text-foreground text-sm uppercase tracking-[0.15em] font-['Cormorant_Garamond']"
               >
                 <span>View on Behance</span>
                 <svg 

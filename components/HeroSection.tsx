@@ -1,12 +1,12 @@
 "use client";
 
-import localFont from "next/font/local";
+
 
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-
+import localFont from "next/font/local";
 const astonScript = localFont({
   src: "../public/fonts/AstonScript.ttf",
   display: "swap",
@@ -618,20 +618,7 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* ── SCROLL INDICATOR ── */}
-        <div
-          className="absolute bottom-7 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20"
-          style={{ animation: "fadeIn 1s 1.2s ease both" }}
-          aria-hidden="true"
-        >
-          <div className="scroll-bar w-px h-9 bg-gradient-to-b from-[rgba(243,121,167,0.45)] to-transparent" />
-          <span
-            className="text-[8.5px] tracking-[0.24em] uppercase text-[rgba(243,121,167,0.35)]"
-            style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
-          >
-            Scroll
-          </span>
-        </div>
+
       </section>
     </>
   );

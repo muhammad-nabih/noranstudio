@@ -171,3 +171,15 @@
     @apply bg-card/40 backdrop-blur-md border border-primary/30;
   }
 }
+
+
+/* Text Selection */
+::selection {
+  color: #000000d2;
+  background-color: #f379a7;
+}
+
+::-moz-selection {
+  background: #000000;
+  color: #f379a7;
+}
