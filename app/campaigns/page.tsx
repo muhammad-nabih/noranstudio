@@ -61,7 +61,6 @@ export default async function CampaignsPage() {
   const campaigns = await getAllCampaigns();
   return (
     <main className="min-h-screen bg-background">
-      <BackNav />
       <Suspense fallback={<CampaignsSkeleton />}>
         <CampaignsClient campaigns={campaigns} />
       </Suspense>
