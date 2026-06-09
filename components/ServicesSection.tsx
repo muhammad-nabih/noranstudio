@@ -179,7 +179,7 @@ export default function ServicesSection({ services, campaigns }: ServicesSection
     <section
       id="services"
       ref={sectionRef}
-      className="relative py-28 md:py-40 overflow-hidden bg-background"
+      className="relative py-28 md:py-40 overflow-hidden bg-background "
     >
       <div
         className="absolute inset-0 pointer-events-none z-0"
@@ -274,7 +274,7 @@ function ServiceCardShell({ svc, isLarge, isWide }: ShellProps) {
   return (
     <div
       className={cn(
-        'sv-card group relative overflow-hidden bg-background cursor-pointer',
+        'sv-card group relative overflow-hidden bg-background cursor-pointer mb-',
         'border border-primary/5 hover:border-primary/25',
         'flex flex-col justify-end',
         'p-6 md:p-8',

@@ -33,7 +33,7 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
     height: 1080,
   });
   const lqip = getBlurDataUrl(campaign.heroImage);
-  const fallback = "#0D0D0D";
+  const fallback = "#030202";
   const titleRef = useRef<HTMLSpanElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLAnchorElement>(null);
@@ -43,7 +43,7 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
   const leak3Ref = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLDivElement>(null);
 
-  // ── entrance animation (pure CSS transitions, no GSAP dependency here) ──
+  // entrance animation (pure CSS transitions)
   useEffect(() => {
     const els = {
       title: titleRef.current,
@@ -56,7 +56,6 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
       img: imgRef.current,
     };
 
-    // reset
     const reset = () => {
       if (els.title) {
         els.title.style.transition = "none";
@@ -97,15 +96,13 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
     };
 
     reset();
-
     if (!isActive) return;
 
-    // force reflow so 'none' transitions take effect before we re-add them
     void titleRef.current?.offsetHeight;
 
     const q = (delay: number, fn: () => void) => setTimeout(fn, delay);
 
-    // light leaks first — they set the mood
+    // light leaks
     q(0, () => {
       if (els.l1) {
         els.l1.style.transition = "opacity 1.6s ease";
@@ -174,19 +171,18 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
     });
 
     return () => {
-      /* timeouts will fire or be GC'd naturally */
+      // timeouts will be cleaned
     };
   }, [isActive]);
 
   return (
     <article className="relative flex-shrink-0 w-screen h-full overflow-hidden">
-      {/* ── Background image with blur-up ── */}
+      {/* Background image */}
       <div
         ref={imgRef}
         className="absolute inset-0 will-change-transform"
         style={{ transform: "scale(1.06)" }}
       >
-        {/* LQIP blur placeholder */}
         {lqip && (
           <div
             className="absolute inset-0 bg-cover bg-center"
@@ -197,9 +193,7 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
             }}
           />
         )}
-        {/* Full image */}
         {imgUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={imgUrl}
             alt={campaign.heroImage?.alt ?? campaign.title}
@@ -208,12 +202,11 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
             decoding="async"
           />
         ) : (
-          /* colour fallback when no image uploaded yet */
           <div className="absolute inset-0" style={{ background: fallback }} />
         )}
       </div>
 
-      {/* ── Light leaks (cinematic atmosphere) ── */}
+      {/* Light leaks (pink tones) */}
       <div
         ref={leak1Ref}
         className="absolute pointer-events-none rounded-full opacity-0"
@@ -223,7 +216,7 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
           right: "-12vw",
           top: "-12vw",
           background:
-            "radial-gradient(circle, rgba(201,169,110,0.18) 0%, transparent 70%)",
+            "radial-gradient(circle, rgba(243,121,167,0.18) 0%, transparent 70%)",
           filter: "blur(60px)",
         }}
       />
@@ -236,7 +229,7 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
           left: "25%",
           bottom: "-8vw",
           background:
-            "radial-gradient(circle, rgba(201,169,110,0.10) 0%, transparent 70%)",
+            "radial-gradient(circle, rgba(243,121,167,0.10) 0%, transparent 70%)",
           filter: "blur(50px)",
         }}
       />
@@ -249,20 +242,18 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
           left: "5%",
           top: "20%",
           background:
-            "radial-gradient(circle, rgba(201,169,110,0.06) 0%, transparent 70%)",
+            "radial-gradient(circle, rgba(243,121,167,0.06) 0%, transparent 70%)",
           filter: "blur(40px)",
         }}
       />
 
-      {/* ── Cinematic overlays ── */}
-
-      {/* main vignette — heavy on left so text is always legible */}
+      {/* Cinematic overlays */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background: [
-            "linear-gradient(100deg, rgba(5,4,2,0.92) 0%, rgba(5,4,2,0.55) 42%, rgba(5,4,2,0.08) 100%)",
-            "linear-gradient(to bottom, rgba(5,4,2,0.55) 0%, transparent 22%, transparent 72%, rgba(5,4,2,0.75) 100%)",
+            "linear-gradient(100deg, rgba(3,2,2,0.92) 0%, rgba(3,2,2,0.55) 42%, rgba(3,2,2,0.08) 100%)",
+            "linear-gradient(to bottom, rgba(3,2,2,0.55) 0%, transparent 22%, transparent 72%, rgba(3,2,2,0.75) 100%)",
           ].join(", "),
         }}
       />
@@ -272,24 +263,24 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
         className="absolute top-0 inset-x-0 h-20 pointer-events-none"
         style={{
           background:
-            "linear-gradient(to bottom, rgba(5,4,2,0.70) 0%, transparent 100%)",
+            "linear-gradient(to bottom, rgba(3,2,2,0.70) 0%, transparent 100%)",
         }}
       />
       <div
         className="absolute bottom-0 inset-x-0 h-28 pointer-events-none"
         style={{
           background:
-            "linear-gradient(to top, rgba(5,4,2,0.80) 0%, transparent 100%)",
+            "linear-gradient(to top, rgba(3,2,2,0.80) 0%, transparent 100%)",
         }}
       />
 
-      {/* ── Slide number watermark ── */}
+      {/* Slide number watermark */}
       <div
         className="absolute right-[8%] top-[15%] pointer-events-none select-none font-mono"
         style={{
           fontSize: "clamp(80px, 14vw, 200px)",
           fontWeight: 300,
-          color: "rgba(201,169,110,0.04)",
+          color: "rgba(243,121,167,0.04)",
           lineHeight: 1,
           letterSpacing: "-0.05em",
         }}
@@ -297,21 +288,21 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
         {pad(index + 1)}
       </div>
 
-      {/* ── Main content ── */}
+      {/* Main content */}
       <div className="absolute left-[7%] md:left-[9%] bottom-[13%] z-10 max-w-[620px]">
         {/* eyebrow row */}
         <div className="flex items-center gap-4 mb-5">
           <span
-            className="inline-block h-px bg-[#C9A96E]"
+            className="inline-block h-px bg-primary"
             style={{ width: 28, opacity: 0.45 }}
           />
-          <span className="font-mono text-[9px] tracking-[0.55em] uppercase text-[rgba(201,169,110,0.55)]">
+          <span className="font-mono text-[9px] tracking-[0.55em] uppercase text-primary/55">
             {pad(index + 1)}&nbsp;&nbsp;/&nbsp;&nbsp;{pad(total)}
           </span>
           {campaign.clientName && (
             <>
-              <span className="inline-block w-px h-3 bg-[rgba(201,169,110,0.2)]" />
-              <span className="font-mono text-[9px] tracking-[0.35em] uppercase text-[rgba(201,169,110,0.38)]">
+              <span className="inline-block w-px h-3 bg-primary/20" />
+              <span className="font-mono text-[9px] tracking-[0.35em] uppercase text-primary/38">
                 {campaign.clientName}
               </span>
             </>
@@ -320,17 +311,17 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
 
         {/* service label */}
         <div
-          className="font-mono text-[9px] tracking-[0.6em] uppercase text-[#C9A96E] mb-4"
+          className="font-mono text-[9px] tracking-[0.6em] uppercase text-primary mb-4"
           style={{ opacity: 0.78 }}
         >
           {campaign.service?.title ?? "Design"}
         </div>
 
-        {/* title — clipped so it sweeps up theatrically */}
+        {/* title */}
         <div className="overflow-hidden mb-7">
           <span
             ref={titleRef}
-            className="block font-['Playfair_Display'] font-bold text-[#F5EDD6] leading-[0.92]"
+            className="block font-['Playfair_Display'] font-bold text-foreground leading-[0.92]"
             style={{
               fontSize: "clamp(46px, 6.5vw, 92px)",
               transform: "translateY(105%)",
@@ -344,61 +335,60 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
         {/* description */}
         <p
           ref={descRef}
-          className="font-['Cormorant_Garamond'] font-light text-[16px] leading-[1.8] text-[rgba(232,220,200,0.62)]  max-w-[440px]"
+          className="font-['Cormorant_Garamond'] font-light text-[16px] leading-[1.8] text-foreground/62 max-w-[440px]"
           style={{ opacity: 0, transform: "translateY(22px)" }}
         >
           {campaign.shortDescription}
         </p>
 
         {/* CTA row */}
-     {/* CTA row */}
-<div className="flex flex-wrap items-center gap-8 my-4 ">
-  <Link
-    ref={ctaRef}
-    href={`/campaigns/${campaign.slug.current}`}
-    className={cn(
-      "group relative inline-flex items-center gap-3",
-      "font-mono text-xs font-medium tracking-[0.3em] uppercase",
-      "text-white/90", // نص أبيض لتباين أفضل
-      "bg-black/30 backdrop-blur-sm", // خلفية خفيفة تزيد الوضوح
-      "border border-white/20 rounded-full",
-      "px-6 py-3",
-      "transition-all duration-500 ease-out",
-      "hover:border-[#C9A96E] hover:bg-[#C9A96E]/20 hover:text-white hover:shadow-lg hover:shadow-[#C9A96E]/20",
-      "hover:gap-5", // تحريك السهم
-      "focus:outline-none focus:ring-2 focus:ring-[#C9A96E]/50"
-    )}
-    style={{ opacity: 0, transform: "translateY(18px)" }}
-  >
-    <span>View project</span>
-    <span className="text-lg transition-transform duration-500 group-hover:translate-x-1.5 group-hover:scale-110">
-      →
-    </span>
-  </Link>
+        <div className="flex flex-wrap items-center gap-8 my-4">
+          <Link
+            ref={ctaRef}
+            href={`/campaigns/${campaign.slug.current}`}
+            className={cn(
+              "group relative inline-flex items-center gap-3",
+              "font-mono text-xs font-medium tracking-[0.3em] uppercase",
+              "text-white/90",
+              "bg-background/30 backdrop-blur-sm",
+              "border border-white/20 rounded-full",
+              "px-6 py-3",
+              "transition-all duration-500 ease-out",
+              "hover:border-primary hover:bg-primary/20 hover:text-white hover:shadow-lg hover:shadow-primary/20",
+              "hover:gap-5",
+              "focus:outline-none focus:ring-2 focus:ring-primary/50"
+            )}
+            style={{ opacity: 0, transform: "translateY(18px)" }}
+          >
+            <span>View project</span>
+            <span className="text-lg transition-transform duration-500 group-hover:translate-x-1.5 group-hover:scale-110">
+              →
+            </span>
+          </Link>
 
-  {campaign.behanceUrl && (
-    <a
-      href={campaign.behanceUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={cn(
-        "inline-flex items-center gap-2",
-        "font-mono text-[11px] font-medium tracking-[0.3em] uppercase",
-        "text-white/60 hover:text-white",
-        "transition-all duration-300",
-        "border-b border-white/20 hover:border-[#C9A96E]",
-        "pb-1"
-      )}
-      style={{ opacity: 0, transform: "translateY(18px)" }}
-    >
-      Behance
-      <span className="text-sm transition-transform duration-300 group-hover:translate-x-1">↗</span>
-    </a>
-  )}
-</div>
+          {campaign.behanceUrl && (
+            <a
+              href={campaign.behanceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(
+                "inline-flex items-center gap-2",
+                "font-mono text-[11px] font-medium tracking-[0.3em] uppercase",
+                "text-white/60 hover:text-white",
+                "transition-all duration-300",
+                "border-b border-white/20 hover:border-primary",
+                "pb-1"
+              )}
+              style={{ opacity: 0, transform: "translateY(18px)" }}
+            >
+              Behance
+              <span className="text-sm transition-transform duration-300 group-hover:translate-x-1">↗</span>
+            </a>
+          )}
+        </div>
       </div>
 
-      {/* ── Right-side meta stack ── */}
+      {/* Right-side meta stack */}
       <div
         ref={metaRef}
         className="absolute right-[6%] top-1/2 -translate-y-1/2 z-10 flex flex-col items-end gap-2.5"
@@ -407,19 +397,19 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
         {campaign.year && (
           <span
             className="font-mono text-[8px] tracking-[0.35em] uppercase"
-            style={{ color: "rgba(201,169,110,0.22)" }}
+            style={{ color: "rgba(243,121,167,0.22)" }}
           >
             {campaign.year}
           </span>
         )}
         <span
           className="w-px h-10 block"
-          style={{ background: "rgba(201,169,110,0.08)" }}
+          style={{ background: "rgba(243,121,167,0.08)" }}
         />
         <span
           className="font-['Cormorant_Garamond'] text-[11px] italic tracking-wide"
           style={{
-            color: "rgba(232,220,200,0.18)",
+            color: "rgba(255,191,205,0.18)",
             writingMode: "vertical-rl",
           }}
         >
@@ -442,7 +432,7 @@ export default function WorkSection({ campaigns }: WorkSectionProps) {
   const [current, setCurrent] = useState(0);
   const [filterId, setFilterId] = useState<string | null>(null);
 
-  // ── derived data ──
+  // derived data
   const services = useMemo<Service[]>(() => {
     const map = new Map<string, Service>();
     campaigns.forEach((c) => {
@@ -460,7 +450,7 @@ export default function WorkSection({ campaigns }: WorkSectionProps) {
   );
   const total = filtered.length;
 
-  // ── translate reel ──
+  // translate reel
   const updateReel = useCallback(
     (idx: number, instant = false) => {
       if (!reelRef.current) return;
@@ -476,7 +466,7 @@ export default function WorkSection({ campaigns }: WorkSectionProps) {
     [total],
   );
 
-  // ── navigate ──
+  // navigate
   const goTo = useCallback(
     (n: number) => {
       if (isAnimating.current || n === current || n < 0 || n >= total) return;
@@ -490,7 +480,7 @@ export default function WorkSection({ campaigns }: WorkSectionProps) {
     [current, total, updateReel],
   );
 
-  // ── keyboard ──
+  // keyboard
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight" || e.key === "ArrowDown") goTo(current + 1);
@@ -500,7 +490,7 @@ export default function WorkSection({ campaigns }: WorkSectionProps) {
     return () => window.removeEventListener("keydown", handler);
   }, [goTo, current]);
 
-  // ── wheel (with cooldown to avoid over-firing) ──
+  // wheel
   useEffect(() => {
     const handler = (e: WheelEvent) => {
       if (wheelCooldown.current) return;
@@ -515,7 +505,7 @@ export default function WorkSection({ campaigns }: WorkSectionProps) {
     return () => window.removeEventListener("wheel", handler);
   }, [goTo, current]);
 
-  // ── touch ──
+  // touch
   useEffect(() => {
     const onStart = (e: TouchEvent) => {
       touchStart.current = e.touches[0].clientY;
@@ -532,27 +522,24 @@ export default function WorkSection({ campaigns }: WorkSectionProps) {
     };
   }, [goTo, current]);
 
-  // ── filter change: reset to 0 ──
+  // filter change: reset to 0
   const applyFilter = useCallback((id: string | null) => {
     setFilterId(id);
     setCurrent(0);
-    // reel position reset happens after state flush via the effect below
   }, []);
 
   useEffect(() => {
     updateReel(0, true);
   }, [filterId, updateReel]);
 
-  // ─────────────────────────────────────────────────────────────────────────────
-
   return (
     <section
       id="work"
-      className="relative w-full overflow-hidden bg-[#050402]"
+      className="relative w-full overflow-hidden bg-background"
       style={{ height: "100svh" }}
       aria-label="Selected work"
     >
-      {/* ── grain texture ── */}
+      {/* grain texture */}
       <div
         aria-hidden
         className="fixed inset-0 z-[90] pointer-events-none opacity-[0.038]"
@@ -565,7 +552,7 @@ export default function WorkSection({ campaigns }: WorkSectionProps) {
       <div className="flex justify-center items-center w-full my-8 px-4">
         {services.length > 0 && (
           <nav
-            className="relative z-[200] flex flex-wrap justify-center gap-1 md:gap-2 rounded-full border border-[#C9A96E]/20 bg-[#0D0D0D]/40 backdrop-blur-xl p-1 shadow-lg shadow-[#C9A96E]/5"
+            className="relative z-[200] flex flex-wrap justify-center gap-1 md:gap-2 rounded-full border border-primary/20 bg-background/40 backdrop-blur-xl p-1 shadow-lg shadow-primary/5"
             aria-label="Filter by service"
           >
             {(["All", ...services.map((s) => s.title)] as string[]).map(
@@ -580,13 +567,13 @@ export default function WorkSection({ campaigns }: WorkSectionProps) {
                       "relative px-5 md:px-6 py-2.5 text-[10px] md:text-[11px] font-mono font-medium tracking-[0.2em] uppercase transition-all duration-300 rounded-full",
                       "hover:tracking-[0.25em]",
                       active
-                        ? "text-[#0D0D0D] bg-[#C9A96E] shadow-md shadow-[#C9A96E]/30"
-                        : "text-[#E8DCC8]/60 hover:text-[#C9A96E] hover:bg-[#C9A96E]/10"
+                        ? "text-background bg-primary shadow-md shadow-primary/30"
+                        : "text-foreground/60 hover:text-primary hover:bg-primary/10"
                     )}
                   >
                     {label}
                     {active && (
-                      <span className="absolute inset-0 rounded-full bg-[#C9A96E] -z-10 animate-pulse opacity-20" />
+                      <span className="absolute inset-0 rounded-full bg-primary -z-10 animate-pulse opacity-20" />
                     )}
                   </button>
                 );
@@ -596,47 +583,7 @@ export default function WorkSection({ campaigns }: WorkSectionProps) {
         )}
       </div>
 
-      {/* ── nav dots ── */}
-      <div
-        className="fixed right-9 top-1/2 -translate-y-1/2 z-[200] flex flex-col gap-[14px]"
-        role="tablist"
-        aria-label="Slide navigation"
-      >
-        {filtered.map((c, i) => (
-          <button
-            key={c._id}
-            role="tab"
-            aria-selected={i === current}
-            aria-label={c.title}
-            onClick={() => goTo(i)}
-            className="group relative flex items-center justify-center"
-            style={{ width: 16, height: 16 }}
-          >
-            <span
-              className={cn(
-                "block rounded-full transition-all duration-500",
-                i === current
-                  ? "bg-[#C9A96E]"
-                  : "bg-[rgba(201,169,110,0.22)] group-hover:bg-[rgba(201,169,110,0.5)]",
-              )}
-              style={{
-                width: i === current ? 5 : 4,
-                height: i === current ? 5 : 4,
-                transform: i === current ? "scale(1.4)" : "scale(1)",
-              }}
-            />
-            {/* tooltip */}
-            <span
-              className="absolute right-6 whitespace-nowrap font-mono text-[8px] tracking-[0.3em] uppercase pointer-events-none opacity-0 group-hover:opacity-60 transition-opacity duration-300"
-              style={{ color: "#C9A96E" }}
-            >
-              {c.service?.title ?? c.title}
-            </span>
-          </button>
-        ))}
-      </div>
-
-      {/* ── arrow controls ── */}
+      {/* arrow controls */}
       <div className="fixed right-9 bottom-[9%] z-[200] flex flex-col gap-2.5">
         {[
           { dir: -1, label: "Previous", sym: "↑" },
@@ -651,9 +598,9 @@ export default function WorkSection({ campaigns }: WorkSectionProps) {
               "w-11 h-11 flex items-center justify-center text-sm",
               "border transition-all duration-350",
               "disabled:opacity-20 disabled:cursor-not-allowed",
-              "bg-[rgba(5,4,2,0.55)] backdrop-blur-sm",
-              "border-[rgba(201,169,110,0.18)] text-[rgba(201,169,110,0.45)]",
-              "hover:border-[rgba(201,169,110,0.65)] hover:text-[#C9A96E] hover:bg-[rgba(201,169,110,0.06)]",
+              "bg-background/55 backdrop-blur-sm",
+              "border-primary/18 text-primary/45",
+              "hover:border-primary/65 hover:text-primary hover:bg-primary/6",
             )}
           >
             {sym}
@@ -661,11 +608,11 @@ export default function WorkSection({ campaigns }: WorkSectionProps) {
         ))}
       </div>
 
-      {/* ── slide counter ── */}
+      {/* slide counter */}
       <div
         className="fixed left-9 bottom-[9%] z-[200] font-mono"
         style={{
-          color: "rgba(201,169,110,0.32)",
+          color: "rgba(243,121,167,0.32)",
           letterSpacing: "0.35em",
           fontSize: 10,
         }}
@@ -674,7 +621,7 @@ export default function WorkSection({ campaigns }: WorkSectionProps) {
           className="block font-light"
           style={{
             fontSize: "clamp(18px,2vw,24px)",
-            color: "#C9A96E",
+            color: "var(--primary)",
             lineHeight: 1,
           }}
         >
@@ -683,17 +630,17 @@ export default function WorkSection({ campaigns }: WorkSectionProps) {
         <span className="block mt-1">/ {pad(total)}</span>
       </div>
 
-      {/* ── progress line ── */}
+      {/* progress line */}
       <div
         ref={progressRef}
-        className="fixed bottom-0 left-0 h-px z-[200] bg-[#C9A96E]"
+        className="fixed bottom-0 left-0 h-px z-[200] bg-primary"
         style={{
           width: "0%",
           transition: "width 1.15s cubic-bezier(0.77,0,0.18,1)",
         }}
       />
 
-      {/* ── reel ── */}
+      {/* reel */}
       <div
         ref={reelRef}
         className="flex h-full will-change-transform"
@@ -713,13 +660,13 @@ export default function WorkSection({ campaigns }: WorkSectionProps) {
         ))}
       </div>
 
-      {/* ── hint (disappears after first interaction) ── */}
+      {/* hint badge */}
       <HintBadge />
     </section>
   );
 }
 
-// ─── Hint badge — fades out after first wheel/key/touch ──────────────────────
+// ─── Hint badge — fades out after first interaction ──────────────────────
 
 function HintBadge() {
   const [visible, setVisible] = useState(true);
@@ -744,7 +691,7 @@ function HintBadge() {
         fontSize: 8,
         letterSpacing: "0.4em",
         textTransform: "uppercase",
-        color: "rgba(201,169,110,0.30)",
+        color: "rgba(243,121,167,0.30)",
         animation: "fadeOut 1s 4s forwards",
       }}
     >

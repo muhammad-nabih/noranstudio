@@ -4,51 +4,36 @@ import { useRef, useEffect, useState, useCallback, useMemo } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import * as THREE from "three";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { getOptimizedImageUrl, getBlurDataUrl } from "@/lib/image-optimization";
 import type { Campaign } from "@/lib/types";
-import { cn } from "@/lib/utils";
 
 gsap.registerPlugin(ScrollTrigger);
 
+// ─── Constants ────────────────────────────────────────────────────────────────
+const CARDS_PER_PAGE = 8; // 4 cols × 2 rows — perfect symmetry
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 interface Props {
   campaigns: Campaign[];
 }
-
-type AspectKind = "tall" | "wide" | "square";
 
 interface GridItem {
   campaign: Campaign;
   imgSrc: string;
   blur: string;
-  aspect: AspectKind;
-  colSpan: number;
-  rowSpan: number;
   serviceSlug: string;
 }
 
-const PATTERN: Array<{ aspect: AspectKind; col: number; row: number }> = [
-  { aspect: "tall", col: 1, row: 2 },
-  { aspect: "wide", col: 2, row: 1 },
-  { aspect: "square", col: 1, row: 1 },
-  { aspect: "square", col: 1, row: 1 },
-  { aspect: "wide", col: 2, row: 1 },
-  { aspect: "tall", col: 1, row: 2 },
-  { aspect: "square", col: 1, row: 1 },
-  { aspect: "wide", col: 2, row: 1 },
-];
-
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 function buildGrid(campaigns: Campaign[]): GridItem[] {
   const items: GridItem[] = [];
-  let pi = 0;
   for (const c of campaigns) {
     const srcs: Array<{ src: string; blur: string }> = [];
     if (c.heroImage?.asset) {
       srcs.push({
-        src: getOptimizedImageUrl(c.heroImage, { width: 1200, quality: 85 }),
+        src: getOptimizedImageUrl(c.heroImage, { width: 900, quality: 85 }),
         blur: getBlurDataUrl(c.heroImage),
       });
     }
@@ -61,15 +46,10 @@ function buildGrid(campaigns: Campaign[]): GridItem[] {
       }
     }
     for (const { src, blur } of srcs) {
-      const p = PATTERN[pi % PATTERN.length];
-      pi++;
       items.push({
         campaign: c,
         imgSrc: src,
         blur,
-        aspect: p.aspect,
-        colSpan: p.col,
-        rowSpan: p.row,
         serviceSlug: (c.service?.title ?? "all")
           .toLowerCase()
           .replace(/\s+/g, "-"),
@@ -102,6 +82,7 @@ function FilterBar({
   filtered: number;
 }) {
   const barRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(
@@ -123,7 +104,8 @@ function FilterBar({
   return (
     <div
       ref={barRef}
-      className="relative z-10 px-8 md:px-20 pb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
+      className="relative z-10 px-8 md:px-20 pb-8 flex flex-col sm:flex-row
+                 items-start sm:items-center justify-between gap-6"
     >
       <div className="flex items-center gap-2 flex-wrap">
         {services.map((svc) => {
@@ -132,7 +114,8 @@ function FilterBar({
             <button
               key={svc}
               onClick={() => onChange(svc)}
-              className="filter-item relative px-5 py-2 text-[9px] tracking-[0.4em] uppercase transition-all duration-400 overflow-hidden group"
+              className="filter-item relative px-5 py-2 text-[9px] tracking-[0.4em]
+                         uppercase transition-all duration-400 overflow-hidden group"
               style={{
                 fontFamily: "'Cormorant Garamond', serif",
                 border: isActive
@@ -143,7 +126,8 @@ function FilterBar({
               }}
             >
               <span
-                className="absolute inset-0 bg-primary/6 -translate-x-full group-hover:translate-x-0 transition-transform duration-500"
+                className="absolute inset-0 bg-primary/6 -translate-x-full
+                           group-hover:translate-x-0 transition-transform duration-500"
                 style={{ display: isActive ? "none" : "block" }}
               />
               <span className="relative z-10">{svc}</span>
@@ -151,13 +135,201 @@ function FilterBar({
           );
         })}
       </div>
+
       <div
-        className="filter-item flex items-center gap-2 text-[9px] tracking-[0.4em] uppercase text-foreground/20"
+        className="filter-item flex items-center gap-2 text-[9px]
+                   tracking-[0.4em] uppercase text-foreground/20"
         style={{ fontFamily: "'Cormorant Garamond', serif" }}
       >
         <span className="text-primary/60">{filtered}</span>
         <span>/</span>
         <span>{total} visuals</span>
+      </div>
+    </div>
+  );
+}
+
+// ─── Pagination ───────────────────────────────────────────────────────────────
+function Pagination({
+  currentPage,
+  totalPages,
+  onChange,
+}: {
+  currentPage: number;
+  totalPages: number;
+  onChange: (page: number) => void;
+}) {
+  if (totalPages <= 1) return null;
+
+  return (
+    <div
+      className="relative flex items-center justify-center gap-2 py-10 px-8
+                 border-t border-primary/7"
+    >
+      {/* Prev */}
+      <button
+        onClick={() => onChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className="w-9 h-9 flex items-center justify-center
+                   border border-primary/12 text-foreground/25
+                   hover:border-primary/40 hover:text-primary
+                   disabled:opacity-30 disabled:cursor-not-allowed
+                   transition-all duration-300"
+        aria-label="Previous page"
+      >
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <path
+            d="M8 3L4 6.5L8 10"
+            stroke="currentColor"
+            strokeWidth=".85"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </button>
+
+      {/* Page numbers */}
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        <button
+          key={page}
+          onClick={() => onChange(page)}
+          className="w-9 h-9 flex items-center justify-center
+                     border transition-all duration-300 text-[10px]
+                     tracking-[0.2em]"
+          style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            border:
+              page === currentPage
+                ? "1px solid rgba(243,121,167,0.6)"
+                : "1px solid rgba(243,121,167,0.12)",
+            color:
+              page === currentPage ? "var(--primary)" : "rgba(255,191,205,0.25)",
+            background:
+              page === currentPage ? "rgba(243,121,167,0.08)" : "transparent",
+          }}
+        >
+          {String(page).padStart(2, "0")}
+        </button>
+      ))}
+
+      {/* Next */}
+      <button
+        onClick={() => onChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className="w-9 h-9 flex items-center justify-center
+                   border border-primary/12 text-foreground/25
+                   hover:border-primary/40 hover:text-primary
+                   disabled:opacity-30 disabled:cursor-not-allowed
+                   transition-all duration-300"
+        aria-label="Next page"
+      >
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <path
+            d="M5 3L9 6.5L5 10"
+            stroke="currentColor"
+            strokeWidth=".85"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </button>
+
+      {/* Page info */}
+      <div
+        className="absolute right-8 text-[9px] tracking-[0.4em]
+                   uppercase text-foreground/18"
+        style={{ fontFamily: "'Cormorant Garamond', serif" }}
+      >
+        <span className="text-primary/60">{currentPage}</span>
+        {" / "}
+        {totalPages}
+      </div>
+    </div>
+  );
+}
+
+// ─── Locked Placeholder Card ───────────────────────────────────────────────────
+function LockedCard({ index }: { index: number }) {
+  return (
+    <div
+      className="relative overflow-hidden flex flex-col items-center
+                 justify-center gap-3"
+      style={{
+        background: `linear-gradient(135deg,
+          hsl(340, 40%, ${5 + (index % 3)}%) 0%,
+          hsl(340, 35%, ${7 + (index % 3)}%) 100%)`,
+      }}
+    >
+      {/* Dashed border inset */}
+      <div
+        className="absolute inset-[1px] pointer-events-none"
+        style={{ border: "1px dashed rgba(243,121,167,0.08)" }}
+      />
+
+      {/* Diagonal hatching */}
+      <div
+        className="absolute inset-0 opacity-[0.025] pointer-events-none"
+        style={{
+          backgroundImage: `repeating-linear-gradient(
+            45deg,
+            rgba(243,121,167,1),
+            rgba(243,121,167,1) 1px,
+            transparent 1px,
+            transparent 28px
+          )`,
+        }}
+      />
+
+      {/* Lock icon */}
+      <div
+        className="relative w-9 h-9 rounded-full flex items-center
+                   justify-center"
+        style={{ border: "1px solid rgba(243,121,167,0.14)" }}
+      >
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 14 14"
+          fill="none"
+          style={{ color: "rgba(243,121,167,0.22)" }}
+        >
+          <rect
+            x="2.5"
+            y="6.5"
+            width="9"
+            height="7"
+            rx="1"
+            stroke="currentColor"
+            strokeWidth=".75"
+          />
+          <path
+            d="M4.5 6.5V5A2.5 2.5 0 0 1 9.5 5V6.5"
+            stroke="currentColor"
+            strokeWidth=".75"
+          />
+        </svg>
+      </div>
+
+      {/* Label */}
+      <span
+        className="text-[8px] tracking-[0.45em] uppercase"
+        style={{
+          fontFamily: "'Cormorant Garamond', serif",
+          color: "rgba(243,121,167,0.16)",
+        }}
+      >
+        Coming Soon
+      </span>
+
+      {/* Dots */}
+      <div className="flex items-center gap-1.5">
+        {[1, 0.6, 0.3].map((op, i) => (
+          <div
+            key={i}
+            className="w-[3px] h-[3px] rounded-full"
+            style={{ background: `rgba(243,121,167,${op * 0.12})` }}
+          />
+        ))}
       </div>
     </div>
   );
@@ -184,8 +356,8 @@ function Lightbox({
     document.body.style.overflow = "hidden";
     const el = ref.current;
     if (el) {
-      gsap.set(el, { autoAlpha: 0, backdropFilter: "blur(0px)" });
-      gsap.to(el, { autoAlpha: 1, duration: 0.45, ease: "power2.out" });
+      gsap.set(el, { autoAlpha: 0 });
+      gsap.to(el, { autoAlpha: 1, duration: 0.4, ease: "power2.out" });
     }
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") close();
@@ -204,7 +376,7 @@ function Lightbox({
     if (el)
       gsap.to(el, {
         autoAlpha: 0,
-        duration: 0.3,
+        duration: 0.28,
         ease: "power2.in",
         onComplete: onClose,
       });
@@ -218,18 +390,17 @@ function Lightbox({
       onClick={close}
       style={{ isolation: "isolate" }}
     >
-      {/* Backdrop */}
       <div className="absolute inset-0 bg-background/95 backdrop-blur-xl" />
 
       {/* Top bar */}
       <div
-        className="absolute top-0 left-0 right-0 z-20 px-8 py-6 flex items-center justify-between"
+        className="absolute top-0 left-0 right-0 z-20 px-8 py-6
+                   flex items-center justify-between"
         style={{
           background:
             "linear-gradient(to bottom, rgba(3,2,0,0.8), transparent)",
         }}
       >
-        {/* Counter */}
         <div className="flex items-center gap-3">
           <span
             className="text-[10px] tracking-[0.4em] uppercase text-primary"
@@ -245,18 +416,19 @@ function Lightbox({
             {String(total).padStart(2, "0")}
           </span>
         </div>
-
-        {/* Close */}
         <button
           onClick={close}
-          className="group w-10 h-10 flex items-center justify-center border border-primary/10 hover:border-primary/40 transition-colors duration-300"
+          className="group w-10 h-10 flex items-center justify-center
+                     border border-primary/10 hover:border-primary/40
+                     transition-colors duration-300"
         >
           <svg
             width="14"
             height="14"
             viewBox="0 0 14 14"
             fill="none"
-            className="text-foreground/30 group-hover:text-primary transition-colors duration-300"
+            className="text-foreground/30 group-hover:text-primary
+                       transition-colors duration-300"
           >
             <path
               d="M1 1L13 13M13 1L1 13"
@@ -269,7 +441,10 @@ function Lightbox({
       </div>
 
       {/* Image */}
-      <div className="relative z-10 px-20" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="relative z-10 px-20"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="relative">
           <Image
             src={item.imgSrc}
@@ -282,7 +457,7 @@ function Lightbox({
           <div className="absolute inset-0 border border-primary/10 pointer-events-none" />
         </div>
 
-        {/* Info panel below image */}
+        {/* Info panel */}
         <div className="mt-8 flex items-end justify-between gap-6">
           <div>
             <div className="flex items-center gap-2 mb-2">
@@ -322,8 +497,6 @@ function Lightbox({
               )}
             </div>
           </div>
-
-          {/* Action buttons */}
           <div className="flex items-center gap-3 flex-shrink-0">
             {(item.campaign as any).behanceUrl && (
               <a
@@ -331,7 +504,10 @@ function Lightbox({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-2 px-5 py-2.5 border border-primary/20 text-primary/60 hover:text-primary hover:border-primary/50 transition-all duration-300"
+                className="flex items-center gap-2 px-5 py-2.5
+                           border border-primary/20 text-primary/60
+                           hover:text-primary hover:border-primary/50
+                           transition-all duration-300"
                 style={{ fontFamily: "'Cormorant Garamond', serif" }}
               >
                 <span className="text-[9px] tracking-[0.35em] uppercase">
@@ -348,12 +524,13 @@ function Lightbox({
                 </svg>
               </a>
             )}
-
             {slug && (
               <Link
                 href={`/campaigns/${slug}`}
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-3 px-6 py-2.5 bg-primary text-background hover:bg-secondary transition-colors duration-300 group"
+                className="flex items-center gap-3 px-6 py-2.5 bg-primary
+                           text-background hover:bg-secondary
+                           transition-colors duration-300 group"
                 style={{ fontFamily: "'Cormorant Garamond', serif" }}
               >
                 <span className="text-[9px] tracking-[0.35em] uppercase font-semibold">
@@ -417,14 +594,16 @@ function Lightbox({
 // ─── Card ─────────────────────────────────────────────────────────────────────
 function Card({
   item,
-  index,
+  displayIndex,
   onOpen,
   isVisible,
+  animDelay,
 }: {
   item: GridItem;
-  index: number;
+  displayIndex: number;
   onOpen: () => void;
   isVisible: boolean;
+  animDelay: number;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLDivElement>(null);
@@ -445,39 +624,39 @@ function Card({
     const ctx = gsap.context(() => {
       gsap.fromTo(
         wrapRef.current,
-        { autoAlpha: 0, y: 50, clipPath: "inset(0 0 100% 0)" },
+        { autoAlpha: 0, y: 40, clipPath: "inset(0 0 100% 0)" },
         {
           autoAlpha: 1,
           y: 0,
           clipPath: "inset(0 0 0% 0)",
-          duration: 1.2,
+          duration: 1.1,
           ease: "power4.out",
-          delay: (index % 4) * 0.1,
+          delay: animDelay,
           scrollTrigger: {
             trigger: wrapRef.current,
-            start: "top 92%",
+            start: "top 94%",
             toggleActions: "play none none none",
           },
         },
       );
     });
     return () => ctx.revert();
-  }, [index]);
+  }, [animDelay]);
 
-  /* Filter visibility */
+  /* Filter/page visibility */
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
     gsap.to(el, {
       autoAlpha: isVisible ? 1 : 0,
-      scale: isVisible ? 1 : 0.94,
-      duration: 0.55,
+      scale: isVisible ? 1 : 0.95,
+      duration: 0.5,
       ease: "power3.out",
       pointerEvents: isVisible ? "all" : "none",
     });
   }, [isVisible]);
 
-  /* Hover GSAP */
+  /* Hover */
   const onEnter = useCallback(() => {
     setHov(true);
     gsap.to(imgRef.current, { scale: 1.07, duration: 0.9, ease: "power3.out" });
@@ -490,14 +669,14 @@ function Card({
     gsap.to(infoRef.current, {
       y: 0,
       autoAlpha: 1,
-      duration: 0.45,
+      duration: 0.42,
       ease: "power3.out",
     });
-    gsap.to(numRef.current, { color: "var(--primary)", duration: 0.3 });
+    gsap.to(numRef.current, { color: "rgba(243,121,167,0.22)", duration: 0.3 });
     gsap.fromTo(
       shimRef.current,
       { top: "-2px", autoAlpha: 0 },
-      { top: "102%", autoAlpha: 0.7, duration: 1.9, ease: "none" },
+      { top: "102%", autoAlpha: 0.7, duration: 1.8, ease: "none" },
     );
   }, []);
 
@@ -506,17 +685,17 @@ function Card({
     gsap.to(imgRef.current, { scale: 1, duration: 0.8, ease: "power3.out" });
     gsap.to(lineRef.current, {
       scaleX: 0,
-      duration: 0.4,
+      duration: 0.38,
       ease: "power3.in",
       transformOrigin: "right",
     });
     gsap.to(infoRef.current, {
       y: 10,
       autoAlpha: 0,
-      duration: 0.35,
+      duration: 0.32,
       ease: "power2.in",
     });
-    gsap.to(numRef.current, { color: "rgba(255,191,205,0.12)", duration: 0.3 });
+    gsap.to(numRef.current, { color: "rgba(255,191,205,0.1)", duration: 0.3 });
   }, []);
 
   return (
@@ -525,10 +704,6 @@ function Card({
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
       className="relative overflow-hidden"
-      style={{
-        gridColumn: `span ${item.colSpan}`,
-        gridRow: `span ${item.rowSpan}`,
-      }}
     >
       {/* Clickable image area */}
       <div className="absolute inset-0 z-[1] cursor-pointer" onClick={onOpen}>
@@ -540,7 +715,7 @@ function Card({
             className="object-cover"
             placeholder="blur"
             blurDataURL={item.blur}
-            sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 33vw"
+            sizes="(max-width:768px) 50vw, 25vw"
           />
         </div>
 
@@ -552,13 +727,13 @@ function Card({
           }}
         />
 
-        {/* Gradient vignette */}
+        {/* Gradient */}
         <div
           className="absolute inset-0 pointer-events-none transition-opacity duration-500"
           style={{
             background: `
-              linear-gradient(to top, rgba(3,2,2,0.95) 0%, rgba(3,2,2,0.15) 45%, transparent 70%),
-              linear-gradient(to right, rgba(3,2,2,0.4) 0%, transparent 40%)
+              linear-gradient(to top, rgba(3,2,2,0.94) 0%, rgba(3,2,2,0.12) 48%, transparent 72%),
+              linear-gradient(to right, rgba(3,2,2,0.35) 0%, transparent 42%)
             `,
             opacity: hov ? 1 : 0.55,
           }}
@@ -579,23 +754,27 @@ function Card({
       {/* Index number */}
       <span
         ref={numRef}
-        className="absolute top-5 left-5 z-[2] font-bold leading-none select-none pointer-events-none"
+        className="absolute top-4 left-4 z-[2] font-bold leading-none
+                   select-none pointer-events-none"
         style={{
           fontFamily: "'Playfair Display', serif",
-          fontSize: "clamp(28px, 3.5vw, 48px)",
-          color: "rgba(255,191,205,0.12)",
+          fontSize: "clamp(26px, 3vw, 42px)",
+          color: "rgba(255,191,205,0.1)",
           lineHeight: 1,
         }}
       >
-        {String(index + 1).padStart(2, "0")}
+        {String(displayIndex).padStart(2, "0")}
       </span>
 
       {/* Service tag */}
       <div
-        className="absolute top-5 right-5 z-[2] px-3 py-1.5 border border-primary/20 bg-background/70 backdrop-blur-sm transition-all duration-400 pointer-events-none"
+        className="absolute top-4 right-4 z-[2] px-3 py-1.5
+                   border border-primary/20 bg-background/70 backdrop-blur-sm
+                   pointer-events-none"
         style={{
           opacity: hov ? 1 : 0,
           transform: hov ? "translateX(0)" : "translateX(10px)",
+          transition: "all 0.35s ease",
         }}
       >
         <span
@@ -608,37 +787,41 @@ function Card({
 
       {/* Corner accents */}
       <div
-        className="absolute top-3 left-3 w-5 h-5 border-t border-l border-primary/40 transition-opacity duration-300 pointer-events-none z-[2]"
+        className="absolute top-3 left-3 w-4 h-4 border-t border-l
+                   border-primary/45 transition-opacity duration-300
+                   pointer-events-none z-[2]"
         style={{ opacity: hov ? 1 : 0 }}
       />
       <div
-        className="absolute bottom-3 right-3 w-5 h-5 border-b border-r border-primary/40 transition-opacity duration-300 pointer-events-none z-[2]"
+        className="absolute bottom-3 right-3 w-4 h-4 border-b border-r
+                   border-primary/45 transition-opacity duration-300
+                   pointer-events-none z-[2]"
         style={{ opacity: hov ? 1 : 0 }}
       />
 
       {/* Bottom info panel */}
-      <div className="absolute bottom-0 left-0 right-0 z-[3] p-5">
+      <div className="absolute bottom-0 left-0 right-0 z-[3] p-4">
         <div
           ref={infoRef}
           style={{ opacity: 0, transform: "translateY(10px)" }}
           className="mb-2"
         >
           {(clientName || year) && (
-            <div className="flex items-center gap-3 mb-3">
+            <div className="flex items-center gap-3 mb-2.5">
               {clientName && (
                 <span
-                  className="text-[8px] tracking-[0.45em] uppercase text-primary"
+                  className="text-[8px] tracking-[0.4em] uppercase text-primary"
                   style={{ fontFamily: "'Cormorant Garamond', serif" }}
                 >
                   {clientName}
                 </span>
               )}
               {clientName && year && (
-                <span className="w-px h-3 bg-primary/25" />
+                <span className="w-px h-2.5 bg-primary/25" />
               )}
               {year && (
                 <span
-                  className="text-[8px] tracking-[0.3em] uppercase text-primary/50"
+                  className="text-[8px] tracking-[0.3em] uppercase text-primary/45"
                   style={{ fontFamily: "'Cormorant Garamond', serif" }}
                 >
                   {year}
@@ -647,28 +830,31 @@ function Card({
             </div>
           )}
 
-          <div className="flex items-center gap-2 relative z-[4]">
+          {/* Action buttons */}
+          <div className="flex items-center gap-1.5 relative z-[4]">
             {slug && (
               <Link
                 href={`/campaigns/${slug}`}
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-2 px-4 py-2 bg-primary text-background hover:bg-secondary transition-colors duration-300 group/btn"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 bg-primary
+                           text-background hover:bg-secondary transition-colors
+                           duration-300 group/btn"
                 style={{ fontFamily: "'Cormorant Garamond', serif" }}
               >
                 <span className="text-[8px] tracking-[0.3em] uppercase font-semibold">
                   View Project
                 </span>
                 <svg
-                  width="10"
-                  height="10"
-                  viewBox="0 0 10 10"
+                  width="9"
+                  height="9"
+                  viewBox="0 0 9 9"
                   fill="none"
                   className="group-hover/btn:translate-x-0.5 transition-transform duration-300"
                 >
                   <path
-                    d="M1.5 5h7M5.5 2l3 3-3 3"
+                    d="M1.5 4.5h6M4.5 1.5l3 3-3 3"
                     stroke="currentColor"
-                    strokeWidth="0.9"
+                    strokeWidth="0.85"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
@@ -682,7 +868,10 @@ function Card({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-1.5 px-4 py-2 border border-primary/25 text-primary/60 hover:text-primary hover:border-primary/50 transition-all duration-300 backdrop-blur-sm"
+                className="flex items-center gap-1 px-3.5 py-1.5
+                           border border-primary/25 text-primary/55
+                           hover:text-primary hover:border-primary/50
+                           transition-all duration-300 backdrop-blur-sm"
                 style={{
                   background: "rgba(3,2,2,0.6)",
                   fontFamily: "'Cormorant Garamond', serif",
@@ -691,11 +880,11 @@ function Card({
                 <span className="text-[8px] tracking-[0.3em] uppercase">
                   Behance
                 </span>
-                <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+                <svg width="7" height="7" viewBox="0 0 7 7" fill="none">
                   <path
-                    d="M1 7L7 1M7 1H3M7 1V5"
+                    d="M1 6L6 1M6 1H3M6 1V4"
                     stroke="currentColor"
-                    strokeWidth="0.8"
+                    strokeWidth="0.75"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
@@ -703,19 +892,23 @@ function Card({
               </a>
             )}
 
+            {/* Quick-view expand */}
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 onOpen();
               }}
-              className="w-8 h-8 flex items-center justify-center border border-primary/15 bg-background/60 backdrop-blur-sm text-foreground/30 hover:text-primary hover:border-primary/40 transition-all duration-300"
+              className="w-7 h-7 flex items-center justify-center
+                         border border-primary/14 bg-background/60 backdrop-blur-sm
+                         text-foreground/28 hover:text-primary hover:border-primary/40
+                         transition-all duration-300"
               title="Quick view"
             >
-              <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
                 <path
-                  d="M1 4V1h3M7 1h3v3M10 7v3H7M4 10H1V7"
+                  d="M1 3.5V1h2.5M6.5 1H9v2.5M9 6.5V9H6.5M3.5 9H1V6.5"
                   stroke="currentColor"
-                  strokeWidth="0.8"
+                  strokeWidth="0.75"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
@@ -725,10 +918,11 @@ function Card({
         </div>
 
         <h3
-          className="font-semibold leading-tight tracking-tight text-foreground pointer-events-none"
+          className="font-semibold leading-tight tracking-tight
+                     text-foreground pointer-events-none"
           style={{
             fontFamily: "'Playfair Display', serif",
-            fontSize: "clamp(13px, 1.1vw, 17px)",
+            fontSize: "clamp(12px, 1vw, 15px)",
           }}
         >
           {item.campaign.title}
@@ -736,7 +930,8 @@ function Card({
 
         <div
           ref={lineRef}
-          className="mt-2.5 h-px bg-gradient-to-r from-primary via-secondary to-transparent scale-x-0 pointer-events-none"
+          className="mt-2 h-px bg-gradient-to-r from-primary
+                     via-secondary to-transparent scale-x-0 pointer-events-none"
           style={{ transformOrigin: "left center" }}
         />
       </div>
@@ -750,19 +945,16 @@ function PlaceholderGrid() {
     <div
       className="grid gap-[3px]"
       style={{
-        gridTemplateColumns: "repeat(4,1fr)",
-        gridAutoRows: "230px",
-        gridAutoFlow: "row dense",
+        gridTemplateColumns: "repeat(4, 1fr)",
+        gridAutoRows: "260px",
       }}
     >
-      {PATTERN.slice(0, 8).map((p, i) => (
+      {Array.from({ length: CARDS_PER_PAGE }, (_, i) => (
         <div
           key={i}
           className="relative overflow-hidden"
           style={{
-            gridColumn: `span ${p.col}`,
-            gridRow: `span ${p.row}`,
-            background: `hsl(340, 40%, ${6 + (i % 3) * 2}%)`,
+            background: `hsl(340, 40%, ${5 + (i % 3) * 2}%)`,
             animation: `pulsePink 2.4s ease-in-out ${i * 0.18}s infinite`,
           }}
         >
@@ -772,18 +964,17 @@ function PlaceholderGrid() {
           </div>
         </div>
       ))}
-      <style>{`@keyframes pulsePink{0%,100%{opacity:.55}50%{opacity:1}}`}</style>
+      <style>{`@keyframes pulsePink{0%,100%{opacity:.5}50%{opacity:.9}}`}</style>
     </div>
   );
 }
 
-// ─── Main ─────────────────────────────────────────────────────────────────────
+// ─── Main Component ───────────────────────────────────────────────────────────
 export default function CampaignsClient({ campaigns }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const rafRef = useRef<number>(0);
 
   const [activeFilter, setActiveFilter] = useState("All");
+  const [currentPage, setCurrentPage] = useState(1);
   const [lightbox, setLightbox] = useState<number | null>(null);
 
   const { scrollYProgress } = useScroll({
@@ -796,143 +987,52 @@ export default function CampaignsClient({ campaigns }: Props) {
   const allGrid = useMemo(() => buildGrid(campaigns), [campaigns]);
   const services = useMemo(() => getServices(campaigns), [campaigns]);
 
-  const visibleSet = useMemo(() => {
-    if (activeFilter === "All") return new Set(allGrid.map((_, i) => i));
-    return new Set(
-      allGrid.reduce<number[]>((acc, item, i) => {
-        if (item.campaign.service?.title === activeFilter) acc.push(i);
-        return acc;
-      }, []),
+  /* Filtered items (for the active service filter) */
+  const filteredItems = useMemo(() => {
+    if (activeFilter === "All") return allGrid;
+    return allGrid.filter(
+      (item) => item.campaign.service?.title === activeFilter,
     );
   }, [activeFilter, allGrid]);
 
-  const filteredCount = visibleSet.size;
-  const visibleItems = useMemo(
-    () => allGrid.filter((_, i) => visibleSet.has(i)),
-    [allGrid, visibleSet],
+  const totalPages = Math.max(1, Math.ceil(filteredItems.length / CARDS_PER_PAGE));
+
+  /* Current page slice */
+  const pageItems = useMemo(() => {
+    const start = (currentPage - 1) * CARDS_PER_PAGE;
+    return filteredItems.slice(start, start + CARDS_PER_PAGE);
+  }, [filteredItems, currentPage]);
+
+  /* How many locked placeholders to fill the grid */
+  const lockedCount = CARDS_PER_PAGE - pageItems.length;
+
+  /* Lightbox navigation works over filteredItems */
+  const openLightbox = useCallback(
+    (filteredIdx: number) => setLightbox(filteredIdx),
+    [],
+  );
+  const closeLightbox = useCallback(() => setLightbox(null), []);
+  const changeLightbox = useCallback((i: number) => setLightbox(i), []);
+
+  const handleFilter = useCallback((s: string) => {
+    setLightbox(null);
+    setCurrentPage(1);
+    setActiveFilter(s);
+  }, []);
+
+  const handlePageChange = useCallback(
+    (page: number) => {
+      setLightbox(null);
+      setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+      // Scroll gallery into view
+      document
+        .getElementById("campaigns-gallery")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    },
+    [totalPages],
   );
 
-  /* Three.js particle field (pink theme) */
-  // useEffect(() => {
-  //   const canvas = canvasRef.current;
-  //   if (!canvas) return;
-  //   const renderer = new THREE.WebGLRenderer({
-  //     canvas,
-  //     alpha: true,
-  //     antialias: true,
-  //   });
-  //   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  //   renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
-  //   const scene = new THREE.Scene();
-  //   const camera = new THREE.PerspectiveCamera(
-  //     55,
-  //     canvas.offsetWidth / canvas.offsetHeight,
-  //     0.1,
-  //     100,
-  //   );
-  //   camera.position.z = 6;
-
-  //   const COUNT = 220;
-  //   const pos = new Float32Array(COUNT * 3);
-  //   const sz = new Float32Array(COUNT);
-  //   for (let i = 0; i < COUNT; i++) {
-  //     pos[i * 3] = (Math.random() - 0.5) * 14;
-  //     pos[i * 3 + 1] = (Math.random() - 0.5) * 14;
-  //     pos[i * 3 + 2] = (Math.random() - 0.5) * 5;
-  //     sz[i] = Math.random() * 2.5 + 0.5;
-  //   }
-  //   const geo = new THREE.BufferGeometry();
-  //   geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-  //   geo.setAttribute("size", new THREE.BufferAttribute(sz, 1));
-
-  //   const mat = new THREE.ShaderMaterial({
-  //     uniforms: {
-  //       uTime: { value: 0 },
-  //       uColor: { value: new THREE.Color(0xf379a7) }, // primary pink
-  //       uMouse: { value: new THREE.Vector2(0, 0) },
-  //     },
-  //     vertexShader: /* glsl */ `
-  //       attribute float size; uniform float uTime; uniform vec2 uMouse; varying float vAlpha;
-  //       void main() {
-  //         vec3 p = position;
-  //         p.y += sin(uTime * 0.35 + position.x * 0.7) * 0.18;
-  //         p.x += cos(uTime * 0.25 + position.y * 0.5) * 0.12;
-  //         float dist = length(p.xy - uMouse * 5.0);
-  //         p.z += smoothstep(2.2, 0.0, dist) * 0.5;
-  //         vAlpha = 0.1 + 0.3 * abs(sin(uTime * 0.4 + position.z));
-  //         vec4 mv = modelViewMatrix * vec4(p, 1.0);
-  //         gl_PointSize = size * (280.0 / -mv.z);
-  //         gl_Position = projectionMatrix * mv;
-  //       }
-  //     `,
-  //     fragmentShader: /* glsl */ `
-  //       uniform vec3 uColor; varying float vAlpha;
-  //       void main() {
-  //         float d = length(gl_PointCoord - 0.5) * 2.0;
-  //         gl_FragColor = vec4(uColor, smoothstep(1.0, 0.2, d) * vAlpha);
-  //       }
-  //     `,
-  //     transparent: true,
-  //     depthWrite: false,
-  //     blending: THREE.AdditiveBlending,
-  //   });
-
-  //   const points = new THREE.Points(geo, mat);
-  //   scene.add(points);
-
-  //   const mkRing = (r: number, op: number, px: number, py: number) => {
-  //     const m = new THREE.Mesh(
-  //       new THREE.TorusGeometry(r, 0.004, 16, 120),
-  //       new THREE.MeshBasicMaterial({
-  //         color: 0xf379a7,
-  //         transparent: true,
-  //         opacity: op,
-  //       }),
-  //     );
-  //     m.position.set(px, py, 0);
-  //     scene.add(m);
-  //     return m;
-  //   };
-  //   const ring1 = mkRing(2.2, 0.07, -3, 0);
-  //   const ring2 = mkRing(3.0, 0.04, -3, 0);
-
-  //   let mouse = { x: 0, y: 0 };
-  //   const onMouse = (e: MouseEvent) => {
-  //     mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-  //     mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-  //     mat.uniforms.uMouse.value.set(mouse.x, mouse.y);
-  //   };
-  //   document.addEventListener("mousemove", onMouse);
-
-  //   const animate = (t: number) => {
-  //     rafRef.current = requestAnimationFrame(animate);
-  //     mat.uniforms.uTime.value = t * 0.001;
-  //     points.rotation.y = mouse.x * 0.03;
-  //     points.rotation.x = mouse.y * 0.03;
-  //     ring1.rotation.z += 0.0008;
-  //     ring2.rotation.z -= 0.0005;
-  //     renderer.render(scene, camera);
-  //   };
-  //   rafRef.current = requestAnimationFrame(animate);
-
-  //   const onResize = () => {
-  //     const w = canvas.offsetWidth,
-  //       h = canvas.offsetHeight;
-  //     renderer.setSize(w, h);
-  //     camera.aspect = w / h;
-  //     camera.updateProjectionMatrix();
-  //   };
-  //   window.addEventListener("resize", onResize);
-
-  //   return () => {
-  //     cancelAnimationFrame(rafRef.current);
-  //     document.removeEventListener("mousemove", onMouse);
-  //     window.removeEventListener("resize", onResize);
-  //     renderer.dispose();
-  //   };
-  // }, []);
-
-  /* GSAP entrance */
+  /* GSAP hero entrance */
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.set(
@@ -1006,50 +1106,24 @@ export default function CampaignsClient({ campaigns }: Props) {
   }, []);
 
   const marqueeWords = [
-    "Campaign",
-    "✦",
-    "Key Visual",
-    "✦",
-    "Retouching",
-    "✦",
-    "Post Production",
-    "✦",
-    "Campaign",
-    "✦",
-    "Key Visual",
-    "✦",
-    "Retouching",
-    "✦",
-    "Post Production",
-    "✦",
+    "Campaign", "✦", "Key Visual", "✦", "Retouching",
+    "✦", "Post Production", "✦", "Campaign", "✦",
+    "Key Visual", "✦", "Retouching", "✦", "Post Production", "✦",
   ];
-
-  const openLightbox = useCallback((i: number) => setLightbox(i), []);
-  const closeLightbox = useCallback(() => setLightbox(null), []);
-  const changeLightbox = useCallback((i: number) => setLightbox(i), []);
-  const handleFilter = useCallback((s: string) => {
-    setLightbox(null);
-    setActiveFilter(s);
-  }, []);
 
   return (
     <>
-      {/* Hero header */}
+      {/* ── Hero header ── */}
       <section
         ref={sectionRef}
         id="campaigns"
         className="relative min-h-[65vh] w-full overflow-hidden bg-background flex flex-col"
       >
-        <canvas
-          ref={canvasRef}
-          className="absolute inset-0 w-full h-full pointer-events-none"
-        />
-
-        {/* Bg */}
+        {/* Bg effects */}
         <div className="absolute inset-0 pointer-events-none">
           <div
             className="absolute top-0 left-0 w-[55%] h-full
-                          bg-[radial-gradient(ellipse_60%_70%_at_20%_40%,rgba(243,121,167,0.06)_0%,transparent_65%)]"
+                       bg-[radial-gradient(ellipse_60%_70%_at_20%_40%,rgba(243,121,167,0.06)_0%,transparent_65%)]"
           />
           <div
             className="absolute inset-0 opacity-[0.015]"
@@ -1078,7 +1152,8 @@ export default function CampaignsClient({ campaigns }: Props) {
 
           <div className="overflow-hidden mb-1">
             <h1
-              className="camp-title block font-bold leading-[0.9] tracking-[-0.02em] text-foreground"
+              className="camp-title block font-bold leading-[0.9]
+                         tracking-[-0.02em] text-foreground"
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontSize: "clamp(60px,10vw,120px)",
@@ -1107,10 +1182,7 @@ export default function CampaignsClient({ campaigns }: Props) {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <p
               className="camp-sub text-foreground/55 text-lg leading-relaxed max-w-[400px]"
-              style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                fontWeight: 300,
-              }}
+              style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300 }}
             >
               A curated archive of advertising campaigns,
               <br />
@@ -1151,15 +1223,15 @@ export default function CampaignsClient({ campaigns }: Props) {
         </div>
       </section>
 
-      {/* Gallery */}
-      <section className="relative bg-background">
+      {/* ── Gallery ── */}
+      <section id="campaigns-gallery" className="relative bg-background">
         {services.length > 1 && (
           <FilterBar
             services={services}
             active={activeFilter}
             onChange={handleFilter}
             total={allGrid.length}
-            filtered={filteredCount}
+            filtered={filteredItems.length}
           />
         )}
 
@@ -1168,22 +1240,36 @@ export default function CampaignsClient({ campaigns }: Props) {
             <div
               className="grid gap-[3px]"
               style={{
-                gridTemplateColumns: "repeat(4,1fr)",
-                gridAutoRows: "230px",
-                gridAutoFlow: "row dense",
+                /*
+                 * Symmetric 4-column grid.
+                 * All cards are exactly 1×1 — no tall/wide breaking symmetry.
+                 * gridAutoRows is fixed so every row is the same height.
+                 */
+                gridTemplateColumns: "repeat(4, 1fr)",
+                gridAutoRows: "260px",
               }}
             >
-              {allGrid.map((item, i) => (
-                <Card
-                  key={`${(item.campaign as any)._id}-${i}`}
-                  item={item}
-                  index={i}
-                  isVisible={visibleSet.has(i)}
-                  onOpen={() => {
-                    const visIdx = visibleItems.findIndex((v) => v === item);
-                    if (visIdx !== -1) openLightbox(visIdx);
-                  }}
-                />
+              {/* Real cards for this page */}
+              {pageItems.map((item, i) => {
+                const globalFilteredIdx = filteredItems.indexOf(item);
+                const displayNumber =
+                  (currentPage - 1) * CARDS_PER_PAGE + i + 1;
+
+                return (
+                  <Card
+                    key={`${(item.campaign as any)._id}-${i}`}
+                    item={item}
+                    displayIndex={displayNumber}
+                    isVisible={true}
+                    animDelay={i * 0.06}
+                    onOpen={() => openLightbox(globalFilteredIdx)}
+                  />
+                );
+              })}
+
+              {/* Locked placeholder cards to maintain 4×2 symmetry */}
+              {Array.from({ length: lockedCount }, (_, i) => (
+                <LockedCard key={`locked-${i}`} index={i} />
               ))}
             </div>
           ) : (
@@ -1191,11 +1277,18 @@ export default function CampaignsClient({ campaigns }: Props) {
           )}
         </div>
 
+        {/* Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onChange={handlePageChange}
+        />
+
         {/* Footer CTA */}
         <div className="relative px-8 md:px-20 py-28 border-t border-primary/7 mt-1">
           <div
             className="absolute inset-0 pointer-events-none
-                          bg-[radial-gradient(ellipse_60%_60%_at_50%_100%,rgba(243,121,167,0.04)_0%,transparent_70%)]"
+                       bg-[radial-gradient(ellipse_60%_60%_at_50%_100%,rgba(243,121,167,0.04)_0%,transparent_70%)]"
           />
           <div className="relative max-w-[1400px] mx-auto flex flex-col md:flex-row items-start md:items-end justify-between gap-10">
             <div>
@@ -1222,7 +1315,9 @@ export default function CampaignsClient({ campaigns }: Props) {
             </div>
             <Link
               href="/#contact"
-              className="group relative flex items-center gap-4 px-8 py-4 border border-primary/25 text-primary hover:border-primary/60 transition-all duration-500 overflow-hidden"
+              className="group relative flex items-center gap-4 px-8 py-4
+                         border border-primary/25 text-primary
+                         hover:border-primary/60 transition-all duration-500 overflow-hidden"
               style={{ fontFamily: "'Cormorant Garamond', serif" }}
             >
               <div className="absolute inset-0 bg-primary/6 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -1247,10 +1342,10 @@ export default function CampaignsClient({ campaigns }: Props) {
         </div>
       </section>
 
-      {/* Lightbox */}
+      {/* ── Lightbox ── */}
       {lightbox !== null && (
         <Lightbox
-          items={visibleItems}
+          items={filteredItems}
           index={lightbox}
           onClose={closeLightbox}
           onChange={changeLightbox}
