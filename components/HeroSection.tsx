@@ -1,476 +1,636 @@
-'use client';
+"use client";
 
-import { useRef, useEffect, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import * as THREE from 'three';
-import Image from 'next/image';
+import localFont from "next/font/local";
 
-gsap.registerPlugin(ScrollTrigger);
 
+import { useEffect, useRef } from "react";
+import Image from "next/image";
+import Link from "next/link";
+
+const astonScript = localFont({
+  src: "../public/fonts/AstonScript.ttf",
+  display: "swap",
+});
+
+// ─── Tools — 6 icons, evenly spaced in a clean arc ───────────────────────────
+const TOOLS = [
+  {
+    key: "ps",
+    label: "Ps",
+    bg: "#001E36",
+    color: "#31A8FF",
+    text: "Ps",
+    angle: -155,
+    r: 230,
+    delay: "0.05s",
+    phase: "0s",
+    isFigma: false,
+  },
+  {
+    key: "ai",
+    label: "Ai",
+    bg: "#260C00",
+    color: "#FF9A00",
+    text: "Ai",
+    angle: -115,
+    r: 245,
+    delay: "0.1s",
+    phase: "0.6s",
+    isFigma: false,
+  },
+  {
+    key: "figma",
+    label: "Fg",
+    bg: "",
+    color: "",
+    text: "",
+    angle: -70,
+    r: 235,
+    delay: "0.15s",
+    phase: "1.2s",
+    isFigma: true,
+  },
+  {
+    key: "ae",
+    label: "Ae",
+    bg: "#00005B",
+    color: "#9999FF",
+    text: "Ae",
+    angle: 70,
+    r: 235,
+    delay: "0.2s",
+    phase: "0.4s",
+    isFigma: false,
+  },
+  {
+    key: "canva",
+    label: "Cv",
+    bg: "#7D2AE8",
+    color: "#fff",
+    text: "C",
+    angle: 115,
+    r: 245,
+    delay: "0.25s",
+    phase: "1s",
+    isFigma: false,
+  },
+  {
+    key: "id",
+    label: "Id",
+    bg: "#49021F",
+    color: "#FF3366",
+    text: "Id",
+    angle: 155,
+    r: 230,
+    delay: "0.3s",
+    phase: "0.2s",
+    isFigma: false,
+  },
+];
+
+function FigmaIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" aria-hidden="true">
+      <circle cx="14.5" cy="12" r="3.5" fill="#1ABCFE" />
+      <path d="M7 3h5a3.5 3.5 0 0 1 0 7H7V3z" fill="#FF7262" />
+      <path d="M7 10h5a3.5 3.5 0 0 1 0 7H7V10z" fill="#A259FF" />
+      <path d="M7 17h3.5A3.5 3.5 0 0 1 7 20.5V17z" fill="#0ACF83" />
+    </svg>
+  );
+}
+
+function ToolBadge({ tool }: { tool: (typeof TOOLS)[number] }) {
+  const rad = (tool.angle * Math.PI) / 180;
+  const x = Math.cos(rad) * tool.r;
+  const y = Math.sin(rad) * tool.r;
+
+  return (
+    <div
+      className="absolute -translate-x-1/2 -translate-y-1/2 group cursor-default"
+      style={{
+        left: `calc(50% + ${x}px)`,
+        top: `calc(50% + ${y}px)`,
+        animation: `toolIn 0.6s ${tool.delay} cubic-bezier(0.34,1.4,0.64,1) both,
+                    drift 6s ${tool.phase} ease-in-out infinite`,
+      }}
+    >
+      <div
+        className="w-[46px] h-[46px] rounded-2xl flex items-center justify-center
+                   border border-[rgba(243,121,167,0.18)] backdrop-blur-sm
+                   transition-all duration-300
+                   group-hover:border-[rgba(243,121,167,0.6)]
+                   group-hover:scale-110
+                   group-hover:shadow-[0_0_18px_rgba(243,121,167,0.2)]"
+        style={{ background: "rgba(10,4,7,0.82)" }}
+      >
+        {tool.isFigma ? (
+          <FigmaIcon />
+        ) : (
+          <svg viewBox="0 0 24 24" className="w-5 h-5" aria-hidden="true">
+            <rect x="2" y="2" width="20" height="20" rx="3" fill={tool.bg} />
+            <text
+              x="12"
+              y="16"
+              textAnchor="middle"
+              fontFamily="'Poppins',sans-serif"
+              fontSize="8.5"
+              fontWeight="700"
+              fill={tool.color}
+            >
+              {tool.text}
+            </text>
+          </svg>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Calligraphic N ───────────────────────────────────────────────────────────
+function CalligraphicN({ size = 68 }: { size?: number }) {
+  return (
+    <svg
+      viewBox="0 0 88 96"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{
+        width: size * 0.92,
+        height: size,
+        filter: "drop-shadow(0 0 10px rgba(243,121,167,0.55))",
+      }}
+      aria-hidden="true"
+    >
+      <path
+        d="M8 88 C8 88, 12 16, 16 8 C18 4, 22 4, 24 8 C30 24, 48 60, 58 80 C60 84, 62 86, 63 88"
+        stroke="#f379a7"
+        strokeWidth="3"
+        strokeLinecap="round"
+        fill="none"
+      />
+      <path
+        d="M16 10 C28 28, 50 60, 62 84"
+        stroke="#f379a7"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        fill="none"
+        opacity="0.35"
+      />
+      <path
+        d="M62 10 C64 10, 68 10, 70 12 C75 18, 78 40, 80 88"
+        stroke="#f379a7"
+        strokeWidth="3"
+        strokeLinecap="round"
+        fill="none"
+      />
+      <path
+        d="M6 6 C10 2, 16 2, 18 6"
+        stroke="#f8a9c9"
+        strokeWidth="2"
+        strokeLinecap="round"
+        fill="none"
+      />
+    </svg>
+  );
+}
+
+// ─── Main ─────────────────────────────────────────────────────────────────────
 export default function HeroSection() {
-  const sectionRef  = useRef<HTMLElement>(null);
-  const canvasRef   = useRef<HTMLCanvasElement>(null);
-  const cursorRef   = useRef<HTMLDivElement>(null);
-  const followerRef = useRef<HTMLDivElement>(null);
-  const imageRef    = useRef<HTMLDivElement>(null);
-  const rafRef      = useRef<number>(0);
-  const [loaded, setLoaded] = useState(false);
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start start', 'end start'],
-  });
-
-  const yText    = useTransform(scrollYProgress, [0, 1], ['0%', '18%']);
-  const yImage   = useTransform(scrollYProgress, [0, 1], ['0%', '10%']);
-  const opacity  = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
-
-
-  /* ── Three.js ambient field ── */
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
-
-    const scene  = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(55, canvas.offsetWidth / canvas.offsetHeight, 0.1, 100);
-    camera.position.z = 6;
-
-    /* Floating dust particles */
-    const COUNT = 280;
-    const positions = new Float32Array(COUNT * 3);
-    const sizes     = new Float32Array(COUNT);
-    for (let i = 0; i < COUNT; i++) {
-      positions[i * 3]     = (Math.random() - 0.5) * 14;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 14;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 5;
-      sizes[i] = Math.random() * 2.5 + 0.5;
-    }
-
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geo.setAttribute('size',     new THREE.BufferAttribute(sizes, 1));
-
-    const mat = new THREE.ShaderMaterial({
-      uniforms: {
-        uTime:  { value: 0 },
-        uColor: { value: new THREE.Color(0xC9A96E) },
-        uMouse: { value: new THREE.Vector2(0, 0) },
-      },
-      vertexShader: /* glsl */`
-        attribute float size;
-        uniform float uTime;
-        uniform vec2  uMouse;
-        varying float vAlpha;
-        void main() {
-          vec3 pos = position;
-          pos.y += sin(uTime * 0.35 + position.x * 0.7) * 0.18;
-          pos.x += cos(uTime * 0.25 + position.y * 0.5) * 0.12;
-          float dist  = length(pos.xy - uMouse * 5.0);
-          float repel = smoothstep(2.2, 0.0, dist) * 0.5;
-          pos.z      += repel;
-          vAlpha = 0.1 + 0.3 * abs(sin(uTime * 0.4 + position.z));
-          vec4 mv = modelViewMatrix * vec4(pos, 1.0);
-          gl_Position  = projectionMatrix * mv;
-          gl_PointSize = size * (280.0 / -mv.z);
-        }
-      `,
-      fragmentShader: /* glsl */`
-        uniform vec3 uColor;
-        varying float vAlpha;
-        void main() {
-          float d = length(gl_PointCoord - 0.5) * 2.0;
-          float a = smoothstep(1.0, 0.2, d) * vAlpha;
-          gl_FragColor = vec4(uColor, a);
-        }
-      `,
-      transparent: true,
-      depthWrite:  false,
-      blending:    THREE.AdditiveBlending,
-    });
-
-    const points = new THREE.Points(geo, mat);
-    scene.add(points);
-
-    /* Thin orbital rings — positioned center-right behind image */
-    const mkRing = (r: number, op: number, px: number, py: number) => {
-      const m = new THREE.Mesh(
-        new THREE.TorusGeometry(r, 0.004, 16, 120),
-        new THREE.MeshBasicMaterial({ color: 0xC9A96E, transparent: true, opacity: op })
-      );
-      m.position.set(px, py, 0);
-      scene.add(m);
-      return m;
-    };
-    const ring1 = mkRing(2.0, 0.10, 2.8,  0.2);
-    const ring2 = mkRing(2.6, 0.05, 2.8,  0.2);
-    const ring3 = mkRing(3.2, 0.03, 2.8,  0.2);
-
-    let mouseNorm = { x: 0, y: 0 };
-    const onMouse = (e: MouseEvent) => {
-      mouseNorm.x = (e.clientX / window.innerWidth)  * 2 - 1;
-      mouseNorm.y = -(e.clientY / window.innerHeight) * 2 + 1;
-      mat.uniforms.uMouse.value.set(mouseNorm.x, mouseNorm.y);
-    };
-    document.addEventListener('mousemove', onMouse);
-
-    const animate = (t: number) => {
-      rafRef.current = requestAnimationFrame(animate);
-      mat.uniforms.uTime.value = t * 0.001;
-      points.rotation.y = mouseNorm.x * 0.03;
-      points.rotation.x = mouseNorm.y * 0.03;
-      ring1.rotation.z += 0.0008;
-      ring2.rotation.z -= 0.0005;
-      ring3.rotation.z += 0.0003;
-      renderer.render(scene, camera);
-    };
-    rafRef.current = requestAnimationFrame(animate);
-
-    const onResize = () => {
-      const w = canvas.offsetWidth, h = canvas.offsetHeight;
-      renderer.setSize(w, h);
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-    };
-    window.addEventListener('resize', onResize);
-
-    return () => {
-      cancelAnimationFrame(rafRef.current);
-      document.removeEventListener('mousemove', onMouse);
-      window.removeEventListener('resize', onResize);
-      renderer.dispose();
-    };
-  }, []);
-
-  /* ── GSAP entrance ── */
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      /* Initial states */
-      gsap.set([
-        '.hero-eyebrow', '.hero-name-1', '.hero-name-2',
-        '.hero-sub', '.hero-cta', '.hero-scroll', '.hero-image',
-        '.hero-badge-1', '.hero-badge-2', '.hero-line',
-        '.hero-stat', '.hero-marquee',
-      ], { autoAlpha: 0 });
-
-      gsap.set('.hero-name-1', { yPercent: 110 });
-      gsap.set('.hero-name-2', { yPercent: 110 });
-      gsap.set('.hero-eyebrow', { y: 20 });
-      gsap.set('.hero-sub',     { y: 24 });
-      gsap.set('.hero-cta',     { y: 20 });
-      gsap.set('.hero-scroll',  { y: 16 });
-      gsap.set('.hero-badge-1', { x: -20 });
-      gsap.set('.hero-badge-2', { x:  20 });
-      gsap.set('.hero-stat',    { y: 16 });
-      gsap.set('.hero-marquee', { y: 10 });
-
-      const tl = gsap.timeline({ delay: 0.4 });
-
-      tl
-        .to('.hero-eyebrow',  { autoAlpha: 1, y: 0,        duration: 0.8, ease: 'power3.out' })
-        .to('.hero-name-1',   { autoAlpha: 1, yPercent: 0, duration: 1.0, ease: 'power4.out' }, '-=0.3')
-        .to('.hero-name-2',   { autoAlpha: 1, yPercent: 0, duration: 1.0, ease: 'power4.out' }, '-=0.7')
-        .to('.hero-line',     { autoAlpha: 1, scaleX: 1,   duration: 1.2, ease: 'power3.inOut', transformOrigin: 'left center' }, '-=0.4')
-        .to('.hero-sub',      { autoAlpha: 1, y: 0,        duration: 0.9, ease: 'power3.out' }, '-=0.8')
-        .to('.hero-cta',      { autoAlpha: 1, y: 0,        duration: 0.7, ease: 'power3.out' }, '-=0.5')
-        .to('.hero-image',    { autoAlpha: 1,              duration: 1.4, ease: 'power2.out' }, '-=0.9')
-        .to('.hero-badge-1',  { autoAlpha: 1, x: 0,        duration: 0.7, ease: 'back.out(1.4)' }, '-=0.6')
-        .to('.hero-badge-2',  { autoAlpha: 1, x: 0,        duration: 0.7, ease: 'back.out(1.4)' }, '-=0.5')
-        .to('.hero-stat',     { autoAlpha: 1, y: 0,        duration: 0.8, ease: 'power3.out', stagger: 0.08 }, '-=0.5')
-        .to('.hero-scroll',   { autoAlpha: 1, y: 0,        duration: 0.7, ease: 'power3.out' }, '-=0.3')
-        .to('.hero-marquee',  { autoAlpha: 1, y: 0,        duration: 0.6, ease: 'power3.out' }, '-=0.5');
-
-
-
-      /* Floating image bob */
-      gsap.to(imageRef.current, {
-        y: -14,
-        duration: 3.5,
-        ease: 'sine.inOut',
-        yoyo: true,
-        repeat: -1,
-        delay: 2,
-      });
-
-      /* Shimmer sweep */
-      const shimmer = () => {
-        gsap.fromTo('.hero-shimmer',
-          { top: '-2px', opacity: 0 },
-          { top: '102%', opacity: 0.5, duration: 2.4, ease: 'none',
-            onComplete: () => gsap.delayedCall(4, shimmer) });
-      };
-      gsap.delayedCall(3, shimmer);
-
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
-
-
-
-  const marqueeWords = [
-    'Retouch', '✦', 'Campaign', '✦', 'Printing', '✦', 'Master KV', '✦',
-    'Retouch', '✦', 'Campaign', '✦', 'Printing', '✦', 'Master KV', '✦',
-  ];
+  const sectionRef = useRef<HTMLElement>(null);
+  useEffect(() => {}, []);
 
   return (
     <>
+      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
+        @keyframes toolIn {
+          from { opacity: 0; transform: translate(-50%,-50%) scale(0.4); }
+          to   { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+        }
+        @keyframes drift {
+          0%,100% { transform: translate(-50%,-50%) translateY(0);    }
+          50%      { transform: translate(-50%,-50%) translateY(-9px); }
+        }
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(18px); }
+          to   { opacity: 1; transform: translateY(0);    }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; } to { opacity: 1; }
+        }
+        @keyframes imageReveal {
+          from { opacity: 0; transform: translateY(24px) scale(0.96); }
+          to   { opacity: 1; transform: translateY(0)    scale(1);    }
+        }
+        @keyframes cardGlow {
+          0%,100% { box-shadow: 0 0 60px rgba(243,121,167,0.10), 0 40px 80px rgba(0,0,0,0.6); }
+          50%      { box-shadow: 0 0 90px rgba(243,121,167,0.18), 0 40px 80px rgba(0,0,0,0.6); }
+        }
+        @keyframes orbitSpin {
+          to { transform: translate(-50%,-50%) rotate(360deg); }
+        }
+        @keyframes badgePulse {
+          0%,100% { opacity:1; box-shadow: 0 0 7px #f379a7; }
+          50%      { opacity:.4; box-shadow: 0 0 2px #f379a7; }
+        }
+        @keyframes scrollAnim {
+          0%   { transform: scaleY(0); transform-origin: top; }
+          50%  { transform: scaleY(1); transform-origin: top; }
+          51%  { transform: scaleY(1); transform-origin: bottom; }
+          100% { transform: scaleY(0); transform-origin: bottom; }
+        }
+
+        .badge-dot  { animation: badgePulse 2s infinite; }
+        .scroll-bar { animation: scrollAnim 2.2s ease-in-out infinite; }
+        .hero-em    { color: #f8a9c9; font-style: normal; font-weight: 500; }
+      `}</style>
 
       <section
         ref={sectionRef}
-        id="hero"
-        className="relative min-h-screen w-full overflow-hidden bg-[#080604] cursor-none flex flex-col"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#030202]"
+        style={{ fontFamily: "'Poppins', sans-serif" }}
       >
-        {/* ── Canvas background ── */}
-        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
+        {/* ── Background glow ─────────────────────────────────── */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          aria-hidden="true"
+          style={{
+            background: `
+              radial-gradient(ellipse 50% 60% at 50% 52%, rgba(243,121,167,0.09) 0%, transparent 65%),
+              radial-gradient(ellipse 25% 35% at 15% 85%, rgba(243,121,167,0.04) 0%, transparent 55%)
+            `,
+          }}
+        />
+        {/* subtle grid */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          aria-hidden="true"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(243,121,167,0.022) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(243,121,167,0.022) 1px, transparent 1px)
+            `,
+            backgroundSize: "64px 64px",
+          }}
+        />
 
-        {/* ── Background texture layers ── */}
-        <div className="absolute inset-0 pointer-events-none">
-          {/* Radial glow behind image */}
-          <div className="absolute top-0 right-0 w-[65%] h-full bg-[radial-gradient(ellipse_70%_80%_at_80%_50%,rgba(201,169,110,0.055)_0%,transparent_65%)]" />
-          {/* Subtle grain overlay */}
-          <div
-            className="absolute inset-0 opacity-[0.025]"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-              backgroundSize: '200px 200px',
-            }}
-          />
-          {/* Fine horizontal lines */}
-          <div
-            className="absolute inset-0 opacity-[0.018]"
-            style={{ backgroundImage: 'repeating-linear-gradient(0deg,transparent,transparent 60px,rgba(201,169,110,1) 60px,rgba(201,169,110,1) 61px)' }}
-          />
-          {/* Left vignette */}
-          <div className="absolute left-0 top-0 h-full w-[30%] bg-gradient-to-r from-[#080604]/80 to-transparent" />
-          {/* Bottom fade */}
-          <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#080604] to-transparent" />
-        </div>
-
-        {/* ── MAIN CONTENT ── */}
-        <motion.div
-          style={{ y: yText, opacity }}
-          className="relative z-10 flex-1 grid grid-cols-1 md:grid-cols-[1fr_auto] items-center px-8 md:px-20 pt-36 pb-20 gap-12"
+        {/* ── LAYOUT ──────────────────────────────────────────── */}
+        <div
+          className="relative z-10 w-full max-w-[1180px] mx-auto px-8
+                        grid grid-cols-[1fr_auto_1fr] items-center gap-0"
+          style={{ minHeight: "100vh" }}
         >
-          {/* LEFT: Typography */}
-          <div className="flex flex-col max-w-[600px]">
-            {/* Eyebrow */}
-            <div className="hero-eyebrow flex items-center gap-4 mb-10">
-              <div className="flex items-center gap-2">
-                <span className="w-8 h-px bg-[#C9A96E]/70" />
-                <div className="w-1 h-1 bg-[#C9A96E] rounded-full" />
-              </div>
-              <span
-                className="text-[#C9A96E]/80 text-[10px] tracking-[0.5em] uppercase"
-                style={{ fontFamily: "'Cormorant Garamond', serif" }}
-              >
-                Visual Designer & Brand Strategist
-              </span>
-            </div>
-
-            {/* Main heading */}
-            <div className="overflow-hidden mb-1">
-              <span
-                className="hero-name-1 block text-[clamp(54px,8vw,96px)] font-bold text-[#F5EDD6] leading-[0.95]"
-                style={{ fontFamily: "'Playfair Display', serif" }}
-              >
-                Crafting
-              </span>
-            </div>
-            <div className="overflow-hidden mb-2">
-              <span
-                className="hero-name-2 block text-[clamp(54px,8vw,96px)] font-bold italic text-[#C9A96E] leading-[0.95]"
-                style={{ fontFamily: "'Playfair Display', serif" }}
-              >
-                Brands
-              </span>
-            </div>
-            <div className="overflow-hidden mb-10">
-              <span
-                className="hero-name-1 block text-[clamp(54px,8vw,96px)] font-bold text-[#F5EDD6] leading-[0.95] opacity-30"
-                style={{ fontFamily: "'Playfair Display', serif" }}
-              >
-                that speak.
-              </span>
-            </div>
-
-            {/* Divider line */}
+          {/* ── LEFT: Name + tagline ──────────────────────── */}
+          <div
+            className="flex flex-col gap-5 pr-8"
+            style={{ animation: "fadeUp 0.65s 0.2s ease both" }}
+          >
+            {/* badge */}
             <div
-              className="hero-line w-full max-w-[340px] h-px mb-10"
+              className="inline-flex items-center gap-2 text-[10.5px] font-medium
+                            tracking-[0.2em] uppercase text-[#f379a7]
+                            border border-[rgba(243,121,167,0.22)] rounded-full
+                            px-4 py-1.5 w-fit"
+            >
+              <span
+                className="badge-dot w-1.5 h-1.5 rounded-full bg-[#f379a7]"
+                style={{ boxShadow: "0 0 7px #f379a7" }}
+              />
+              Visual Artist &amp; Designer
+            </div>
+
+            {/* name */}
+            <div className="flex items-end gap-1.5 leading-none select-none  my-12">
+              {/* The "N" with Aston Script Bold */}
+              <span
+                className={`${astonScript.className} text-[90px] leading-none text-[#f379a7]`}
+                style={{
+                  textShadow: "0 0 20px rgba(243,121,167,0.45)",
+                }}
+              >
+                N
+              </span>
+              <div>
+                <span className="block text-[64px] font-bold tracking-[-2.5px] text-white leading-[0.88]">
+                  oran
+                </span>
+                <span className="block text-[26px] font-light tracking-[0.16em] text-[#f8a9c9] uppercase mt-2">
+                  ELgeneady
+                </span>
+              </div>
+            </div>
+
+            {/* divider + role */}
+            <div className="flex items-center gap-3">
+              <div className="w-7 h-px bg-[#f379a7] opacity-50" />
+              <span className="text-[11px] tracking-[0.22em] uppercase text-[#f379a7] opacity-70">
+                Graphic Designer
+              </span>
+            </div>
+
+            {/* stats */}
+            <div
+              className="flex items-center gap-0 mt-4 pt-5
+                            border-t border-[rgba(243,121,167,0.14)]"
+            >
+              {[
+                { num: "50+", label: "Projects" },
+                { num: "3+", label: "Years" },
+                { num: "30+", label: "Clients" },
+              ].map((s, i) => (
+                <div key={s.label} className="flex items-center">
+                  <div className="px-6 first:pl-0">
+                    <span className="block text-[30px] font-bold text-[#f379a7] leading-none">
+                      {s.num}
+                    </span>
+                    <span className="block text-[9.5px] tracking-[0.15em] text-[rgba(255,191,205,0.4)] uppercase mt-1">
+                      {s.label}
+                    </span>
+                  </div>
+                  {i < 2 && (
+                    <div className="w-px h-8 bg-[rgba(243,121,167,0.18)]" />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── CENTER: Card + image overflow + orbit icons ── */}
+          <div
+            className="relative flex items-end justify-center"
+            style={{ width: 360, height: "88vh" }}
+          >
+            {/* orbit ring — single clean dashed circle */}
+            <div
+              className="absolute"
               style={{
-                background: 'linear-gradient(90deg, #C9A96E 0%, rgba(201,169,110,0.3) 60%, transparent 100%)',
-                transform: 'scaleX(0)',
+                width: 500,
+                height: 500,
+                left: "50%",
+                top: "50%",
+                transform: "translate(-50%,-50%)",
+                animation: "orbitSpin 40s linear infinite",
+                pointerEvents: "none",
+              }}
+              aria-hidden="true"
+            >
+              <svg width="500" height="500" viewBox="0 0 500 500">
+                <circle
+                  cx="250"
+                  cy="250"
+                  r="240"
+                  fill="none"
+                  stroke="rgba(243,121,167,0.10)"
+                  strokeWidth="1"
+                  strokeDasharray="4 20"
+                />
+              </svg>
+            </div>
+
+            {/* static faint inner ring */}
+            <div
+              className="absolute pointer-events-none"
+              aria-hidden="true"
+              style={{
+                width: 320,
+                height: 320,
+                left: "50%",
+                top: "50%",
+                transform: "translate(-50%,-50%)",
+                border: "1px solid rgba(243,121,167,0.06)",
+                borderRadius: "50%",
               }}
             />
 
-            {/* Sub copy */}
-            <p
-              className="hero-sub text-[#E8DCC8]/60 text-[17px] leading-relaxed max-w-[420px] mb-12"
-              style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300 }}
+            {/* glow behind card */}
+            <div
+              className="absolute pointer-events-none"
+              aria-hidden="true"
+              style={{
+                width: 320,
+                height: 420,
+                left: "50%",
+                bottom: "5%",
+                transform: "translateX(-50%)",
+                background:
+                  "radial-gradient(ellipse 80% 60% at 50% 80%, rgba(243,121,167,0.18) 0%, transparent 70%)",
+              }}
+            />
+
+            {/* ── CARD ── */}
+            <div
+              className="relative z-20 overflow-visible"
+              style={{
+                width: 300,
+                height: 420,
+                borderRadius: 32,
+                animation:
+                  "imageReveal 0.9s 0.1s cubic-bezier(0.34,1.1,0.64,1) both, cardGlow 5s 1s ease-in-out infinite",
+              }}
             >
-              I design visuals that don't just look good — they convert,
-              communicate, and position your brand where it deserves to be.
+              {/* card body */}
+              <div
+                className="absolute inset-0 rounded-[32px]"
+                style={{
+                  background:
+                    "linear-gradient(160deg, rgba(30,12,20,0.95) 0%, rgba(10,4,7,0.98) 100%)",
+                  border: "1px solid rgba(243,121,167,0.16)",
+                }}
+              />
+
+              {/* top shimmer on card edge */}
+              <div
+                className="absolute inset-x-0 top-0 h-px rounded-t-[32px] pointer-events-none"
+                style={{
+                  background:
+                    "linear-gradient(90deg, transparent, rgba(243,121,167,0.35), transparent)",
+                }}
+              />
+
+              {/* ── IMAGE — overflows top of card ── */}
+              <div
+                className="absolute left-0 right-0 overflow-visible"
+                style={{
+                  bottom: 0,
+                  height: 520 /* taller than card → image pokes above */,
+                  zIndex: 10,
+                }}
+              >
+                <Image
+                  src="/noran.png"
+                  alt="Noran ELgeneady"
+                  fill
+                  priority
+                  className="object-cover object-top"
+                  style={{
+                    maskImage:
+                      "linear-gradient(to top, transparent 0%, black 12%, black 82%, transparent 100%)",
+                    WebkitMaskImage:
+                      "linear-gradient(to top, transparent 0%, black 12%, black 82%, transparent 100%)",
+                    borderRadius: "0 0 32px 32px",
+                  }}
+                />
+              </div>
+
+              {/* card bottom info strip */}
+              <div
+                className="absolute bottom-0 left-0 right-0 z-20 px-6 pb-5 pt-14 rounded-b-[32px]"
+                style={{
+                  background:
+                    "linear-gradient(to top, rgba(8,3,6,0.95) 60%, transparent)",
+                }}
+              >
+                <p className="text-[11px] font-light leading-[1.75] text-[rgba(255,191,205,0.6)]">
+                  Visuals that bring{" "}
+                  <span className="hero-em">brands to life</span> and turn ideas
+                  into <span className="hero-em">impact</span>.
+                </p>
+              </div>
+            </div>
+
+            {/* ── FLOATING TOOL BADGES around the center ── */}
+            {TOOLS.map((tool) => (
+              <ToolBadge key={tool.key} tool={tool} />
+            ))}
+          </div>
+
+          {/* ── RIGHT: desc + CTAs ─────────────────────────── */}
+          <div
+            className="flex flex-col gap-6 pl-8"
+            style={{ animation: "fadeUp 0.65s 0.35s ease both" }}
+          >
+            {/* tagline */}
+            <p className="text-[13px] font-light leading-[2] text-[rgba(255,191,205,0.6)] max-w-[240px]">
+              I don&apos;t just design — I craft{" "}
+              <span className="hero-em">experiences</span> that make brands
+              unforgettable.
             </p>
 
             {/* CTAs */}
-            <div className="hero-cta flex items-center gap-5 mb-16">
-              <a
+            <div className="flex flex-col gap-3">
+              <Link
                 href="#work"
-                className="hero-cta-btn group relative flex items-center gap-3 px-7 py-4 bg-[#C9A96E] text-[#0D0A05] text-[11px] tracking-[0.3em] uppercase overflow-hidden transition-all duration-500"
-                style={{ fontFamily: "'Cormorant Garamond', serif" }}
+                className="inline-flex items-center gap-2 bg-[#f379a7] text-[#030202]
+                           text-[12px] font-semibold tracking-wide
+                           px-7 py-3.5 rounded-full w-fit
+                           transition-all duration-300
+                           hover:bg-[#f8a9c9] hover:-translate-y-0.5
+                           hover:shadow-[0_8px_28px_rgba(243,121,167,0.35)]"
               >
-                <span className="relative z-10 font-semibold">View Work</span>
-                <svg className="relative z-10 w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" viewBox="0 0 16 16" fill="none">
-                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
-                <div className="absolute inset-0 bg-[#F5EDD6] translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]" />
-              </a>
-
-              <a
+                View My Work
+              </Link>
+              <Link
                 href="#contact"
-                className="hero-cta-btn group flex items-center gap-3 px-7 py-4 border border-[#C9A96E]/30 text-[#C9A96E] text-[11px] tracking-[0.3em] uppercase hover:border-[#C9A96E]/70 transition-all duration-400"
-                style={{ fontFamily: "'Cormorant Garamond', serif" }}
+                className="inline-flex items-center gap-2 text-[#ffbfcd]
+                           text-[12px] font-normal tracking-wide
+                           px-7 py-3.5 rounded-full w-fit
+                           border border-[rgba(243,121,167,0.22)]
+                           transition-all duration-300
+                           hover:border-[#f379a7] hover:text-[#f379a7]"
               >
-                <span>Let's Talk</span>
-              </a>
+                Let&apos;s Talk
+              </Link>
             </div>
 
+            {/* social */}
+            <div className="flex items-center gap-3 mt-2">
+              {[
+                {
+                  label: "Behance",
+                  href: "#",
+                  icon: (
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="w-3.5 h-3.5"
+                    >
+                      <path d="M22 7h-7v-2h7v2zm1.726 10c-.442 1.297-2.029 3-5.101 3-3.074 0-5.564-1.729-5.564-5.675 0-3.91 2.325-5.92 5.466-5.92 3.082 0 4.964 1.782 5.375 4.426.078.506.109 1.188.095 2.14H15.97c.13 3.211 3.483 3.312 4.588 2.029H23.7zm-7.441-3h4.917c-.048-1.741-1.249-2.93-2.425-2.93-1.326 0-2.315.89-2.492 2.93zm-5.408-6.4c2.443-.188 3.912.49 4.516 2.029.228.585.307 1.282.307 2.152 0 .839-.075 1.517-.218 2.032C14.807 15.46 13.208 16 11.38 16H4V7.6h6.877zm-4.08 5.9h3.4c1.504 0 2.332-.668 2.332-2.07 0-1.385-.885-2.03-2.305-2.03h-3.427v4.1z" />
+                    </svg>
+                  ),
+                },
+                {
+                  label: "Instagram",
+                  href: "#",
+                  icon: (
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="w-3.5 h-3.5"
+                    >
+                      <rect x="2" y="2" width="20" height="20" rx="5" />
+                      <circle cx="12" cy="12" r="4" />
+                      <circle
+                        cx="17.5"
+                        cy="6.5"
+                        r="0.5"
+                        fill="currentColor"
+                        stroke="none"
+                      />
+                    </svg>
+                  ),
+                },
+                {
+                  label: "LinkedIn",
+                  href: "#",
+                  icon: (
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="w-3.5 h-3.5"
+                    >
+                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                    </svg>
+                  ),
+                },
+              ].map((s) => (
+                <Link
+                  key={s.label}
+                  href={s.href}
+                  aria-label={s.label}
+                  className="w-8 h-8 rounded-full border border-[rgba(243,121,167,0.2)]
+                             flex items-center justify-center
+                             text-[rgba(243,121,167,0.45)]
+                             transition-all duration-300
+                             hover:border-[#f379a7] hover:text-[#f379a7] hover:scale-110"
+                >
+                  {s.icon}
+                </Link>
+              ))}
+            </div>
           </div>
+        </div>
 
-          {/* RIGHT: Portrait */}
-          <motion.div
-            style={{ y: yImage }}
-            className="hidden md:flex items-center justify-center relative"
-          >
-            {/* Outer decorative frame container */}
-            <div className="relative w-[340px] h-[480px] md:w-[380px] md:h-[520px]">
-
-              {/* Orbiting corner accents */}
-              <div className="absolute -top-4 -left-4 w-16 h-16 border-t border-l border-[#C9A96E]/50" />
-              <div className="absolute -bottom-4 -right-4 w-16 h-16 border-b border-r border-[#C9A96E]/50" />
-              <div className="absolute -top-4 -right-4 w-6 h-6 border-t border-r border-[#C9A96E]/20" />
-              <div className="absolute -bottom-4 -left-4 w-6 h-6 border-b border-l border-[#C9A96E]/20" />
-
-              {/* Glow halo behind image */}
-              <div
-                className="absolute inset-0 rounded-[2px]"
-                style={{ boxShadow: '0 0 80px rgba(201,169,110,0.10), 0 0 160px rgba(201,169,110,0.05)' }}
-              />
-
-              {/* Image */}
-              <div ref={imageRef} className="hero-image relative w-full h-full">
-                <Image
-                  src="/landing.png"
-                  alt="Noran Elgeneady — Visual Designer"
-                  fill
-                  className="object-cover object-left"
-                  priority
-                  onLoad={() => setLoaded(true)}
-                />
-
-                {/* Image overlay gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#080604]/50 via-transparent to-transparent pointer-events-none" />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#080604]/20 via-transparent to-transparent pointer-events-none" />
-
-                {/* Shimmer sweep */}
-                <div
-                  className="hero-shimmer absolute left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#C9A96E] to-transparent z-10"
-                  style={{ top: '-2px' }}
-                />
-              </div>
-
-              {/* Badge: role */}
-              <div className="hero-badge-1 absolute -left-14 top-[22%] bg-[rgba(8,6,4,0.92)] border border-[#C9A96E]/20 backdrop-blur-sm py-3 px-4 z-10">
-                <div
-                  className="text-[10px] text-[#C9A96E] tracking-[0.35em] uppercase mb-0.5"
-                  style={{ fontFamily: "'Cormorant Garamond', serif" }}
-                >
-                  Visual Designer
-                </div>
-                <div
-                  className="text-[9px] text-[#E8DCC8]/35 tracking-[0.25em] uppercase"
-                  style={{ fontFamily: "'Cormorant Garamond', serif" }}
-                >
-                  Brand & Identity
-                </div>
-              </div>
-
-              {/* Badge: availability */}
-              <div className="hero-badge-2 absolute -right-12 bottom-[22%] bg-[rgba(8,6,4,0.92)] border border-[#C9A96E]/20 backdrop-blur-sm py-3 px-4 z-10">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span
-                    className="text-[10px] text-[#E8DCC8]/70 tracking-[0.3em] uppercase"
-                    style={{ fontFamily: "'Cormorant Garamond', serif" }}
-                  >
-                    Available
-                  </span>
-                </div>
-                <div
-                  className="text-[9px] text-[#E8DCC8]/30 tracking-[0.2em] uppercase"
-                  style={{ fontFamily: "'Cormorant Garamond', serif" }}
-                >
-                  Open to projects
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
-
-        {/* ── Scroll indicator ── */}
-        <motion.div
-          style={{ opacity }}
-          className="hero-scroll absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3"
+        {/* ── SCROLL INDICATOR ── */}
+        <div
+          className="absolute bottom-7 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20"
+          style={{ animation: "fadeIn 1s 1.2s ease both" }}
+          aria-hidden="true"
         >
+          <div className="scroll-bar w-px h-9 bg-gradient-to-b from-[rgba(243,121,167,0.45)] to-transparent" />
           <span
-            className="text-[#E8DCC8]/25 text-[9px] tracking-[0.45em] uppercase"
-            style={{ fontFamily: "'Cormorant Garamond', serif" }}
+            className="text-[8.5px] tracking-[0.24em] uppercase text-[rgba(243,121,167,0.35)]"
+            style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
           >
             Scroll
           </span>
-          <div className="w-px h-10 bg-gradient-to-b from-[#C9A96E]/50 to-transparent relative overflow-hidden">
-            <div
-              className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-[#C9A96E] to-transparent"
-              style={{ animation: 'scrollLine 1.8s ease-in-out infinite' }}
-            />
-          </div>
-          <style>{`
-            @keyframes scrollLine {
-              0%   { transform: translateY(-100%); opacity: 0; }
-              30%  { opacity: 1; }
-              100% { transform: translateY(100%); opacity: 0; }
-            }
-          `}</style>
-        </motion.div>
-
-        {/* ── Marquee strip ── */}
-        <div className="hero-marquee relative z-10 border-t border-[#C9A96E]/8 py-4 overflow-hidden bg-[#080604]/60 backdrop-blur-sm">
-          <div
-            className="flex items-center gap-8 whitespace-nowrap"
-            style={{ animation: 'marquee 22s linear infinite' }}
-          >
-            {[...marqueeWords, ...marqueeWords].map((w, i) => (
-              <span
-                key={i}
-                className={`text-[11px] tracking-[0.35em] uppercase ${w === '✦' ? 'text-[#C9A96E]/60 text-[8px]' : 'text-[#E8DCC8]/20'}`}
-                style={{ fontFamily: "'Cormorant Garamond', serif" }}
-              >
-                {w}
-              </span>
-            ))}
-          </div>
-          <style>{`
-            @keyframes marquee {
-              0%   { transform: translateX(0); }
-              100% { transform: translateX(-50%); }
-            }
-          `}</style>
         </div>
       </section>
     </>
