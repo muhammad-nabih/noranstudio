@@ -1,309 +1,142 @@
-'use client'
-import styled from 'styled-components';
+"use client";
 
-const Loader = () => {
-  return (
-    <Overlay>
-      <StyledWrapper>
-        <div aria-label="Golden hamster running in a wheel" role="img" className="wheel-and-hamster">
-          <div className="wheel" />
-          <div className="hamster">
-            <div className="hamster__body">
-              <div className="hamster__head">
-                <div className="hamster__ear" />
-                <div className="hamster__eye" />
-                <div className="hamster__nose" />
-              </div>
-              <div className="hamster__limb hamster__limb--fr" />
-              <div className="hamster__limb hamster__limb--fl" />
-              <div className="hamster__limb hamster__limb--br" />
-              <div className="hamster__limb hamster__limb--bl" />
-              <div className="hamster__tail" />
-            </div>
-          </div>
-          <div className="spoke" />
-        </div>
-      </StyledWrapper>
-    </Overlay>
-  );
+import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { gsap } from "gsap";
+
+interface LoaderProps {
+  onComplete?: () => void;
+  /** How long to hold the closed curtain before opening (ms). Default 600 */
+  duration?: number;
 }
 
-const Overlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #0D0D0D; /* Obsidian black */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-`;
+export default function Loader({ onComplete, duration = 600 }: LoaderProps) {
+  const [phase, setPhase] = useState<"hold" | "open" | "reveal" | "exit">(
+    "hold",
+  );
+  const shimmerRef = useRef<HTMLDivElement>(null);
 
-const StyledWrapper = styled.div`
-  .wheel-and-hamster {
-    --dur: 1s;
-    position: relative;
-    width: 12em;
-    height: 12em;
-    font-size: 14px;
-  }
+  // ── Timeline ──────────────────────────────────────────────────────────────
+  useEffect(() => {
+    const t1 = setTimeout(() => setPhase("open"), duration);
+    const t2 = setTimeout(() => setPhase("reveal"), duration + 1100);
+    const t3 = setTimeout(() => setPhase("exit"), duration + 2400);
+    const t4 = setTimeout(() => onComplete?.(), duration + 3050);
+    return () => [t1, t2, t3, t4].forEach(clearTimeout);
+  }, [duration, onComplete]);
 
-  .wheel,
-  .hamster,
-  .hamster div,
-  .spoke {
-    position: absolute;
-  }
+  // ── GSAP shimmer sweep ────────────────────────────────────────────────────
+  useEffect(() => {
+    if (phase !== "reveal" || !shimmerRef.current) return;
+    gsap.fromTo(
+      shimmerRef.current,
+      { x: "-110%", opacity: 1 },
+      {
+        x: "260%",
+        opacity: 1,
+        duration: 1.5,
+        ease: "power2.inOut",
+        delay: 0.35,
+      },
+    );
+  }, [phase]);
 
-  .wheel,
-  .spoke {
-    border-radius: 50%;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
+  // ── Framer variants ───────────────────────────────────────────────────────
+  const ease = [0.76, 0, 0.24, 1] as const;
 
-  .wheel {
-    /* Golden gradient with cream highlight */
-    background: radial-gradient(100% 100% at center, hsla(0,0%,0%,0) 47.8%, #C9A96E 48%);
-    z-index: 2;
-  }
+  const curtainL = {
+    hold: { x: "0%" },
+    open: { x: "-101%", transition: { duration: 1.1, ease } },
+    reveal: { x: "-101%" },
+    exit: { x: "-101%" },
+  };
+  const curtainR = {
+    hold: { x: "0%" },
+    open: { x: "101%", transition: { duration: 1.1, ease } },
+    reveal: { x: "101%" },
+    exit: { x: "101%" },
+  };
 
-  .hamster {
-    animation: hamster var(--dur) ease-in-out infinite;
-    top: 50%;
-    left: calc(50% - 3.5em);
-    width: 7em;
-    height: 3.75em;
-    transform: rotate(4deg) translate(-0.8em, 1.85em);
-    transform-origin: 50% 0;
-    z-index: 1;
-  }
+  const folds = [25, 50, 75];
 
-  .hamster__head {
-    animation: hamsterHead var(--dur) ease-in-out infinite;
-    background: #C9A96E; /* Warm gold */
-    border-radius: 70% 30% 0 100% / 40% 25% 25% 60%;
-    box-shadow: 0 -0.25em 0 #8B7355 inset,   /* Bronze shadow */
-                0.75em -1.55em 0 #E8DCC8 inset; /* Cream highlight */
-    top: 0;
-    left: -2em;
-    width: 2.75em;
-    height: 2.5em;
-    transform-origin: 100% 50%;
-  }
+  return (
+    <AnimatePresence>
+      <motion.div
+        key="loader"
+        className="fixed inset-0 z-[9999] flex items-center justify-center bg-black overflow-hidden"
+        animate={{ opacity: phase === "exit" ? 0 : 1 }}
+        transition={{ duration: 0.65, ease: "easeInOut" }}
+      >
+        {/* ── Left curtain ── */}
+        <motion.div
+          className="absolute inset-y-0 left-0 w-1/2 bg-[#0d0d0d]"
+          variants={curtainL}
+          animate={phase}
+        >
+          {folds.map((p) => (
+            <div
+              key={p}
+              className="absolute top-0 h-full w-px bg-white/[0.025]"
+              style={{ left: `${p}%` }}
+            />
+          ))}
+          {/* seam */}
+          <div className="absolute inset-y-0 right-0 w-px bg-white/[0.05]" />
+        </motion.div>
 
-  .hamster__ear {
-    animation: hamsterEar var(--dur) ease-in-out infinite;
-    background: #8B7355; /* Bronze */
-    border-radius: 50%;
-    box-shadow: -0.25em 0 #C9A96E inset;
-    top: -0.25em;
-    right: -0.25em;
-    width: 0.75em;
-    height: 0.75em;
-    transform-origin: 50% 75%;
-  }
+        {/* ── Right curtain ── */}
+        <motion.div
+          className="absolute inset-y-0 right-0 w-1/2 bg-[#0d0d0d]"
+          variants={curtainR}
+          animate={phase}
+        >
+          {folds.map((p) => (
+            <div
+              key={p}
+              className="absolute top-0 h-full w-px bg-white/[0.025]"
+              style={{ left: `${p}%` }}
+            />
+          ))}
+          {/* seam */}
+          <div className="absolute inset-y-0 left-0 w-px bg-white/[0.05]" />
+        </motion.div>
 
-  .hamster__eye {
-    animation: hamsterEye var(--dur) linear infinite;
-    background-color: #0D0D0D; /* Obsidian black */
-    border-radius: 50%;
-    top: 0.375em;
-    left: 1.25em;
-    width: 0.5em;
-    height: 0.5em;
-  }
+        {/* ── Logo mark ── */}
+        <motion.div
+          className="relative z-10 flex flex-col items-center gap-3 select-none"
+          animate={{ opacity: phase === "reveal" || phase === "exit" ? 1 : 0 }}
+          transition={{ duration: 0.55, ease: "easeOut" }}
+        >
+          {/* Circle + N */}
+          <div className="relative flex items-center justify-center w-16 h-16 rounded-full border border-white/10 overflow-hidden">
+            <span
+              className="text-white leading-none"
+              style={{ fontFamily: "Georgia, serif", fontSize: "2.25rem" }}
+            >
+              N
+            </span>
 
-  .hamster__nose {
-    background: #E8DCC8; /* Aged cream */
-    border-radius: 35% 65% 85% 15% / 70% 50% 50% 30%;
-    top: 0.75em;
-    left: 0;
-    width: 0.2em;
-    height: 0.25em;
-  }
+            {/* GSAP shimmer layer */}
+            <div
+              ref={shimmerRef}
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(105deg, transparent 25%, rgba(255,255,255,0.07) 50%, transparent 75%)",
+                transform: "translateX(-110%)",
+              }}
+            />
+          </div>
 
-  .hamster__body {
-    animation: hamsterBody var(--dur) ease-in-out infinite;
-    background: #E8DCC8; /* Cream body */
-    border-radius: 50% 30% 50% 30% / 15% 60% 40% 40%;
-    box-shadow: 0.1em 0.75em 0 #C9A96E inset,   /* Gold inner glow */
-                0.15em -0.5em 0 #8B7355 inset;  /* Bronze shadow */
-    top: 0.25em;
-    left: 2em;
-    width: 4.5em;
-    height: 3em;
-    transform-origin: 17% 50%;
-    transform-style: preserve-3d;
-  }
-
-  .hamster__limb--fr,
-  .hamster__limb--fl {
-    clip-path: polygon(0 0, 100% 0, 70% 80%, 60% 100%, 0% 100%, 40% 80%);
-    top: 2em;
-    left: 0.5em;
-    width: 1em;
-    height: 1.5em;
-    transform-origin: 50% 0;
-  }
-
-  .hamster__limb--fr {
-    animation: hamsterFRLimb var(--dur) linear infinite;
-    background: linear-gradient(#E8DCC8 80%, #C9A96E 80%);
-    transform: rotate(15deg) translateZ(-1px);
-  }
-
-  .hamster__limb--fl {
-    animation: hamsterFLLimb var(--dur) linear infinite;
-    background: linear-gradient(#FFFFFF 80%, #8B7355 80%);
-    transform: rotate(15deg);
-  }
-
-  .hamster__limb--br,
-  .hamster__limb--bl {
-    border-radius: 0.75em 0.75em 0 0;
-    clip-path: polygon(0 0, 100% 0, 100% 30%, 70% 90%, 70% 100%, 30% 100%, 40% 90%, 0% 30%);
-    top: 1em;
-    left: 2.8em;
-    width: 1.5em;
-    height: 2.5em;
-    transform-origin: 50% 30%;
-  }
-
-  .hamster__limb--br {
-    animation: hamsterBRLimb var(--dur) linear infinite;
-    background: linear-gradient(#E8DCC8 90%, #C9A96E 90%);
-    transform: rotate(-25deg) translateZ(-1px);
-  }
-
-  .hamster__limb--bl {
-    animation: hamsterBLLimb var(--dur) linear infinite;
-    background: linear-gradient(#FFFFFF 90%, #8B7355 90%);
-    transform: rotate(-25deg);
-  }
-
-  .hamster__tail {
-    animation: hamsterTail var(--dur) linear infinite;
-    background: #8B7355; /* Bronze */
-    border-radius: 0.25em 50% 50% 0.25em;
-    box-shadow: 0 -0.2em 0 #C9A96E inset;
-    top: 1.5em;
-    right: -0.5em;
-    width: 1em;
-    height: 0.5em;
-    transform: rotate(30deg) translateZ(-1px);
-    transform-origin: 0.25em 0.25em;
-  }
-
-  .spoke {
-    animation: spoke var(--dur) linear infinite;
-    background: radial-gradient(100% 100% at center, #C9A96E 4.8%, hsla(0,0%,0%,0) 5%),
-                linear-gradient(hsla(0,0%,0%,0) 46.9%, #E8DCC8 47% 52.9%, hsla(0,0%,0%,0) 53%) 50% 50% / 99% 99% no-repeat;
-  }
-
-  /* Keyframes unchanged (same animation logic) */
-  @keyframes hamster {
-    from, to {
-      transform: rotate(4deg) translate(-0.8em, 1.85em);
-    }
-    50% {
-      transform: rotate(0) translate(-0.8em, 1.85em);
-    }
-  }
-
-  @keyframes hamsterHead {
-    from, 25%, 50%, 75%, to {
-      transform: rotate(0);
-    }
-    12.5%, 37.5%, 62.5%, 87.5% {
-      transform: rotate(8deg);
-    }
-  }
-
-  @keyframes hamsterEye {
-    from, 90%, to {
-      transform: scaleY(1);
-    }
-    95% {
-      transform: scaleY(0);
-    }
-  }
-
-  @keyframes hamsterEar {
-    from, 25%, 50%, 75%, to {
-      transform: rotate(0);
-    }
-    12.5%, 37.5%, 62.5%, 87.5% {
-      transform: rotate(12deg);
-    }
-  }
-
-  @keyframes hamsterBody {
-    from, 25%, 50%, 75%, to {
-      transform: rotate(0);
-    }
-    12.5%, 37.5%, 62.5%, 87.5% {
-      transform: rotate(-2deg);
-    }
-  }
-
-  @keyframes hamsterFRLimb {
-    from, 25%, 50%, 75%, to {
-      transform: rotate(50deg) translateZ(-1px);
-    }
-    12.5%, 37.5%, 62.5%, 87.5% {
-      transform: rotate(-30deg) translateZ(-1px);
-    }
-  }
-
-  @keyframes hamsterFLLimb {
-    from, 25%, 50%, 75%, to {
-      transform: rotate(-30deg);
-    }
-    12.5%, 37.5%, 62.5%, 87.5% {
-      transform: rotate(50deg);
-    }
-  }
-
-  @keyframes hamsterBRLimb {
-    from, 25%, 50%, 75%, to {
-      transform: rotate(-60deg) translateZ(-1px);
-    }
-    12.5%, 37.5%, 62.5%, 87.5% {
-      transform: rotate(20deg) translateZ(-1px);
-    }
-  }
-
-  @keyframes hamsterBLLimb {
-    from, 25%, 50%, 75%, to {
-      transform: rotate(20deg);
-    }
-    12.5%, 37.5%, 62.5%, 87.5% {
-      transform: rotate(-60deg);
-    }
-  }
-
-  @keyframes hamsterTail {
-    from, 25%, 50%, 75%, to {
-      transform: rotate(30deg) translateZ(-1px);
-    }
-    12.5%, 37.5%, 62.5%, 87.5% {
-      transform: rotate(10deg) translateZ(-1px);
-    }
-  }
-
-  @keyframes spoke {
-    from {
-      transform: rotate(0);
-    }
-    to {
-      transform: rotate(-1turn);
-    }
-  }
-`;
-
-export default Loader;
+          {/* Wordmark */}
+          <p
+            className="text-white/30 uppercase tracking-[0.22em]"
+            style={{ fontSize: "9px" }}
+          >
+            Noran Elgeneady
+          </p>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
