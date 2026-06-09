@@ -180,7 +180,7 @@ export default function AboutStrip() {
           className="absolute inset-[-8%] w-[116%] h-[116%]"
         >
           <Image
-            src="/NORAN.png"
+            src="/noran-genedy.png"
             alt="Noran Elgeneady"
             fill
             className="ab-portrait object-cover object-top opacity-0"

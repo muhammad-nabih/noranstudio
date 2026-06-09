@@ -458,7 +458,7 @@ export default function HeroSection() {
                 }}
               >
                 <Image
-                  src="/noran.png"
+                  src="/noran-genedy.png"
                   alt="Noran ELgeneady"
                   fill
                   priority
