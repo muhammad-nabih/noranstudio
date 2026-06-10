@@ -1,0 +1,98 @@
+{
+    "projectName": "Brew & Soul – Coffee House Identity",
+    "slug": { "_type": "slug", "current": "brew-soul-coffee-identity" },
+    "projectType": "Brand Identity · Packaging · Art Direction",
+    "role": "Lead Designer (Freelance)",
+    "year": "2024",
+    "duration": "8 weeks",
+    "summary": "أعدنا تصور هوية مقهى محلي ليصبح علامة جريئة، دافئة وذات طابع حرفي. ارتفعت ولاء العملاء بنسبة 40% خلال 3 أشهر.",
+    "heroImage": {
+      "_type": "image",
+      "asset": { "_ref": "image-abc123-..." },
+      "alt": "Brew & Soul storefront with new branding",
+      "caption": "الواجهة النهائية للمقهى – لافتة خشبية مع شعار محفور"
+    },
+    "heroVideo": "https://www.youtube.com/watch?v=example",
+    "tags": ["Brand Identity", "Packaging", "Art Direction", "Hospitality"],
+  
+    "problemTitle": "علامة بلا شخصية ولا ثقة",
+    "problemContext": "كان للمقهى شعار عام ومزج ألوان عشوائي، لا يعكس جودة القهوة المتخصصة ولا الأجواء المجتمعية. العملاء لا يتذكرون العلامة، والمبيعات المتكررة ضعيفة.",
+    "clientQuote": "كنا نبدو مثل أي مقهى آخر – نحتاج شيئاً يشبه روحنا الحقيقية.",
+    "problemImages": [
+      {
+        "_type": "image",
+        "asset": { "_ref": "image-old-logo..." },
+        "alt": "الشعار القديم للمقهى",
+        "caption": "الهوية السابقة – بلا تركيز ولا قصة"
+      }
+    ],
+  
+    "moodBoardImages": [
+      { "_type": "image", "asset": { "_ref": "mood1..." }, "alt": "ألوان ترابية وصور لحبوب قهوة" },
+      { "_type": "image", "asset": { "_ref": "mood2..." }, "alt": "طباعة يدوية وخامات طبيعية" }
+    ],
+    "keywords": ["حرفي", "دافئ", "جريء", "بسيط", "أصيل"],
+    "competitors": [
+      {
+        "name": "Starbucks",
+        "strength": "حضور عالمي وولاء للعلامة",
+        "weakness": "يفتقر إلى الطابع المحلي والحرفي",
+        "image": { "_type": "image", "asset": { "_ref": "comp1..." } }
+      },
+      {
+        "name": "Local Roaster X",
+        "strength": "قهوة ممتازة",
+        "weakness": "تسويق ضعيف وهوية غير متسقة"
+      }
+    ],
+    "researchInsights": "أظهر الاستطلاع أن 70% من زبائن المقهى يبحثون عن 'مكان يشعرون بالانتماء له'. المنافسون إما كبار ومبعدون، أو صغار بلا هوية قوية. الفرصة كانت في بناء علامة 'مقهى الحي الحرفي'.",
+  
+    "sketchImages": [
+      { "_type": "image", "asset": { "_ref": "sketch1..." }, "caption": "استكشافات أولية لشكل الحرف B&S" }
+    ],
+    "processSteps": [
+      {
+        "phase": "التصور والتوجه",
+        "description": "اعتمدنا على الكلمات المفتاحية: أصالة، دفء، جرأة. صنعنا 3 لوحات مزاجية مختلفة.",
+        "images": [{ "_type": "image", "asset": { "_ref": "step1_img..." } }]
+      },
+      {
+        "phase": "تطوير الشعار",
+        "description": "اخترنا خط serif معدل مع رمز لحبة قهوة ويد تحضن الكوب. 15 تكراراً حتى النسخة النهائية."
+      }
+    ],
+    "rejectedOptions": [
+      {
+        "title": "شعار minimimalist جداً",
+        "reason": "بدا باردا ولم يعكس الدفء المطلوب، فقد كان يصلح لأي علامة تجارية تقنية.",
+        "image": { "_type": "image", "asset": { "_ref": "rej1..." } }
+      }
+    ],
+  
+    "finalImages": [
+      { "_type": "image", "asset": { "_ref": "final_logo..." }, "alt": "الشعار النهائي", "caption": "شعار B&S – تكامل الخط والرمز" },
+      { "_type": "image", "asset": { "_ref": "final_bag..." }, "alt": "حبوب القهوة", "caption": "عبوة قهوة 250gm" }
+    ],
+    "mockupImages": [
+      { "_type": "image", "asset": { "_ref": "mockup_apron..." }, "alt": "مريلة بارستا", "caption": "المريلة بتطريز الشعار" }
+    ],
+    "colorPalette": [
+      { "name": "Espresso Brown", "hex": "#3E2723", "role": "Primary – الشعار والعناوين" },
+      { "name": "Cream Latte", "hex": "#F5E6D3", "role": "خلفية ناعمة" },
+      { "name": "Copper Accent", "hex": "#B85C1A", "role": "لون مميز – أزرار و تفاصيل" }
+    ],
+    "typography": [
+      { "fontName": "Figtree", "role": "display", "weight": "700, 800", "sample": "Brew & Soul" },
+      { "fontName": "Work Sans", "role": "body", "weight": "400", "sample": "قهوة متخصصة تحضّر يومياً" }
+    ],
+    "designRationale": "اخترنا اللون البني الغامق ليعكس عمق القهوة، والكريمي الفاتح للنظافة والدفء. خط Figtree الجريء يعطي حضوراً حديثاً دون تفريط في الطابع الحرفي. النحاسي (Copper) يضيف لمسة فاخرة ومحلية.",
+  
+    "metrics": [
+      { "label": "زيادة المبيعات المتكررة", "value": "+40%", "description": "خلال 3 أشهر من الإطلاق" },
+      { "label": "نمو متابعي إنستغرام", "value": "+215%", "description": "أول شهرين" },
+      { "label": "رضا العملاء", "value": "4.9/5", "description": "بناءً على 120 تقييماً" }
+    ],
+    "clientFeedback": "الفريق متحمس جداً! ولأول مرة نشعر أن هويتنا تتحدث عنا. العملاء صاروا يصورون المنتجات وينشرونها بدون ما نطلب منهم.",
+    "lessonsLearned": "الاختبار المبكر مع 5 زبائن حقيقيين قبل التصميم النهائي أنقذنا من خيارات جميلة لكن غير مناسبة. التوثيق الجيد لأسباب كل قرار ساعد في إقناع العميل لاحقاً.",
+    "nextSteps": "تصميم تطبيق ولاء رقمي، وتوسيع الهوية إلى الملابس الموحدة والمواقع الإلكترونية للعلامة."
+  }
