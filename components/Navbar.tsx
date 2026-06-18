@@ -2,10 +2,10 @@
 // NAVIGATION (PINK THEME)
 // ═══════════════════════════════════════════════════════════════════════════════
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import cn from 'classnames';
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
+import cn from "classnames";
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -13,16 +13,17 @@ function Navbar() {
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 60);
-    window.addEventListener('scroll', fn);
-    return () => window.removeEventListener('scroll', fn);
+    window.addEventListener("scroll", fn);
+    return () => window.removeEventListener("scroll", fn);
   }, []);
 
   const navLinks = [
-    { label: 'studio',     href: '/campaigns' },
-    { label: 'Work',       href: '#work' },
-    { label: 'Services',   href: '#services' },
-    { label: 'About',      href: '#about' },
-    { label: 'Contact',    href: '#contact' },
+    { label: "studio", href: "/campaigns" },
+    { label: "Case Studies", href: "/work" },
+    { label: "Work", href: "#work" },
+    { label: "Services", href: "#services" },
+    { label: "About", href: "#about" },
+    { label: "Contact", href: "#contact" },
   ];
 
   return (
@@ -30,12 +31,16 @@ function Navbar() {
       <motion.nav
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 1.2, duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
+        transition={{
+          delay: 1.2,
+          duration: 0.9,
+          ease: [0.25, 0.46, 0.45, 0.94],
+        }}
         className={cn(
-          'fixed top-0 left-0 right-0 z-[100] px-8 md:px-20 py-5 flex items-center justify-between transition-all duration-500',
+          "fixed top-0 left-0 right-0 z-[100] px-8 md:px-20 py-5 flex items-center justify-between transition-all duration-500",
           scrolled
-            ? 'bg-background/85 backdrop-blur-2xl border-b border-primary/10'
-            : ''
+            ? "bg-background/85 backdrop-blur-2xl border-b border-primary/10"
+            : "",
         )}
       >
         {/* Logo */}
@@ -43,7 +48,9 @@ function Navbar() {
           <div className="w-8 h-8 border border-primary/60 rotate-45 group-hover:rotate-[135deg] transition-transform duration-700 flex items-center justify-center">
             <div className="w-2 h-2 bg-primary rotate-45" />
           </div>
-          <span className="text-white font-['Playfair_Display'] text-lg tracking-wide">NORAN GENEDY</span>
+          <span className="text-white font-['Playfair_Display'] text-lg tracking-wide">
+            NORAN GENEDY
+          </span>
         </Link>
 
         {/* Desktop links */}
@@ -93,9 +100,9 @@ function Navbar() {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            initial={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
-            animate={{ opacity: 1, clipPath: 'inset(0 0 0% 0)' }}
-            exit={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
+            initial={{ opacity: 0, clipPath: "inset(0 0 100% 0)" }}
+            animate={{ opacity: 1, clipPath: "inset(0 0 0% 0)" }}
+            exit={{ opacity: 0, clipPath: "inset(0 0 100% 0)" }}
             transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
             className="fixed inset-0 z-[99] bg-background/97 backdrop-blur-2xl flex flex-col items-center justify-center gap-8"
           >
