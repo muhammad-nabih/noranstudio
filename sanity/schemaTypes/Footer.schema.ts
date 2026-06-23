@@ -5,7 +5,7 @@ export const footerSchema = defineType({
   title: "Footer",
   type: "document",
   // singleton — حد واحد بس في الـ studio
-  __experimental_actions: ["update", "publish"],
+  // No __experimental_actions here; remove for valid config.
   fields: [
     // ─── CTA Section ───────────────────────────────────────────────────────
     defineField({
