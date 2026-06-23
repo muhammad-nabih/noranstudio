@@ -88,7 +88,6 @@ function SidePanel({
   const [hovered, setHovered] = useState(false);
   const hideTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  // Custom hovered state that stays visible for 6 seconds after mouse leave
   const handleMouseEnter = () => {
     if (hideTimeout.current) {
       clearTimeout(hideTimeout.current);
@@ -98,7 +97,6 @@ function SidePanel({
   };
 
   const handleMouseLeave = () => {
-    // Don't hide immediately, wait 6 seconds
     if (hideTimeout.current) {
       clearTimeout(hideTimeout.current);
     }
@@ -107,7 +105,6 @@ function SidePanel({
     }, 500);
   };
 
-  // Clean up timeout on unmount
   useEffect(() => {
     return () => {
       if (hideTimeout.current) {
@@ -128,34 +125,33 @@ function SidePanel({
   }, [hovered]);
 
   return (
-    // Outer wrapper — full-height strip on right edge
     <div
       className="fixed right-0 top-0 h-full z-50 flex items-stretch"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Trigger strip — always visible, ultra-thin */}
+      {/* Trigger strip */}
       <div
         className="w-[18px] h-full flex flex-col items-center justify-center
                    gap-[5px] cursor-pointer"
       >
-        {/* Three subtle dots hinting at the panel */}
+        {/* Three dots - using teal primary */}
         {[0.5, 1, 0.5].map((op, i) => (
           <div
             key={i}
             className="w-[3px] h-[3px] rounded-full transition-all duration-300"
             style={{
-              background: `rgba(243,121,167,${hovered ? 0 : op * 0.3})`,
+              background: `rgba(50, 90, 87,${hovered ? 0 : op * 0.4})`,
             }}
           />
         ))}
 
-        {/* Vertical line hint */}
+        {/* Vertical line hint - teal gradient */}
         <div
           className="absolute right-0 top-0 h-full w-[1px] transition-opacity duration-300"
           style={{
             background:
-              "linear-gradient(to bottom, transparent, rgba(243,121,167,0.12) 30%, rgba(243,121,167,0.12) 70%, transparent)",
+              "linear-gradient(to bottom, transparent, rgba(50,90,87,0.15) 30%, rgba(50,90,87,0.15) 70%, transparent)",
             opacity: hovered ? 0 : 1,
           }}
         />
@@ -168,14 +164,13 @@ function SidePanel({
                    py-8 px-5 w-[200px]
                    bg-background/90 backdrop-blur-xl"
         style={{
-          borderLeft: "1px solid rgba(243,121,167,0.10)",
+          borderLeft: "1px solid rgba(50, 90, 87, 0.12)",
           transform: "translateX(100%)",
           opacity: 0,
-          boxShadow: "-20px 0 60px rgba(0,0,0,0.4)",
+          boxShadow: "-20px 0 60px rgba(0,0,0,0.5)",
         }}
       >
         {/* ── Top: Back arrow ── */}
-
         <div className='my-4'>
           <Link
             href="/"
@@ -189,18 +184,18 @@ function SidePanel({
         </div>
 
         <div>
-          {/* Divider */}
+          {/* Divider - teal gradient */}
           <div
             className="w-full h-px mb-7"
             style={{
               background:
-                "linear-gradient(to right, rgba(243,121,167,0.15), transparent)",
+                "linear-gradient(to right, rgba(50,90,87,0.2), transparent)",
             }}
           />
 
           {/* ── Filter label ── */}
           <p
-            className="text-[7px] tracking-[0.55em] uppercase text-foreground/18 mb-4"
+            className="text-[7px] tracking-[0.55em] uppercase text-foreground/20 mb-4"
             style={{ fontFamily: "'Cormorant Garamond', serif" }}
           >
             Filter
@@ -220,13 +215,13 @@ function SidePanel({
                   style={{
                     fontFamily: "'Cormorant Garamond', serif",
                     border: isActive
-                      ? "1px solid rgba(243,121,167,0.55)"
-                      : "1px solid rgba(243,121,167,0.10)",
+                      ? "1px solid rgba(50, 90, 87, 0.6)"
+                      : "1px solid rgba(50, 90, 87, 0.12)",
                     color: isActive
                       ? "var(--primary)"
-                      : "rgba(255,191,205,0.3)",
+                      : "rgba(142, 169, 148, 0.4)",
                     background: isActive
-                      ? "rgba(243,121,167,0.07)"
+                      ? "rgba(50, 90, 87, 0.08)"
                       : "transparent",
                   }}
                 >
@@ -235,7 +230,7 @@ function SidePanel({
                                group-hover/pill:translate-x-0
                                transition-transform duration-400"
                     style={{
-                      background: "rgba(243,121,167,0.05)",
+                      background: "rgba(50, 90, 87, 0.06)",
                       display: isActive ? "none" : "block",
                     }}
                   />
@@ -262,14 +257,14 @@ function SidePanel({
               className="w-full h-px mb-1"
               style={{
                 background:
-                  "linear-gradient(to right, rgba(243,121,167,0.12), transparent)",
+                  "linear-gradient(to right, rgba(50,90,87,0.15), transparent)",
               }}
             />
 
             {/* Page indicator */}
             <div
               className="flex items-center gap-2 text-[8px] tracking-[0.3em]
-                         text-foreground/18"
+                         text-foreground/20"
               style={{ fontFamily: "'Cormorant Garamond', serif" }}
             >
               <span className="text-primary/50">
@@ -277,7 +272,7 @@ function SidePanel({
               </span>
               <span
                 className="w-6 h-px"
-                style={{ background: "rgba(243,121,167,0.18)" }}
+                style={{ background: "rgba(50, 90, 87, 0.2)" }}
               />
               <span>{String(totalPages).padStart(2, "0")}</span>
             </div>
@@ -292,8 +287,8 @@ function SidePanel({
                            disabled:opacity-20 disabled:cursor-not-allowed
                            hover:text-primary hover:border-primary/40"
                 style={{
-                  border: "1px solid rgba(243,121,167,0.12)",
-                  color: "rgba(255,191,205,0.3)",
+                  border: "1px solid rgba(50, 90, 87, 0.15)",
+                  color: "rgba(142, 169, 148, 0.4)",
                 }}
                 aria-label="Previous page"
               >
@@ -316,8 +311,8 @@ function SidePanel({
                            disabled:opacity-20 disabled:cursor-not-allowed
                            hover:text-primary hover:border-primary/40"
                 style={{
-                  border: "1px solid rgba(243,121,167,0.12)",
-                  color: "rgba(255,191,205,0.3)",
+                  border: "1px solid rgba(50, 90, 87, 0.15)",
+                  color: "rgba(142, 169, 148, 0.4)",
                 }}
                 aria-label="Next page"
               >
@@ -347,32 +342,32 @@ function LockedCard({ index }: { index: number }) {
                  justify-center gap-3"
       style={{
         background: `linear-gradient(135deg,
-          hsl(340, 40%, ${5 + (index % 3)}%) 0%,
-          hsl(340, 35%, ${7 + (index % 3)}%) 100%)`,
+          hsl(150, 12%, ${5 + (index % 3)}%) 0%,
+          hsl(150, 10%, ${7 + (index % 3)}%) 100%)`,
       }}
     >
       <div
         className="absolute inset-[1px] pointer-events-none"
-        style={{ border: "1px dashed rgba(243,121,167,0.08)" }}
+        style={{ border: "1px dashed rgba(142,169,148,0.08)" }}
       />
       <div
         className="absolute inset-0 opacity-[0.025] pointer-events-none"
         style={{
           backgroundImage: `repeating-linear-gradient(
-            45deg, rgba(243,121,167,1), rgba(243,121,167,1) 1px,
+            45deg, rgba(142,169,148,1), rgba(142,169,148,1) 1px,
             transparent 1px, transparent 28px)`,
         }}
       />
       <div
         className="relative w-9 h-9 rounded-full flex items-center justify-center"
-        style={{ border: "1px solid rgba(243,121,167,0.14)" }}
+        style={{ border: "1px solid rgba(142,169,148,0.14)" }}
       >
         <svg
           width="14"
           height="14"
           viewBox="0 0 14 14"
           fill="none"
-          style={{ color: "rgba(243,121,167,0.22)" }}
+          style={{ color: "rgba(142,169,148,0.22)" }}
         >
           <rect
             x="2.5"
@@ -394,7 +389,7 @@ function LockedCard({ index }: { index: number }) {
         className="text-[8px] tracking-[0.45em] uppercase"
         style={{
           fontFamily: "'Cormorant Garamond', serif",
-          color: "rgba(243,121,167,0.16)",
+          color: "rgba(142,169,148,0.16)",
         }}
       >
         Coming Soon
@@ -404,7 +399,7 @@ function LockedCard({ index }: { index: number }) {
           <div
             key={i}
             className="w-[3px] h-[3px] rounded-full"
-            style={{ background: `rgba(243,121,167,${op * 0.12})` }}
+            style={{ background: `rgba(142,169,148,${op * 0.12})` }}
           />
         ))}
       </div>

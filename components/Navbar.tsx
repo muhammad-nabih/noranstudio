@@ -1,130 +1,110 @@
-// ═══════════════════════════════════════════════════════════════════════════════
-// NAVIGATION (PINK THEME)
-// ═══════════════════════════════════════════════════════════════════════════════
+"use client";
 
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import cn from "classnames";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { Menu, X } from "lucide-react";
 
-function Navbar() {
+const NAV_LINKS = [
+  { label: "STUDIO", href: "/campaigns" },
+  { label: "WORK", href: "/#work" },
+  { label: "CASES STUDIES", href: "/cases-studies" },
+  { label: "CONTACT", href: "/#contact" },
+];
+
+export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 60);
-    window.addEventListener("scroll", fn);
-    return () => window.removeEventListener("scroll", fn);
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const navLinks = [
-    { label: "studio", href: "/campaigns" },
-    { label: "Case Studies", href: "/work" },
-    { label: "Work", href: "#work" },
-    { label: "Services", href: "#services" },
-    { label: "About", href: "#about" },
-    { label: "Contact", href: "#contact" },
-  ];
-
   return (
-    <>
-      <motion.nav
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{
-          delay: 1.2,
-          duration: 0.9,
-          ease: [0.25, 0.46, 0.45, 0.94],
-        }}
-        className={cn(
-          "fixed top-0 left-0 right-0 z-[100] px-8 md:px-20 py-5 flex items-center justify-between transition-all duration-500",
-          scrolled
-            ? "bg-background/85 backdrop-blur-2xl border-b border-primary/10"
-            : "",
-        )}
-      >
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-8 h-8 border border-primary/60 rotate-45 group-hover:rotate-[135deg] transition-transform duration-700 flex items-center justify-center">
-            <div className="w-2 h-2 bg-primary rotate-45" />
-          </div>
-          <span className="text-white font-['Playfair_Display'] text-lg tracking-wide">
-            NORAN GENEDY
-          </span>
-        </Link>
+    <header
+      className={`sticky top-0 z-50 w-full transition-colors duration-500 ${
+        scrolled
+          ? "bg-[#060a0a]/85 backdrop-blur-md border-b border-[rgba(142,169,148,0.12)]"
+          : "bg-transparent"
+      }`}
+    >
+      <nav className="grid grid-cols-[auto_1fr_auto] items-stretch">
+        {/* Logo mark */}
+        <a
+          href="/"
+          aria-label="Home"
+          className="flex h-16 w-16 shrink-0 items-center justify-center bg-accent text-accent-foreground transition-opacity hover:opacity-90"
+        >
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"
+              fill="currentColor"
+            />
+          </svg>
+        </a>
 
         {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-10">
-          {navLinks.map((l, i) => (
-            <a
-              key={i}
-              href={l.href}
-              className="text-foreground/50 hover:text-primary text-xs tracking-[0.25em] uppercase transition-colors duration-300 font-['Cormorant_Garamond']"
+        <ul className="hidden flex-1 items-stretch md:flex">
+          {NAV_LINKS.map((link, i) => (
+            <li
+              key={link.label}
+              className={`flex flex-1 items-center justify-center border-l border-[rgba(142,169,148,0.15)]`}
             >
-              {l.label}
-            </a>
-          ))}
-        </div>
-
-        {/* CTA */}
-        <Link
-          href="#contact"
-          className="hidden md:flex items-center gap-2 text-xs tracking-[0.25em] uppercase text-primary border border-primary/40 px-5 py-2.5 hover:bg-primary hover:text-background transition-all duration-300 font-['Cormorant_Garamond']"
-        >
-          Get in touch
-        </Link>
-
-        {/* Mobile hamburger */}
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="md:hidden flex flex-col gap-1.5 p-2"
-          aria-label="Open menu"
-          type="button"
-        >
-          <motion.span
-            animate={{ rotate: menuOpen ? 45 : 0, y: menuOpen ? 8 : 0 }}
-            className="w-6 h-px bg-primary block transition-all"
-          />
-          <motion.span
-            animate={{ opacity: menuOpen ? 0 : 1 }}
-            className="w-6 h-px bg-primary block"
-          />
-          <motion.span
-            animate={{ rotate: menuOpen ? -45 : 0, y: menuOpen ? -8 : 0 }}
-            className="w-6 h-px bg-primary block transition-all"
-          />
-        </button>
-      </motion.nav>
-
-      {/* Mobile menu */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0, clipPath: "inset(0 0 100% 0)" }}
-            animate={{ opacity: 1, clipPath: "inset(0 0 0% 0)" }}
-            exit={{ opacity: 0, clipPath: "inset(0 0 100% 0)" }}
-            transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
-            className="fixed inset-0 z-[99] bg-background/97 backdrop-blur-2xl flex flex-col items-center justify-center gap-8"
-          >
-            {navLinks.map((l, i) => (
-              <motion.a
-                key={i}
-                href={l.href}
-                onClick={() => setMenuOpen(false)}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                transition={{ delay: i * 0.08 + 0.2 }}
-                className="text-4xl font-['Playfair_Display'] text-white hover:text-primary transition-colors duration-300"
+              <a
+                href={link.href}
+                className="text-xs font-medium tracking-[0.2em] text-foreground/90 transition-colors hover:text-accent"
               >
-                {l.label}
-              </motion.a>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        {/* Mobile spacer so hamburger sits at the right edge */}
+        <div className="flex-1 md:hidden" />
+
+        {/* Hamburger - hidden on desktop */}
+        <button
+          aria-label={open ? "Close menu" : "Open menu"}
+          onClick={() => setOpen((v) => !v)}
+          className="flex h-16 w-16 shrink-0 items-center justify-center border-l border-[rgba(142,169,148,0.15)] text-foreground transition-colors hover:text-accent md:hidden"
+        >
+          {open ? <X size={20} /> : <Menu size={20} />}
+        </button>
+      </nav>
+
+      {/* Mobile dropdown */}
+      {open && (
+        <motion.ul
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          className="flex flex-col border-t border-[rgba(142,169,148,0.15)] bg-[#060a0a]/95 backdrop-blur-md md:hidden"
+        >
+          {NAV_LINKS.map((link) => (
+            <li
+              key={link.label}
+              className="border-b border-[rgba(142,169,148,0.1)]"
+            >
+              <a
+                href={link.href}
+                onClick={() => setOpen(false)}
+                className="block px-6 py-4 text-xs font-medium tracking-[0.2em] text-foreground/90 hover:text-accent"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </motion.ul>
+      )}
+    </header>
   );
 }
-
-export default Navbar;

@@ -1,5 +1,5 @@
 import { client } from './sanity'
-import type { Campaign } from './types'
+import type { Campaign, CaseStudy, CaseStudyCard, FooterData } from '@/sanity/lib/types'
 
 // ─── Full Campaign (for slug page) ───────────────────────────────────────────
 
@@ -82,6 +82,117 @@ export const getFeaturedCampaigns = async (): Promise<Campaign[]> => {
       clientName,
       year
     }
+  `
+  return client.fetch(query)
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// ─── Footer query ───────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+
+export const getFooterData = async (): Promise<FooterData | null> => {
+  const query = `
+    *[_type == "footer"][0]{
+      _id,
+      _type,
+      ctaTagline,
+      ctaHeading,
+      email,
+      ctaButtonLabel,
+      logoText,
+      logoSubtext,
+      navigationLinks,
+      socialLinks,
+      copyrightText
+    }
+  `
+  return client.fetch(query)
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// ─── Case Study queries ───────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+
+// ─── Full Case Study (for app/work/[slug]/page.tsx) ──────────────────────────
+
+export const getCaseStudyBySlug = async (slug: string): Promise<CaseStudy | null> => {
+  const query = `
+    *[_type == "caseStudy" && slug.current == $slug][0] {
+      _id,
+      _type,
+      slug,
+      projectName,
+      subtitle,
+      tags,
+      year,
+      heroImage {
+        ...,
+        asset->
+      },
+      heroVideo,
+      heroDetailImages[] {
+        ...,
+        asset->
+      },
+      challengeTitle,
+      challengeDescription,
+      goalTitle,
+      goalDescription,
+      insightTitle,
+      insightDescription,
+      strategyTitle,
+      strategyDescription,
+      creativeIdeaTitle,
+      creativeIdeaDescription,
+      visualDirectionTitle,
+      visualDirectionImages[] {
+        ...,
+        asset->
+      },
+      visualDirectionDescription,
+      colorPalette[] {
+        name,
+        hex,
+        role
+      },
+      resultsTitle,
+      metrics[] {
+        _key,
+        label,
+        value,
+        description
+      },
+      clientFeedback
+    }
+  `
+  return client.fetch(query, { slug })
+}
+
+// ─── All Case Studies (listing page, e.g. /work) ─────────────────────────────
+
+export const getAllCaseStudies = async (): Promise<CaseStudyCard[]> => {
+  const query = `
+    *[_type == "caseStudy"] | order(year desc) {
+      _id,
+      slug,
+      projectName,
+      subtitle,
+      tags,
+      year,
+      heroImage {
+        ...,
+        asset->
+      }
+    }
+  `
+  return client.fetch(query)
+}
+
+// ─── All Case Study Slugs (for generateStaticParams) ─────────────────────────
+
+export const getAllCaseStudySlugs = async (): Promise<{ slug: string }[]> => {
+  const query = `
+    *[_type == "caseStudy"] { "slug": slug.current }
   `
   return client.fetch(query)
 }

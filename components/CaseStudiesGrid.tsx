@@ -28,7 +28,7 @@ function Card({ data, index }: { data: CaseStudyCard; index: number }) {
       layout
     >
       <Link
-        href={`/work/${data.slug.current}`}
+        href={`/cases-studies/${data.slug.current}`}
         className="group block"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
@@ -74,19 +74,15 @@ function Card({ data, index }: { data: CaseStudyCard; index: number }) {
 
         {/* Meta */}
         <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-accent tracking-widest uppercase">{data.projectType}</span>
-            <span className="text-border">·</span>
-            <span className="text-muted-foreground text-xs">{data.role}</span>
-          </div>
-
           <h2 className="text-foreground font-bold text-xl leading-tight group-hover:text-accent transition-colors duration-300">
             {data.projectName}
           </h2>
 
-          <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">
-            {data.summary}
-          </p>
+          {data.subtitle && (
+            <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">
+              {data.subtitle}
+            </p>
+          )}
 
           {data.tags && data.tags.length > 0 && (
             <div className="flex flex-wrap gap-1.5 pt-1">
@@ -108,12 +104,12 @@ function Card({ data, index }: { data: CaseStudyCard; index: number }) {
 
 // ─── Root export ──────────────────────────────────────────────────────────────
 
-export default function CaseStudiesGrid({ data }: { data: CaseStudyCard[] }) {
-  // Collect all unique project types for filter
-  const types = ["All", ...Array.from(new Set(data.map((d) => d.projectType).filter(Boolean)))];
+export default function CaseStudiesGrid({ data = [] }: { data: CaseStudyCard[] }) {
+  // Collect all unique tags across case studies for filtering
+  const types = ["All", ...Array.from(new Set(data.flatMap((d) => d.tags ?? [])))];
   const [active, setActive] = useState("All");
 
-  const filtered = active === "All" ? data : data.filter((d) => d.projectType === active);
+  const filtered = active === "All" ? data : data.filter((d) => d.tags?.includes(active));
 
   return (
     <main className="bg-background text-foreground min-h-screen">
@@ -148,30 +144,10 @@ export default function CaseStudiesGrid({ data }: { data: CaseStudyCard[] }) {
 
       <div className="w-full h-px bg-border/30" />
 
-      {/* Filters */}
-      {types.length > 2 && (
-        <section className="px-6 md:px-16 py-8 max-w-7xl mx-auto">
-          <div className="flex flex-wrap gap-2">
-            {types.map((type) => (
-              <motion.button
-                key={type}
-                onClick={() => setActive(type)}
-                whileTap={{ scale: 0.97 }}
-                className={`text-xs px-4 py-2 rounded-full border transition-all duration-300 ${
-                  active === type
-                    ? "border-accent text-accent bg-accent/5"
-                    : "border-border/50 text-muted-foreground hover:border-border hover:text-foreground"
-                }`}
-              >
-                {type}
-              </motion.button>
-            ))}
-          </div>
-        </section>
-      )}
+ 
 
       {/* Grid */}
-      <section className="px-6 md:px-16 pb-32 max-w-7xl mx-auto">
+      <section className="px-6  my-8 md:px-16 pb-32 max-w-7xl mx-auto">
         {filtered.length === 0 ? (
           <motion.p
             initial={{ opacity: 0 }}
