@@ -23,7 +23,6 @@ import { getCampaignBySlug } from "@/lib/sanity-queries";
 import { getOptimizedImageUrl } from "@/lib/image-optimization";
 import type { Campaign } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import Loader from "@/components/common/Loader";
 import BackNav from "@/components/common/BackNav";
 
 if (typeof window !== "undefined") {
@@ -736,7 +735,7 @@ export default function CampaignSlugPage({ params }: PageProps) {
     return () => { document.documentElement.style.scrollBehavior = ""; };
   }, []);
 
-  if (loading) return <Loader />;
+
 
   if (error || !campaign) {
     return (
