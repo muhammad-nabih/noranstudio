@@ -1,9 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  // Enables class-based dark mode (matches your .dark selector)
   darkMode: "class",
-  // Scan all relevant files in a Next.js 16 app
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -12,7 +10,6 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      // ── Color system (pulls from your CSS variables) ──
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
@@ -42,13 +39,11 @@ const config: Config = {
         },
         destructive: {
           DEFAULT: "var(--destructive)",
-          // destructive foreground often defaults to foreground
           foreground: "var(--foreground)",
         },
         border: "var(--border)",
         input: "var(--input)",
         ring: "var(--ring)",
-        // Chart colours
         chart: {
           "1": "var(--chart-1)",
           "2": "var(--chart-2)",
@@ -56,7 +51,6 @@ const config: Config = {
           "4": "var(--chart-4)",
           "5": "var(--chart-5)",
         },
-        // Sidebar colours
         sidebar: {
           DEFAULT: "var(--sidebar)",
           foreground: "var(--sidebar-foreground)",
@@ -72,13 +66,11 @@ const config: Config = {
           ring: "var(--sidebar-ring)",
         },
       },
-      // ── Border radius ──
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      // ── Keyframes for shadcn/ui animations (if needed beyond animate plugin) ──
       keyframes: {
         "accordion-down": {
           from: { height: "0" },

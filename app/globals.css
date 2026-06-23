@@ -5,73 +5,73 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ═══════════════════════════════════
-   THEME TOKENS (Vibrant Pink & Black)
+   THEME TOKENS (من ألوان 6.jpg)
    ═══════════════════════════════════ */
 
 :root {
   --radius: 0.625rem;
 
-  /* Base */
-  --background: #030202;         /* الأسود من الصورة */
-  --foreground: #ffbfcd;         /* الوردي الأفتح للنصوص الأساسية */
+  /* Base - الأغمق */
+  --background: #060a0a;         /* أسود مخضر عميق */
+  --foreground: #8ea994;         /* بيج مائل للرمادي الناعم (للنصوص) */
 
   /* Surfaces */
-  --card: #0f070a;               /* درجة أسود مائلة للوردي خفيف جداً لتناسب الـ Cards */
-  --card-foreground: #ffbfcd;
+  --card: #090e0f;               /* أغمق قليلاً من الخلفية الأساسية */
+  --card-foreground: #8ea994;
 
-  --popover: #0f070a;
-  --popover-foreground: #ffbfcd;
+  --popover: #090e0f;
+  --popover-foreground: #8ea994;
 
-  /* Primary (The vibrant main pink) */
-  --primary: #f379a7;            /* الوردي الفاقع الأساسي من الصورة */
-  --primary-foreground: #030202; /* نص أسود فوق الخلفية الوردية */
+  /* Primary (اللون الرئيسي - الزيتي) */
+  --primary: #325a57;            /* الزيتي الجميل من الصورة */
+  --primary-foreground: #060a0a; /* نص غامق فوق الزيتي */
 
-  /* Secondary (Medium Pink) */
-  --secondary: #f8a9c9;          /* الوردي المتوسط من الصورة */
-  --secondary-foreground: #030202;
+  /* Secondary (اللون الثانوي - أخضر داكن جداً) */
+  --secondary: #294145;
+  --secondary-foreground: #8ea994;
 
   /* Muted */
-  --muted: #1a0b12;              /* خلفية داكنة مكتومة */
-  --muted-foreground: #f8a9c9;   /* نص وردي هادئ */
+  --muted: #090e0f;
+  --muted-foreground: #8ea994;
 
-  /* Accent */
-  --accent: #ffbfcd;             /* الوردي الفاتح جداً للإضاءات */
-  --accent-foreground: #030202;
+  /* Accent (للإضاءات والأزرار المهمة - النحاسي/البرونزي) */
+  --accent: #c07d51;             /* اللون الدافئ المميز */
+  --accent-foreground: #060a0a;
 
   /* Destructive */
-  --destructive: #f379a7;
-  --destructive-foreground: #030202;
+  --destructive: #c07d51;
+  --destructive-foreground: #060a0a;
 
-  /* Borders / Inputs */
-  --border: rgba(243, 121, 167, 0.25);    /* حدود شفافة مأخوذة من الوردي الأساسي */
-  --input: #1a0b12;
-  --ring: rgba(243, 121, 167, 0.5);
+  /* Borders / Inputs - شفاف من لون الزيتي */
+  --border: rgba(50, 90, 87, 0.35);    /* #325a57 مع شفافية */
+  --input: #090e0f;
+  --ring: rgba(192, 125, 81, 0.5);     /* #c07d51 مع شفافية */
 
   /* Charts */
-  --chart-1: #f379a7;
-  --chart-2: #f8a9c9;
-  --chart-3: #ffbfcd;
-  --chart-4: rgba(243, 121, 167, 0.5);
-  --chart-5: rgba(248, 169, 201, 0.5);
+  --chart-1: #325a57;
+  --chart-2: #294145;
+  --chart-3: #c07d51;
+  --chart-4: #8ea994;
+  --chart-5: #060a0a;
 
   /* Sidebar */
-  --sidebar: #030202;
-  --sidebar-foreground: #ffbfcd;
-  --sidebar-primary: #f379a7;
-  --sidebar-primary-foreground: #030202;
-  --sidebar-accent: #f8a9c9;
-  --sidebar-accent-foreground: #030202;
-  --sidebar-border: rgba(243, 121, 167, 0.18);
-  --sidebar-ring: rgba(243, 121, 167, 0.5);
+  --sidebar: #060a0a;
+  --sidebar-foreground: #8ea994;
+  --sidebar-primary: #325a57;
+  --sidebar-primary-foreground: #060a0a;
+  --sidebar-accent: #c07d51;
+  --sidebar-accent-foreground: #060a0a;
+  --sidebar-border: rgba(50, 90, 87, 0.25);
+  --sidebar-ring: rgba(192, 125, 81, 0.5);
 }
 
-/* Dark mode (inherits same tokens) */
+/* Dark mode (نفس الألوان) */
 .dark {
-  /* no override needed */
+  /* لا حاجة لتغيير، لأن التصميم داكن أصلاً */
 }
 
 /* ═══════════════════════════════════
-   Tailwind theme mapping
+   ربط Tailwind بالمتغيرات
    ═══════════════════════════════════ */
 
 @theme inline {
@@ -122,7 +122,7 @@
 }
 
 /* ═══════════════════════════════════
-   Base styles
+   الأنماط الأساسية
    ═══════════════════════════════════ */
 
 @layer base {
@@ -140,46 +140,76 @@
 }
 
 /* ═══════════════════════════════════
-   Utilities (Vibrant Pink & Neon Effects)
+   أدوات مساعدة خاصة بهذه الألوان
    ═══════════════════════════════════ */
 
 @layer utilities {
 
-  /* ستايل وردي فاقع ومضيء */
-  .text-neon-pink {
-    color: #f379a7;
-    text-shadow: 0 0 10px rgba(243, 121, 167, 0.5);
+  /* تأثير توهج باللون الزيتي */
+  .glow-teal {
+    box-shadow: 0 0 20px rgba(50, 90, 87, 0.4);
   }
 
-  /* ستايل وردي فاتح مضيء */
-  .text-neon-purple {
-    color: #ffbfcd;
-    text-shadow: 0 0 10px rgba(255, 191, 205, 0.5);
+  /* تأثير توهج باللون النحاسي/البرونزي */
+  .glow-bronze {
+    box-shadow: 0 0 20px rgba(192, 125, 81, 0.3);
   }
 
-  /* تأثير توهج للصناديق */
-  .glow-pink {
-    box-shadow: 0 0 20px rgba(243, 121, 167, 0.3);
-  }
-
-  .glow-purple {
-    box-shadow: 0 0 20px rgba(255, 191, 205, 0.2);
-  }
-
-  /* تأثير زجاجي متناسق مع الثيم الجديد */
+  /* تأثير زجاجي متناسق */
   .glass-card {
     @apply bg-card/40 backdrop-blur-md border border-primary/30;
   }
+
+  /* تدرج مميز بين الزيتي والبرونزي */
+  .bg-gradient-brand {
+    background: linear-gradient(135deg, #325a57 0%, #c07d51 100%);
+  }
 }
 
-
-/* Text Selection */
+/* تحديد النص */
 ::selection {
-  color: #000000d2;
-  background-color: #f379a7;
+  color: #060a0a;
+  background-color: #c07d51;
 }
 
 ::-moz-selection {
-  background: #000000;
-  color: #f379a7;
+  background: #c07d51;
+  color: #060a0a;
+}
+
+/* ===== Full Page Loader ===== */
+.loader-screen {
+  background-image: url('/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.loader {
+  width: fit-content;
+  font-size: clamp(56px, 12vw, 120px);
+  line-height: 1.5;
+  font-family: system-ui, sans-serif;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #0000;
+  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.9);
+  background:
+    radial-gradient(1.13em at 50% 1.6em, rgba(255,255,255,0.95) 99%, #0000 101%) 
+      calc(50% - 1.6em) 0/3.2em 100% text,
+    radial-gradient(1.13em at 50% -0.8em, #0000 99%, rgba(255,255,255,0.95) 101%) 
+      50% .8em/3.2em 100% repeat-x text;
+  animation: l9 2s linear infinite;
+}
+
+.loader:before {
+  content: "NORAN";
+}
+
+@keyframes l9 {
+  to {
+    background-position: 
+      calc(50% + 1.6em) 0, 
+      calc(50% + 3.2em) .8em;
+  }
 }

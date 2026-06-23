@@ -5,12 +5,13 @@ import { motion, useMotionValue, useSpring } from 'framer-motion';
 import gsap from 'gsap';
 import * as THREE from 'three';
 
-// ─── Palette (All Pink & Black) ─────────────────────────────────────────────────
+// ─── Palette (Dark Teal & Bronze) ───────────────────────────────────────────
 const PALETTE = {
-  darkBg       : 0x030202,   // خلفية سوداء
-  pinkPrimary  : 0xf379a7,   // الوردي الأساسي
-  pinkSecondary: 0xf8a9c9,   // الوردي المتوسط
-  pinkLight    : 0xffbfcd,   // الوردي الفاتح
+  darkBg       : 0x060a0a,   // أسود مخضر عميق
+  tealPrimary  : 0x325a57,   // الزيتي الأساسي
+  tealSecondary: 0x4a7a76,   // زيتي أفتح
+  sageLight    : 0x8ea994,   // بيج مائل للرمادي
+  bronzeAccent : 0xc07d51,   // النحاسي/البرونزي
 };
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -64,9 +65,9 @@ export default function MagicWandCursor() {
     ctx.closePath();
   };
 
-  // ── Spawn particle (only pink shades) ──────────────────────────────────────
+  // ── Spawn particle (teal, sage & bronze) ───────────────────────────────────
   const spawnParticle = useCallback((x: number, y: number, speed: number) => {
-    const colors = ['#f379a7', '#f8a9c9', '#ffbfcd', '#f379a7', '#f8a9c9'];
+    const colors = ['#325a57', '#4a7a76', '#8ea994', '#c07d51', '#325a57'];
     const types: TrailParticle['type'][] = ['star', 'star', 'dot', 'sparkle', 'star'];
     const idx    = Math.floor(Math.random() * colors.length);
     const angle  = Math.random() * Math.PI * 2;
@@ -139,7 +140,7 @@ export default function MagicWandCursor() {
         } else if (p.type === 'sparkle') {
           ctx.fillStyle = p.color;
           ctx.shadowBlur  = 10;
-          ctx.shadowColor = '#f379a7'; // replaced gold with pink primary
+          ctx.shadowColor = '#c07d51'; // bronze glow
           const s = scale * 0.8;
           ctx.beginPath();
           ctx.moveTo(0, -s); ctx.lineTo(s * 0.18, -s * 0.18);
@@ -171,7 +172,7 @@ export default function MagicWandCursor() {
     };
   }, []);
 
-  // ── Three.js aura (pink embers) ────────────────────────────────────────────
+  // ── Three.js aura (bronze embers) ──────────────────────────────────────────
   useEffect(() => {
     const canvas = threeCanvasRef.current;
     if (!canvas) return;
@@ -208,7 +209,7 @@ export default function MagicWandCursor() {
     const mat = new THREE.ShaderMaterial({
       uniforms: {
         uTime:  { value: 0 },
-        uColor: { value: new THREE.Color(PALETTE.pinkPrimary) },
+        uColor: { value: new THREE.Color(PALETTE.bronzeAccent) },
       },
       vertexShader: /* glsl */`
         attribute float size;
@@ -375,7 +376,7 @@ export default function MagicWandCursor() {
     return () => clearInterval(id);
   }, [spawnParticle]);
 
-  // ─── Render (SVG wand with pink colors) ─────────────────────────────────────
+  // ─── Render (SVG wand with teal & bronze) ───────────────────────────────────
   return (
     <>
       <canvas
@@ -411,37 +412,37 @@ export default function MagicWandCursor() {
           viewBox="0 0 44 44"
           width="44"
           height="44"
-          style={{ display: 'block', filter: 'drop-shadow(0 2px 8px rgba(243,121,167,0.5))' }}
+          style={{ display: 'block', filter: 'drop-shadow(0 2px 8px rgba(192,125,81,0.45))' }}
         >
           {/* Shadow layer */}
           <line
             x1="38" y1="6" x2="10" y2="38"
-            stroke="#030202"
+            stroke="#060a0a"
             strokeWidth="6.5"
             strokeLinecap="round"
             opacity="0.45"
           />
-          {/* Wand body - black */}
+          {/* Wand body - dark */}
           <line
             x1="37" y1="5" x2="9" y2="37"
-            stroke="#030202"
+            stroke="#060a0a"
             strokeWidth="5"
             strokeLinecap="round"
           />
-          {/* Mid-body pink highlight */}
+          {/* Mid-body teal highlight */}
           <line
             x1="36" y1="6.5" x2="22" y2="21"
-            stroke="#f8a9c9"
+            stroke="#4a7a76"
             strokeWidth="1.2"
             strokeLinecap="round"
             opacity="0.6"
           />
-          {/* Pink tip band */}
-          <circle cx="37.5" cy="5.5" r="3.8" fill="#f379a7" opacity="0.95" />
-          {/* Inner light pink highlight */}
-          <circle cx="37.5" cy="5.5" r="1.8" fill="#ffbfcd" opacity="0.85" />
-          {/* Pink ring at mid-wand */}
-          <circle cx="23" cy="21" r="1.4" fill="none" stroke="#f379a7" strokeWidth="1" opacity="0.5" />
+          {/* Bronze tip band */}
+          <circle cx="37.5" cy="5.5" r="3.8" fill="#c07d51" opacity="0.95" />
+          {/* Inner sage highlight */}
+          <circle cx="37.5" cy="5.5" r="1.8" fill="#8ea994" opacity="0.85" />
+          {/* Teal ring at mid-wand */}
+          <circle cx="23" cy="21" r="1.4" fill="none" stroke="#325a57" strokeWidth="1" opacity="0.5" />
         </svg>
       </motion.div>
     </>
