@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
-import Image from "next/image";
-import { urlFor } from "@/lib/sanity";
 import { getCaseStudyBySlug, getAllCaseStudySlugs } from "@/lib/sanity-queries";
 import CaseStudyView from "@/components/CaseStudyView";
 import Navbar from "@/components/Navbar";
+import Loader from "@/app/Loader";
+import { Suspense } from "react";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Static params (SSG) — اختياري بس بيحسّن السرعة
@@ -22,23 +22,27 @@ export default async function CaseStudyPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const caseStudy = await getCaseStudyBySlug(slug);
+  const caseStudyPromise = getCaseStudyBySlug(slug);
 
-  if (!caseStudy) notFound();
-
+  // Loader usage with suspense pattern (Next.js 13+)
   return (
     <>
-   
-      
       <Navbar />
       <div className="flex items-center my-4">
         <div className="flex-grow h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
-    
         <div className="flex-grow h-px bg-gradient-to-l from-transparent via-accent/40 to-transparent" />
       </div>
- 
-  
-      <CaseStudyView caseStudy={caseStudy} />;
+      <Suspense fallback={<Loader />}>
+        {/* Await-ing the caseStudy */}
+        <CaseStudyBoundary caseStudyPromise={caseStudyPromise} />
+      </Suspense>
     </>
   );
+}
+
+// Helper boundary to handle async/await plus 404 for not found
+async function CaseStudyBoundary({ caseStudyPromise }: { caseStudyPromise: Promise<any> }) {
+  const caseStudy = await caseStudyPromise;
+  if (!caseStudy) notFound();
+  return <CaseStudyView caseStudy={caseStudy} />;
 }
