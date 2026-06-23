@@ -11,16 +11,27 @@ import {
 } from "@/sanity/case-study.queries";
 import CaseStudiesGrid from "@/components/CaseStudiesGrid";
 import type { Metadata } from "next";
+import Navbar from "@/components/Navbar";
 
 export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Work — Case Studies",
-  description: "A curated collection of projects — each one a problem worth documenting.",
+  description:
+    "A curated collection of projects — each one a problem worth documenting.",
 };
 
 export default async function WorkPage() {
   const data: CaseStudyCard[] = await client.fetch(ALL_CASE_STUDIES_QUERY);
 
-  return <CaseStudiesGrid data={data} />;
+  return (
+    <>
+      <Navbar />
+      <div className="flex items-center my-4">
+        <div className="flex-grow h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
+        <div className="flex-grow h-px bg-gradient-to-l from-transparent via-accent/40 to-transparent" />
+      </div>
+      <CaseStudiesGrid data={data} />;
+    </>
+  );
 }
