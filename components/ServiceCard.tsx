@@ -6,7 +6,7 @@ import { useRef, useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import gsap from 'gsap'
 import { getOptimizedImageUrl } from '@/lib/image-optimization'
-import type { Service, Campaign } from '@/lib/types'
+import type { Service, Campaign }  from '@/sanity/lib/types'
 
 interface ServiceCardProps {
   service: Service

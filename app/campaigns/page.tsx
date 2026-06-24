@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { getAllCampaigns } from '@/lib/sanity-queries';
+import { getAllCampaigns } from '@/sanity/sanity-queries/sanity-queries';
 import CampaignsClient from '@/components/CampaignsClient';
 import Navbar from '@/components/Navbar';
 import BackNav from '@/components/common/BackNav';

@@ -10,7 +10,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import type { CaseStudy, SanityImageAsset } from "@/sanity/case-study.queries";
+import type { CaseStudy, SanityImageAsset } from "@/sanity/sanity-queries/case-study.queries";
 import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
 import BackNav from "./common/BackNav";

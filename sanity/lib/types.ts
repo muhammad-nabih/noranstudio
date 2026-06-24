@@ -101,9 +101,10 @@ export interface FooterData {
   logoText?: string
   logoSubtext?: string
   navigationLinks?: NavigationLink[]
-  socialLinks?: SocialLink[]
+  // socialLinks removed → now comes from siteSettings
   copyrightText?: string
 }
+
 
 
 
@@ -182,3 +183,19 @@ export interface CaseStudyCard {
   year?: string
   heroImage: SanityImageAsset
 }
+
+
+// sanity/lib/types.ts — أضفها جنب Campaign و Service
+export type AboutData = {
+  name: string;
+  greeting: string;
+  role: string;
+  location: string;
+  heroHeadingLine1: string;
+  heroHeadingLine2: string;
+  shortBio: string;
+  fullBio: string;
+  yearsExperience: string;
+  brandsCrafted: string;
+  photoUrl: string;
+};

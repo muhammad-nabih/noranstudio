@@ -9,7 +9,7 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import Image from "next/image";
-import type { CaseStudyCard } from "@/sanity/case-study.queries";
+import type { CaseStudyCard } from "@/sanity/sanity-queries/case-study.queries";
 import { urlFor } from "@/sanity/lib/image";
 
 // ─── Card component ───────────────────────────────────────────────────────────

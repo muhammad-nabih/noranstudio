@@ -1,29 +1,18 @@
-import { client } from "@/lib/sanity";
+import { getFooterData, getSiteSettings } from "@/sanity/sanity-queries/sanity-queries";
 import type { FooterData } from "@/sanity/lib/types";
-import Footer from "./Footer";
+import type { SocialLink } from "@/components/SocialLinks";
+import Footer from "@/components/Footer";
 
 export default async function FooterWrapper() {
-  let data: FooterData | null = null;
+  const [footerData, siteSettings] = await Promise.all([
+    getFooterData(),
+    getSiteSettings(),
+  ]);
 
-  try {
-    data = await client.fetch<FooterData>(
-      `*[_type == "footer"][0]{
-        _id,
-        _type,
-        ctaTagline,
-        ctaHeading,
-        email,
-        ctaButtonLabel,
-        logoText,
-        logoSubtext,
-        navigationLinks,
-        socialLinks,
-        copyrightText
-      }`
-    );
-  } catch (err) {
-    console.error("[FooterWrapper] Failed to fetch footer data:", err);
-  }
-
-  return <Footer data={data} />;
+  return (
+    <Footer 
+      data={footerData} 
+      socialLinks={siteSettings?.socialLinks ?? []} 
+    />
+  );
 }

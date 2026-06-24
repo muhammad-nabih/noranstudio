@@ -8,7 +8,7 @@ import { client } from "@/sanity/lib/client";
 import {
   ALL_CASE_STUDIES_QUERY,
   type CaseStudyCard,
-} from "@/sanity/case-study.queries";
+} from "@/sanity/sanity-queries/case-study.queries";
 import CaseStudiesGrid from "@/components/CaseStudiesGrid";
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";

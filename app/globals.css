@@ -1,60 +1,45 @@
 @import "tailwindcss";
-@import "tw-animate-css";
+/* @import "tw-animate-css"; */
 
-/* Dark mode variant */
 @custom-variant dark (&:where(.dark, .dark *));
-
-/* ═══════════════════════════════════
-   THEME TOKENS (من ألوان 6.jpg)
-   ═══════════════════════════════════ */
 
 :root {
   --radius: 0.625rem;
 
-  /* Base - الأغمق */
-  --background: #060a0a;         /* أسود مخضر عميق */
-  --foreground: #8ea994;         /* بيج مائل للرمادي الناعم (للنصوص) */
+  --background: #060a0a;
+  --foreground: #8ea994;
 
-  /* Surfaces */
-  --card: #090e0f;               /* أغمق قليلاً من الخلفية الأساسية */
+  --card: #090e0f;
   --card-foreground: #8ea994;
 
   --popover: #090e0f;
   --popover-foreground: #8ea994;
 
-  /* Primary (اللون الرئيسي - الزيتي) */
-  --primary: #325a57;            /* الزيتي الجميل من الصورة */
-  --primary-foreground: #060a0a; /* نص غامق فوق الزيتي */
+  --primary: #325a57;
+  --primary-foreground: #060a0a;
 
-  /* Secondary (اللون الثانوي - أخضر داكن جداً) */
   --secondary: #294145;
   --secondary-foreground: #8ea994;
 
-  /* Muted */
   --muted: #090e0f;
   --muted-foreground: #8ea994;
 
-  /* Accent (للإضاءات والأزرار المهمة - النحاسي/البرونزي) */
-  --accent: #c07d51;             /* اللون الدافئ المميز */
+  --accent: #c07d51;
   --accent-foreground: #060a0a;
 
-  /* Destructive */
   --destructive: #c07d51;
   --destructive-foreground: #060a0a;
 
-  /* Borders / Inputs - شفاف من لون الزيتي */
-  --border: rgba(50, 90, 87, 0.35);    /* #325a57 مع شفافية */
+  --border: rgba(50, 90, 87, 0.35);
   --input: #090e0f;
-  --ring: rgba(192, 125, 81, 0.5);     /* #c07d51 مع شفافية */
+  --ring: rgba(192, 125, 81, 0.5);
 
-  /* Charts */
   --chart-1: #325a57;
   --chart-2: #294145;
   --chart-3: #c07d51;
   --chart-4: #8ea994;
   --chart-5: #060a0a;
 
-  /* Sidebar */
   --sidebar: #060a0a;
   --sidebar-foreground: #8ea994;
   --sidebar-primary: #325a57;
@@ -65,50 +50,31 @@
   --sidebar-ring: rgba(192, 125, 81, 0.5);
 }
 
-/* Dark mode (نفس الألوان) */
-.dark {
-  /* لا حاجة لتغيير، لأن التصميم داكن أصلاً */
-}
-
-/* ═══════════════════════════════════
-   ربط Tailwind بالمتغيرات
-   ═══════════════════════════════════ */
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
-
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
-
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
-
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
-
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
-
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -117,13 +83,8 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-
   --radius: var(--radius);
 }
-
-/* ═══════════════════════════════════
-   الأنماط الأساسية
-   ═══════════════════════════════════ */
 
 @layer base {
   * {
@@ -139,34 +100,24 @@
   }
 }
 
-/* ═══════════════════════════════════
-   أدوات مساعدة خاصة بهذه الألوان
-   ═══════════════════════════════════ */
-
 @layer utilities {
-
-  /* تأثير توهج باللون الزيتي */
   .glow-teal {
     box-shadow: 0 0 20px rgba(50, 90, 87, 0.4);
   }
 
-  /* تأثير توهج باللون النحاسي/البرونزي */
   .glow-bronze {
     box-shadow: 0 0 20px rgba(192, 125, 81, 0.3);
   }
 
-  /* تأثير زجاجي متناسق */
   .glass-card {
     @apply bg-card/40 backdrop-blur-md border border-primary/30;
   }
 
-  /* تدرج مميز بين الزيتي والبرونزي */
   .bg-gradient-brand {
     background: linear-gradient(135deg, #325a57 0%, #c07d51 100%);
   }
 }
 
-/* تحديد النص */
 ::selection {
   color: #060a0a;
   background-color: #c07d51;
@@ -177,7 +128,6 @@
   color: #060a0a;
 }
 
-/* ===== Full Page Loader ===== */
 .loader-screen {
   background-image: url('/background.png');
   background-size: cover;
@@ -189,8 +139,8 @@
   width: fit-content;
   font-size: clamp(56px, 12vw, 120px);
   line-height: 1.5;
-  font-family: system-ui, sans-serif;
-  font-weight: bold;
+  font-family: var(--font-montserrat), system-ui, sans-serif;
+  font-weight: 700;
   text-transform: uppercase;
   color: #0000;
   -webkit-text-stroke: 2px rgba(255, 255, 255, 0.9);

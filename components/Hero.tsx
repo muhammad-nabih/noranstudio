@@ -2,13 +2,17 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import SocialRail from "./SocialRail";
+import SocialLinks, { type SocialLink } from "./SocialLinks";
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
-export default function Hero() {
+interface HeroProps {
+  socialLinks?: SocialLink[];
+}
+
+export default function Hero({ socialLinks }: HeroProps) {
   return (
-    <section
+  <section
       id="top"
       className="relative isolate flex min-h-[100vh] w-full flex-col overflow-hidden bg-background"
     >
@@ -29,7 +33,7 @@ export default function Hero() {
         />
         <Image
           src="/hero/back3.png"
-          alt="i'm background 3 "
+          alt=""
           fill
           className="object-cover z-30"
         />
@@ -38,29 +42,29 @@ export default function Hero() {
       {/* LAYER 2 — grain */}
       <div className="grain-overlay z-[1]" />
 
-      {/* LAYER 3 — column grid lines, aligned with navbar */}
+      {/* LAYER 3 — column grid lines */}
       <div className="pointer-events-none absolute inset-0 z-[2] hidden md:block">
         <div className="absolute inset-0 grid grid-cols-[64px_1fr]">
-          {/* left column: empty (matches logo width) */}
-          <div></div>
-          {/* right column: 4 equal parts with left borders */}
-          <div className="grid grid-cols-4">
-            <div className="border-l border-[rgba(142,169,148,0.18)]" />
-            <div className="border-l border-[rgba(142,169,148,0.18)]" />
-            <div className="border-l border-[rgba(142,169,148,0.18)]" />
-            <div className="border-l border-[rgba(142,169,148,0.18)]" />
+          <div />
+          <div className="grid grid-cols-4 ">
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className="border-l border-[rgba(142,169,148,0.18)]"
+              />
+            ))}
           </div>
         </div>
-        {/* horizontal line directly under the navbar */}
         <div className="absolute inset-x-0 top-0 h-px bg-[rgba(142,169,148,0.18)]" />
-
-        {/* horizontal line splitting the screen in half */}
         <div className="absolute inset-x-0 top-1/2 h-px bg-[rgba(142,169,148,0.18)]" />
       </div>
 
-      <SocialRail />
+      {/* LAYER 4 — Social Rail (vertical icons) */}
+      <div className="absolute left-4 md:left-[15px] top-[200px] -translate-y-1/2 z-[6] pointer-events-auto">
+  <SocialLinks links={socialLinks ?? []} direction="vertical" />
+</div>
 
-      {/* LAYER 6 — name + role */}
+      {/* LAYER 5 — name + role */}
       <div className="absolute top-[46%] left-0 right-0 z-[5] -translate-y-1/2 mx-auto w-full max-w-[1700px] px-4 sm:px-10">
         <div className="flex flex-col items-center justify-center">
           <motion.h2

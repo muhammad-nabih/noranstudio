@@ -19,9 +19,9 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import * as THREE from "three";
 import Image from "next/image";
 import Link from "next/link";
-import { getCampaignBySlug } from "@/lib/sanity-queries";
+import { getCampaignBySlug } from "@/sanity/sanity-queries/sanity-queries";
 import { getOptimizedImageUrl } from "@/lib/image-optimization";
-import type { Campaign } from "@/lib/types";
+import type { Campaign } from "@/sanity/lib/types";
 import { cn } from "@/lib/utils";
 import BackNav from "@/components/common/BackNav";
 
@@ -141,7 +141,7 @@ function HeroSection({ campaign }: { campaign: Campaign }) {
           className="mb-6 flex items-center gap-4"
         >
           <span className="w-8 h-px bg-primary/60" />
-          <span className="text-primary/70 text-[10px] tracking-[0.5em] uppercase font-light font-['Cormorant_Garamond']">
+          <span className="text-primary text-[10px] tracking-[0.5em] uppercase font-light font-[montserrat]">
             {(campaign as any)?.service?.title || "Campaign"}
           </span>
         </motion.div>
@@ -151,7 +151,7 @@ function HeroSection({ campaign }: { campaign: Campaign }) {
             initial={{ y: "105%" }}
             animate={{ y: "0%" }}
             transition={{ delay: 1.05, duration: 1.2, ease: EASE_EXPO }}
-            className="font-['Cormorant_Garamond'] font-bold leading-[0.87] text-foreground tracking-[-0.025em]"
+            className="font-[montserrat] font-bold leading-[0.87] text-foreground tracking-[-0.025em]"
             style={{ fontSize: "clamp(3.5rem,8.5vw,9rem)" }}
           >
             {campaign?.title || "Campaign"}
@@ -170,7 +170,7 @@ function HeroSection({ campaign }: { campaign: Campaign }) {
             <a
               href={(campaign as any).behanceUrl}
               target="_blank" rel="noopener noreferrer"
-              className="group flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors duration-400 text-[10px] tracking-[0.35em] uppercase"
+              className="group flex items-center gap-2 text-foreground/80 hover:text-primary transition-colors duration-400 text-[10px] tracking-[0.35em] uppercase"
             >
               Behance
               <span className="inline-block group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300">↗</span>
@@ -192,7 +192,7 @@ function HeroSection({ campaign }: { campaign: Campaign }) {
             transition={{ duration: 1.9, repeat: Infinity, ease: "easeInOut" }}
           />
         </div>
-        <span className="text-muted-foreground text-[9px] tracking-[0.4em] uppercase rotate-90 origin-center mt-2">Scroll</span>
+        <span className="text-foreground/60 text-[9px] tracking-[0.4em] uppercase rotate-90 origin-center mt-2">Scroll</span>
       </motion.div>
     </section>
   );
@@ -201,8 +201,8 @@ function HeroSection({ campaign }: { campaign: Campaign }) {
 function HeroMeta({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <span className="text-muted-foreground/40 text-[9px] tracking-[0.4em] uppercase">{label}</span>
-      <span className="text-muted-foreground text-sm font-['Cormorant_Garamond'] font-light leading-none">{value}</span>
+      <span className="text-foreground/50 text-[9px] tracking-[0.4em] uppercase">{label}</span>
+      <span className="text-foreground text-sm font-[montserrat] font-light leading-none">{value}</span>
     </div>
   );
 }
@@ -231,10 +231,10 @@ function DescriptionSection({ campaign }: { campaign: Campaign }) {
         <motion.div variants={itm}>
           <div className="flex items-center gap-3 mb-7">
             <span className="w-6 h-px bg-primary/50" />
-            <span className="text-primary/60 text-[9px] tracking-[0.5em] uppercase font-['Cormorant_Garamond']">The Story</span>
+            <span className="text-primary text-[9px] tracking-[0.5em] uppercase font-[montserrat]">The Story</span>
           </div>
           <h2
-            className="font-['Cormorant_Garamond'] font-bold text-foreground leading-[0.9] tracking-[-0.02em]"
+            className="font-[montserrat] font-bold text-foreground leading-[0.9] tracking-[-0.02em]"
             style={{ fontSize: "clamp(2.8rem,5vw,5rem)" }}
           >
             About<br />
@@ -247,7 +247,7 @@ function DescriptionSection({ campaign }: { campaign: Campaign }) {
         <div className="pt-0 lg:pt-8 flex flex-col gap-10">
           <motion.p
             variants={itm}
-            className="text-muted-foreground font-['Cormorant_Garamond'] font-light leading-[1.85]"
+            className="text-foreground/80 font-[montserrat] font-light leading-[1.85]"
             style={{ fontSize: "clamp(1.05rem,1.3vw,1.25rem)", maxWidth: "58ch" }}
           >
             {campaign?.shortDescription ||
@@ -259,10 +259,10 @@ function DescriptionSection({ campaign }: { campaign: Campaign }) {
           <motion.div variants={itm} className="flex gap-12 md:gap-16">
             {stats.map((s, i) => (
               <div key={i}>
-                <div className="font-['Cormorant_Garamond'] text-primary font-bold leading-none mb-2" style={{ fontSize: "clamp(1.8rem,3vw,2.8rem)" }}>
+                <div className="font-[montserrat] text-primary font-bold leading-none mb-2" style={{ fontSize: "clamp(1.8rem,3vw,2.8rem)" }}>
                   {s.value}
                 </div>
-                <div className="text-muted-foreground/40 text-[9px] tracking-[0.4em] uppercase">{s.label}</div>
+                <div className="text-foreground/50 text-[9px] tracking-[0.4em] uppercase">{s.label}</div>
               </div>
             ))}
           </motion.div>
@@ -273,7 +273,6 @@ function DescriptionSection({ campaign }: { campaign: Campaign }) {
 }
 
 // ─── Lightbox ──────────────────────────────────────────────────────────────
-// Fix: backdrop click closes, stopPropagation on image container only
 
 interface LightboxProps {
   images: { src: string; alt: string }[];
@@ -284,7 +283,6 @@ interface LightboxProps {
 }
 
 function Lightbox({ images, current, onClose, onPrev, onNext }: LightboxProps) {
-  // Lock scroll while open
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = ""; };
@@ -301,7 +299,6 @@ function Lightbox({ images, current, onClose, onPrev, onNext }: LightboxProps) {
   }, [onClose, onPrev, onNext]);
 
   return (
-    // Outer backdrop — clicking anywhere here closes
     <motion.div
       className="fixed inset-0 z-[400] flex items-center justify-center cursor-zoom-out"
       initial={{ opacity: 0 }}
@@ -310,10 +307,8 @@ function Lightbox({ images, current, onClose, onPrev, onNext }: LightboxProps) {
       transition={{ duration: 0.3 }}
       onClick={onClose}
     >
-      {/* Blur backdrop */}
       <div className="absolute inset-0 bg-background/92 backdrop-blur-2xl" />
 
-      {/* Image wrapper — stop propagation so clicking image doesn't close */}
       <AnimatePresence mode="wait">
         <motion.div
           key={current}
@@ -325,7 +320,6 @@ function Lightbox({ images, current, onClose, onPrev, onNext }: LightboxProps) {
           transition={{ duration: 0.4, ease: EASE_SMOOTH }}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Subtle border frame */}
           <div className="absolute inset-0 border border-border/30 z-[1] pointer-events-none" />
           <Image
             src={images[current].src}
@@ -337,38 +331,33 @@ function Lightbox({ images, current, onClose, onPrev, onNext }: LightboxProps) {
         </motion.div>
       </AnimatePresence>
 
-      {/* Counter */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3">
         <span className="w-6 h-px bg-border/50" />
-        <span className="text-muted-foreground/60 text-[10px] tracking-[0.45em] uppercase font-['Cormorant_Garamond']">
+        <span className="text-foreground/70 text-[10px] tracking-[0.45em] uppercase font-[montserrat]">
           {String(current + 1).padStart(2, "0")} / {String(images.length).padStart(2, "0")}
         </span>
         <span className="w-6 h-px bg-border/50" />
       </div>
 
-      {/* Prev */}
       <button
         onClick={(e) => { e.stopPropagation(); onPrev(); }}
-        className="absolute left-5 md:left-10 z-20 top-1/2 -translate-y-1/2 w-11 h-11 border border-border/40 flex items-center justify-center text-muted-foreground/50 hover:text-primary hover:border-primary/40 transition-all duration-300 bg-background/30 backdrop-blur-sm"
+        className="absolute left-5 md:left-10 z-20 top-1/2 -translate-y-1/2 w-11 h-11 border border-border/40 flex items-center justify-center text-foreground/70 hover:text-primary hover:border-primary/40 transition-all duration-300 bg-background/30 backdrop-blur-sm"
         aria-label="Previous"
       >←</button>
 
-      {/* Next */}
       <button
         onClick={(e) => { e.stopPropagation(); onNext(); }}
-        className="absolute right-5 md:right-10 z-20 top-1/2 -translate-y-1/2 w-11 h-11 border border-border/40 flex items-center justify-center text-muted-foreground/50 hover:text-primary hover:border-primary/40 transition-all duration-300 bg-background/30 backdrop-blur-sm"
+        className="absolute right-5 md:right-10 z-20 top-1/2 -translate-y-1/2 w-11 h-11 border border-border/40 flex items-center justify-center text-foreground/70 hover:text-primary hover:border-primary/40 transition-all duration-300 bg-background/30 backdrop-blur-sm"
         aria-label="Next"
       >→</button>
 
-      {/* Close */}
       <button
         onClick={onClose}
-        className="absolute top-7 right-7 z-20 w-9 h-9 border border-border/30 flex items-center justify-center text-muted-foreground/40 hover:text-primary hover:border-primary/40 transition-all duration-300 text-sm bg-background/30 backdrop-blur-sm"
+        className="absolute top-7 right-7 z-20 w-9 h-9 border border-border/30 flex items-center justify-center text-foreground/70 hover:text-primary hover:border-primary/40 transition-all duration-300 text-sm bg-background/30 backdrop-blur-sm"
         aria-label="Close"
       >✕</button>
 
-      {/* ESC hint */}
-      <p className="absolute top-8 left-1/2 -translate-x-1/2 z-20 text-muted-foreground/25 text-[9px] tracking-[0.4em] uppercase">
+      <p className="absolute top-8 left-1/2 -translate-x-1/2 z-20 text-foreground/50 text-[9px] tracking-[0.4em] uppercase">
         Click outside or press ESC to close
       </p>
     </motion.div>
@@ -400,7 +389,6 @@ function GalleryTile({
       ref={ref}
       onClick={onClick}
       className={cn(
-        // Subtle border on every tile — the key visual refinement
         "group relative overflow-hidden cursor-pointer",
         "border border-border/20 hover:border-primary/25 transition-colors duration-500",
         "bg-card",
@@ -417,37 +405,20 @@ function GalleryTile({
         onLoad={() => setLoaded(true)}
       />
 
-      {/* Hover overlay */}
       <div className="absolute inset-0 bg-background/0 group-hover:bg-background/15 transition-colors duration-500" />
 
-      {/* Bottom gradient */}
       <div className="absolute bottom-0 left-0 right-0 h-2/5 bg-gradient-to-t from-background/55 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-      {/* Frame number */}
-      <span className="absolute bottom-3.5 right-4 text-foreground/0 group-hover:text-foreground/40 transition-all duration-400 font-['Cormorant_Garamond'] text-[10px] tracking-[0.3em]">
+      <span className="absolute bottom-3.5 right-4 text-foreground/0 group-hover:text-foreground/70 transition-all duration-400 font-[montserrat] text-[10px] tracking-[0.3em]">
         {String(index + 1).padStart(2, "0")}
       </span>
 
-      {/* Bottom accent */}
       <div className="absolute bottom-0 left-0 h-px w-0 group-hover:w-full bg-primary transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)]" />
     </div>
   );
 }
 
 // ─── Gallery Section ───────────────────────────────────────────────────────
-/*
-  Symmetric editorial layout — 6 block types, curated pattern:
-    A  =  1 image, full width, tall             (cinematic opener)
-    B  =  2 images, equal halves                (balanced pair)
-    C  =  3 images, equal thirds                (strip)
-    D  =  2 images, 2fr | 1fr                   (wide-left)
-    E  =  2 images, 1fr | 2fr                   (wide-right, mirror of D)
-    F  =  1 image, full width, short            (breathing spacer)
-
-  All rows use fixed clamp heights → perfectly consistent rows.
-  Grid gaps: 6px = thin editorial "gutter" feel.
-  Outer padding: consistent px-8/px-16/px-24 matching other sections.
-*/
 
 type BlockType = "A" | "B" | "C" | "D" | "E" | "F";
 interface GImg { src: string; alt: string; }
@@ -476,7 +447,6 @@ function buildBlocks(images: GImg[]): { type: BlockType; imgs: GImg[]; startIdx:
   return out;
 }
 
-// Heights — perfectly consistent across all blocks
 const H_TALL   = "clamp(320px, 44vh, 580px)";
 const H_MID    = "clamp(260px, 36vh, 480px)";
 const H_STRIP  = "clamp(200px, 28vh, 360px)";
@@ -527,7 +497,6 @@ function GallerySection({ campaign }: { campaign: Campaign }) {
   return (
     <section ref={sectionRef} className="py-16 md:py-24">
 
-      {/* Header */}
       <div
         ref={headerRef}
         className="px-8 md:px-16 lg:px-24 max-w-[1600px] mx-auto mb-12 md:mb-16 flex items-end justify-between"
@@ -535,10 +504,10 @@ function GallerySection({ campaign }: { campaign: Campaign }) {
         <div>
           <div className="gh-label flex items-center gap-3 mb-5">
             <span className="w-6 h-px bg-primary/50" />
-            <span className="text-primary/60 text-[9px] tracking-[0.5em] uppercase font-['Cormorant_Garamond']">Gallery</span>
+            <span className="text-primary text-[9px] tracking-[0.5em] uppercase font-[montserrat]">Gallery</span>
           </div>
           <h2
-            className="gh-title font-['Cormorant_Garamond'] font-bold text-foreground leading-[0.9] tracking-[-0.025em]"
+            className="gh-title font-[montserrat] font-bold text-foreground leading-[0.9] tracking-[-0.025em]"
             style={{ fontSize: "clamp(3rem,6vw,6rem)" }}
           >
             Visual<br />
@@ -546,28 +515,25 @@ function GallerySection({ campaign }: { campaign: Campaign }) {
           </h2>
         </div>
         <div className="gh-count text-right hidden md:block">
-          <div className="font-['Cormorant_Garamond'] font-bold text-primary leading-none" style={{ fontSize: "clamp(2.5rem,4vw,4rem)" }}>
+          <div className="font-[montserrat] font-bold text-primary leading-none" style={{ fontSize: "clamp(2.5rem,4vw,4rem)" }}>
             {String(images.length).padStart(2, "0")}
           </div>
-          <div className="text-muted-foreground/35 text-[9px] tracking-[0.4em] uppercase mt-2">Frames</div>
+          <div className="text-foreground/50 text-[9px] tracking-[0.4em] uppercase mt-2">Frames</div>
         </div>
       </div>
 
-      {/* ─ Editorial blocks — consistent outer padding ─ */}
       <div
         className="px-8 md:px-16 lg:px-24 max-w-[1600px] mx-auto flex flex-col"
         style={{ gap: GAP }}
       >
         {blocks.map(({ type, imgs, startIdx }, bi) => {
 
-          /* ── A: Full-width, tall ── */
           if (type === "A") return (
             <div key={bi} className="relative w-full" style={{ height: H_TALL }}>
               <GalleryTile src={imgs[0].src} alt={imgs[0].alt} index={startIdx} onClick={() => open(startIdx)} className="absolute inset-0" />
             </div>
           );
 
-          /* ── B: 2 equal columns ── */
           if (type === "B") return (
             <div key={bi} className="grid grid-cols-2" style={{ gap: GAP, height: H_MID }}>
               {imgs.map((img, ii) => (
@@ -578,7 +544,6 @@ function GallerySection({ campaign }: { campaign: Campaign }) {
             </div>
           );
 
-          /* ── C: 3 equal columns ── */
           if (type === "C") return (
             <div key={bi} className="grid grid-cols-3" style={{ gap: GAP, height: H_STRIP }}>
               {imgs.map((img, ii) => (
@@ -589,7 +554,6 @@ function GallerySection({ campaign }: { campaign: Campaign }) {
             </div>
           );
 
-          /* ── D: 2fr | 1fr (wide left) ── */
           if (type === "D") return (
             <div key={bi} className="grid" style={{ gridTemplateColumns: "2fr 1fr", gap: GAP, height: H_MID }}>
               {imgs.map((img, ii) => (
@@ -600,7 +564,6 @@ function GallerySection({ campaign }: { campaign: Campaign }) {
             </div>
           );
 
-          /* ── E: 1fr | 2fr (wide right, mirror of D) ── */
           if (type === "E") return (
             <div key={bi} className="grid" style={{ gridTemplateColumns: "1fr 2fr", gap: GAP, height: H_MID }}>
               {imgs.map((img, ii) => (
@@ -611,7 +574,6 @@ function GallerySection({ campaign }: { campaign: Campaign }) {
             </div>
           );
 
-          /* ── F: Full-width, short cinematic ── */
           if (type === "F") return (
             <div key={bi} className="relative w-full" style={{ height: H_SHORT }}>
               <GalleryTile src={imgs[0].src} alt={imgs[0].alt} index={startIdx} onClick={() => open(startIdx)} className="absolute inset-0" />
@@ -622,7 +584,6 @@ function GallerySection({ campaign }: { campaign: Campaign }) {
         })}
       </div>
 
-      {/* Lightbox */}
       <AnimatePresence>
         {lbIdx !== null && (
           <Lightbox images={images} current={lbIdx} onClose={close} onPrev={prev} onNext={next} />
@@ -644,7 +605,7 @@ function MarqueeStrip() {
         transition={{ duration: 30, ease: "linear", repeat: Infinity }}
       >
         {Array.from({ length: 4 }).map((_, i) => (
-          <span key={i} className="text-foreground/8 text-[10px] tracking-[0.6em] uppercase font-['Cormorant_Garamond'] font-light flex-shrink-0">
+          <span key={i} className="text-foreground/30 text-[10px] tracking-[0.6em] uppercase font-[montserrat] font-light flex-shrink-0">
             {text}
           </span>
         ))}
@@ -668,21 +629,21 @@ function CTASection({ campaign }: { campaign: Campaign }) {
       >
         <div className="flex items-center gap-5 mb-16">
           <span className="w-8 h-px bg-primary/30" />
-          <span className="text-primary/40 text-[9px] tracking-[0.55em] uppercase font-['Cormorant_Garamond']">Next Step</span>
+          <span className="text-primary text-[9px] tracking-[0.55em] uppercase font-[montserrat]">Next Step</span>
           <div className="flex-1 h-px bg-border/30" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-10 md:gap-16 items-end">
           <div>
             <h2
-              className="font-['Cormorant_Garamond'] font-bold text-foreground leading-[0.88] tracking-[-0.025em] mb-5"
+              className="font-[montserrat] font-bold text-foreground leading-[0.88] tracking-[-0.025em] mb-5"
               style={{ fontSize: "clamp(3rem,7vw,7.5rem)" }}
             >
               See the full<br />
               <em className="not-italic text-primary">project.</em>
             </h2>
             <p
-              className="text-muted-foreground/60 font-['Cormorant_Garamond'] font-light leading-[1.8]"
+              className="text-foreground/70 font-[montserrat] font-light leading-[1.8]"
               style={{ fontSize: "clamp(0.95rem,1.1vw,1.1rem)", maxWidth: "44ch" }}
             >
               The complete case study, process, and full asset library are available on Behance.
@@ -696,9 +657,9 @@ function CTASection({ campaign }: { campaign: Campaign }) {
               className={cn(
                 "group inline-flex items-center gap-5 self-end",
                 "border border-primary/25 px-9 py-4",
-                "text-primary/65 hover:text-primary hover:border-primary/55 hover:bg-primary/[0.04]",
+                "text-primary hover:text-foreground hover:border-primary/55 hover:bg-primary/[0.04]",
                 "transition-all duration-500",
-                "text-[10px] tracking-[0.45em] uppercase font-['Cormorant_Garamond']"
+                "text-[10px] tracking-[0.45em] uppercase font-[montserrat]"
               )}
               whileHover={{ scale: 1.012 }}
               whileTap={{ scale: 0.988 }}
@@ -735,15 +696,13 @@ export default function CampaignSlugPage({ params }: PageProps) {
     return () => { document.documentElement.style.scrollBehavior = ""; };
   }, []);
 
-
-
   if (error || !campaign) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <p className="font-['Cormorant_Garamond'] text-foreground/8 font-bold mb-6" style={{ fontSize: "8rem" }}>404</p>
-          <p className="text-primary/45 text-[10px] tracking-[0.4em] uppercase mb-10">Campaign not found</p>
-          <Link href="/" className="text-muted-foreground/35 hover:text-primary transition-colors duration-300 text-[10px] tracking-[0.35em] uppercase">
+          <p className="font-[montserrat] text-foreground/20 font-bold mb-6" style={{ fontSize: "8rem" }}>404</p>
+          <p className="text-primary text-[10px] tracking-[0.4em] uppercase mb-10">Campaign not found</p>
+          <Link href="/" className="text-foreground/70 hover:text-primary transition-colors duration-300 text-[10px] tracking-[0.35em] uppercase">
             ← Return
           </Link>
         </div>
@@ -754,7 +713,6 @@ export default function CampaignSlugPage({ params }: PageProps) {
   return (
     <>
       <style jsx global>{`
-        @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&display=swap");
         ::-webkit-scrollbar       { width: 2px; }
         ::-webkit-scrollbar-track { background: var(--background); }
         ::-webkit-scrollbar-thumb { background: var(--primary); }

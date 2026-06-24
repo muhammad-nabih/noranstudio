@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getCaseStudyBySlug, getAllCaseStudySlugs } from "@/lib/sanity-queries";
+import { getCaseStudyBySlug, getAllCaseStudySlugs } from "@/sanity/sanity-queries/sanity-queries";
 import CaseStudyView from "@/components/CaseStudyView";
 import Navbar from "@/components/Navbar";
 import Loader from "@/app/Loader";

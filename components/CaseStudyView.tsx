@@ -108,12 +108,12 @@ export default function CaseStudyView({ caseStudy }: { caseStudy: CaseStudy }) {
           )}
           {subtitle && (
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 bg-gradient-to-b from-black/10 via-transparent to-black/30">
-              <span className="text-3xl md:text-5xl font-serif italic text-accent/95 drop-shadow-lg">
+              {/* <span className="text-3xl md:text-5xl font-serif italic text-accent/95 drop-shadow-lg">
                 {projectName}
               </span>
               <span className="mt-2 text-xs md:text-sm tracking-[0.15em] text-foreground/90 uppercase">
                 {subtitle}
-              </span>
+              </span> */}
             </div>
           )}
         </div>

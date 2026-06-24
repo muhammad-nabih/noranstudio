@@ -8,6 +8,9 @@ import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import MagicWandCursor from "@/components/common/Magicwandcursor";
 import FullPageLoader from "@/components/FullPageLoader";
 
+
+
+
 export const metadata: Metadata = {
   title: "NORAN GENEDY",
   description: `I don't create designs just for art or aesthetics. I craft visuals that bring brand identity to life, communicate marketing messages clearly, and transform ideas into impactful designs that truly support goals.`,

@@ -1,12 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { X, ChevronLeft, ChevronRight } from 'lucide-react'
-import Image from 'next/image'
-import gsap from 'gsap'
-import type { ImageAsset } from '@/lib/types'
 import { urlFor } from '@/lib/sanity'
+import type { ImageAsset } from '@/sanity/lib/types'
+import { AnimatePresence, motion } from 'framer-motion'
+import { ChevronLeft, ChevronRight, X } from 'lucide-react'
+import Image from 'next/image'
+import { useEffect, useState } from 'react'
 
 interface ModalGalleryProps {
   images: Array<{ image: ImageAsset; alt?: string }>

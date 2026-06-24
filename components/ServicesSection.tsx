@@ -6,7 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 
-import type { Service, Campaign } from '@/lib/types'
+import type { Service, Campaign }  from '@/sanity/lib/types'
 
 interface ServicesSectionProps {
   services: Service[]

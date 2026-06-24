@@ -4,7 +4,7 @@ import { useRef, useEffect, useState, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { getOptimizedImageUrl, getBlurDataUrl } from "@/lib/image-optimization";
-import type { Campaign, Service } from "@/lib/types";
+import type { Campaign, Service } from "@/sanity/lib/types";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -276,9 +276,9 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
 
       {/* Slide number watermark */}
       <div
-        className="absolute right-[8%] top-[15%] pointer-events-none select-none font-mono"
+        className="absolute right-[4%] md:right-[8%] top-[12%] md:top-[15%] pointer-events-none select-none font-[virust]"
         style={{
-          fontSize: "clamp(80px, 14vw, 200px)",
+          fontSize: "clamp(48px, 18vw, 200px)",
           fontWeight: 300,
           color: "rgba(255,255,255,0.04)",
           lineHeight: 1,
@@ -289,20 +289,20 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
       </div>
 
       {/* Main content */}
-      <div className="absolute left-[7%] md:left-[9%] bottom-[13%] z-10 max-w-[620px]">
+      <div className="absolute left-[5%] md:left-[9%] bottom-[12%] md:bottom-[13%] z-10 max-w-[90%] md:max-w-[620px]">
         {/* eyebrow row */}
-        <div className="flex items-center gap-4 mb-5">
+        <div className="flex items-center gap-3 md:gap-4 mb-4 md:mb-5">
           <span
             className="inline-block h-px bg-white"
-            style={{ width: 28, opacity: 0.45 }}
+            style={{ width: 20, opacity: 0.45 }}
           />
-          <span className="font-mono text-[9px] tracking-[0.55em] uppercase text-white/55">
+          <span className="font-[montserrat] text-[8px] md:text-[9px] tracking-[0.55em] uppercase text-white/55">
             {pad(index + 1)}&nbsp;&nbsp;/&nbsp;&nbsp;{pad(total)}
           </span>
           {campaign.clientName && (
             <>
               <span className="inline-block w-px h-3 bg-white/20" />
-              <span className="font-mono text-[9px] tracking-[0.35em] uppercase text-white/38">
+              <span className="font-[montserrat] text-[8px] md:text-[9px] tracking-[0.35em] uppercase text-white/38">
                 {campaign.clientName}
               </span>
             </>
@@ -311,19 +311,19 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
 
         {/* service label */}
         <div
-          className="font-mono text-[9px] tracking-[0.6em] uppercase text-white mb-4"
+          className="font-[montserrat] text-[8px] md:text-[9px] tracking-[0.6em] uppercase text-white mb-3 md:mb-4"
           style={{ opacity: 0.78 }}
         >
           {campaign.service?.title ?? "Design"}
         </div>
 
         {/* title */}
-        <div className="overflow-hidden mb-7">
+        <div className="overflow-hidden mb-5 md:mb-7">
           <span
             ref={titleRef}
-            className="block font-['Playfair_Display'] font-bold text-white leading-[0.92]"
+            className="block font-[virust] font-bold text-white leading-[0.92]"
             style={{
-              fontSize: "clamp(46px, 6.5vw, 92px)",
+              fontSize: "clamp(28px, 10vw, 92px)",
               transform: "translateY(105%)",
               opacity: 0,
             }}
@@ -335,28 +335,29 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
         {/* description */}
         <p
           ref={descRef}
-          className="font-['Cormorant_Garamond'] font-light text-[16px] leading-[1.8] text-white/62 max-w-[440px]"
+          className="font-[montserrat] font-light text-sm md:text-[16px] leading-[1.8] text-white/62 max-w-[90%] md:max-w-[440px] line-clamp-2 overflow-hidden"
+     
           style={{ opacity: 0, transform: "translateY(22px)" }}
         >
           {campaign.shortDescription}
         </p>
 
         {/* CTA row */}
-        <div className="flex flex-wrap items-center gap-8 my-4">
+        <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-4 sm:gap-8 my-4 md:my-8">
           <Link
             ref={ctaRef}
             href={`/campaigns/${campaign.slug.current}`}
             className={cn(
               "group relative inline-flex items-center gap-3",
-              "font-mono text-xs font-medium tracking-[0.3em] uppercase",
+              "font-[montserrat] text-xs font-medium tracking-[0.3em] uppercase",
               "text-white/90",
               "bg-background/30 backdrop-blur-sm",
               "border border-white/20 rounded-full",
-              "px-6 py-3",
+              "px-5 md:px-6 py-2.5 md:py-3",
               "transition-all duration-500 ease-out",
               "hover:border-primary hover:bg-primary/20 hover:text-white hover:shadow-lg hover:shadow-primary/20",
               "hover:gap-5",
-              "focus:outline-none focus:ring-2 focus:ring-primary/50 mb-8"
+              "focus:outline-none focus:ring-2 focus:ring-primary/50"
             )}
             style={{ opacity: 0, transform: "translateY(18px)" }}
           >
@@ -373,7 +374,7 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
               rel="noopener noreferrer"
               className={cn(
                 "inline-flex items-center gap-2",
-                "font-mono text-[11px] font-medium tracking-[0.3em] uppercase",
+                "font-[montserrat] text-[10px] md:text-[11px] font-medium tracking-[0.3em] uppercase",
                 "text-white/60 hover:text-white",
                 "transition-all duration-300",
                 "border-b border-white/20 hover:border-primary",
@@ -388,15 +389,15 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
         </div>
       </div>
 
-      {/* Right-side meta stack */}
+      {/* Right-side meta stack — hidden on mobile */}
       <div
         ref={metaRef}
-        className="absolute right-[6%] top-1/2 -translate-y-1/2 z-10 flex flex-col items-end gap-2.5"
+        className="hidden md:flex absolute right-[6%] top-1/2 -translate-y-1/2 z-10 flex-col items-end gap-2.5"
         style={{ opacity: 0, transform: "translateX(14px)" }}
       >
         {campaign.year && (
           <span
-            className="font-mono text-[8px] tracking-[0.35em] uppercase"
+            className="font-[montserrat] text-[8px] tracking-[0.35em] uppercase"
             style={{ color: "rgba(255,255,255,0.22)" }}
           >
             {campaign.year}
@@ -407,7 +408,7 @@ function CinemaSlide({ campaign, index, total, isActive }: SlideProps) {
           style={{ background: "rgba(255,255,255,0.08)" }}
         />
         <span
-          className="font-['Cormorant_Garamond'] text-[11px] italic tracking-wide"
+          className="font-[montserrat] text-[11px] italic tracking-wide"
           style={{
             color: "rgba(255,255,255,0.18)",
             writingMode: "vertical-rl",
@@ -438,8 +439,8 @@ function NavArrow({ direction, onClick, disabled }: NavArrowProps) {
       disabled={disabled}
       className={cn(
         "absolute top-1/2 -translate-y-1/2 z-[60]",
-        isPrev ? "left-4 md:left-7" : "right-4 md:right-7",
-        "w-11 h-11 md:w-12 md:h-12 rounded-full",
+        isPrev ? "left-2 md:left-7" : "right-2 md:right-7",
+        "w-9 h-9 md:w-12 md:h-12 rounded-full",
         "flex items-center justify-center",
         "bg-background/40 backdrop-blur-md",
         "border border-primary/15",
@@ -452,12 +453,11 @@ function NavArrow({ direction, onClick, disabled }: NavArrowProps) {
       )}
     >
       <svg
-        width="15"
-        height="15"
+        width="14"
+        height="14"
         viewBox="0 0 16 16"
         fill="none"
         className="transition-transform duration-300"
-        style={{ transform: isPrev ? "translateX(0)" : "translateX(0)" }}
       >
         <path
           d={isPrev ? "M10 2.5L4.5 8L10 13.5" : "M6 2.5L11.5 8L6 13.5"}
@@ -600,10 +600,11 @@ export default function WorkSection({ campaigns }: WorkSectionProps) {
         }}
       />
 
-      <div className="flex justify-center items-center w-full my-8 px-4 relative z-[100]">
+      {/* Filter nav */}
+      <div className="flex justify-center items-center w-full my-4 md:my-8 px-4 relative z-[100]">
         {services.length > 0 && (
           <nav
-            className="relative z-[200] flex flex-wrap justify-center gap-1 md:gap-2 rounded-full border border-primary/20 bg-background/40 backdrop-blur-xl p-1 shadow-lg shadow-primary/5"
+            className="relative z-[200] flex justify-center gap-0.5 sm:gap-1 md:gap-2 rounded-full border border-primary/20 bg-background/40 backdrop-blur-xl p-1 shadow-lg shadow-primary/5"
             aria-label="Filter by service"
           >
             {(["All", ...services.map((s) => s.title)] as string[]).map(
@@ -615,8 +616,8 @@ export default function WorkSection({ campaigns }: WorkSectionProps) {
                     key={label}
                     onClick={() => applyFilter(id)}
                     className={cn(
-                      "relative px-5 md:px-6 py-2.5 text-[10px] md:text-[11px] font-mono font-medium tracking-[0.2em] uppercase transition-all duration-300 rounded-full",
-                      "hover:tracking-[0.25em]",
+                      "relative px-2.5 sm:px-5 md:px-6 py-2 sm:py-2.5 text-[8px] sm:text-[10px] md:text-[11px] font-[montserrat] font-medium tracking-[0.15em] sm:tracking-[0.2em] uppercase transition-all duration-300 rounded-full",
+                      "hover:tracking-[0.2em] sm:hover:tracking-[0.25em]",
                       active
                         ? "text-background bg-accent shadow-md shadow-accent/30"
                         : "text-foreground/60 hover:text-accent hover:bg-accent/10"
@@ -640,7 +641,7 @@ export default function WorkSection({ campaigns }: WorkSectionProps) {
 
       {/* slide counter */}
       <div
-        className="absolute left-9 bottom-[9%] z-[100] font-mono"
+        className="absolute left-4 md:left-9 bottom-[9%] z-[100] font-[montserrat]"
         style={{
           color: "rgba(243,121,167,0.32)",
           letterSpacing: "0.35em",
@@ -650,7 +651,7 @@ export default function WorkSection({ campaigns }: WorkSectionProps) {
         <span
           className="block font-light"
           style={{
-            fontSize: "clamp(18px,2vw,24px)",
+            fontSize: "clamp(16px,2vw,24px)",
             color: "var(--primary)",
             lineHeight: 1,
           }}
@@ -717,7 +718,7 @@ function HintBadge() {
     <div
       className="absolute bottom-9 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-3 pointer-events-none"
       style={{
-        fontFamily: "DM Mono, monospace",
+        fontFamily: "var(--font-montserrat), monospace",
         fontSize: 8,
         letterSpacing: "0.4em",
         textTransform: "uppercase",
