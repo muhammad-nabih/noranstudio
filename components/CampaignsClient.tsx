@@ -79,6 +79,19 @@ function useIsMobile() {
   return isMobile;
 }
 
+// ─── Hook: respect reduced-motion ─────────────────────────────────────────────
+function usePrefersReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduced(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setReduced(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return reduced;
+}
+
 // ─── Floating Side Panel (desktop) ───────────────────────────────────────────
 function SidePanel({
   services,
@@ -109,7 +122,7 @@ function SidePanel({
 
   const handleMouseLeave = () => {
     if (hideTimeout.current) clearTimeout(hideTimeout.current);
-    hideTimeout.current = setTimeout(() => setHovered(false), 500);
+    hideTimeout.current = setTimeout(() => setHovered(false), 550);
   };
 
   useEffect(() => {
@@ -124,8 +137,9 @@ function SidePanel({
     gsap.to(el, {
       x: hovered ? 0 : "100%",
       opacity: hovered ? 1 : 0,
-      duration: 0.9,
-      ease: hovered ? "power3.out" : "power3.in",
+      duration: hovered ? 0.7 : 0.5,
+      ease: "power2.out",
+      overwrite: true,
     });
   }, [hovered]);
 
@@ -287,8 +301,9 @@ function MobileNav({
     if (!el) return;
     gsap.to(el, {
       y: filterOpen ? 0 : "100%",
-      duration: 0.45,
-      ease: filterOpen ? "power3.out" : "power3.in",
+      duration: 0.55,
+      ease: "power2.out",
+      overwrite: true,
     });
   }, [filterOpen]);
 
@@ -447,12 +462,21 @@ function MobileSlides({
   const [currentSlide, setCurrentSlide] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
   const startXRef = useRef(0);
+  const startYRef = useRef(0);
   const isDraggingRef = useRef(false);
   const dragDeltaRef = useRef(0);
+  const widthRef = useRef(1);
+  // tracks whether the last positioning came from a drag (so the snap effect
+  // doesn't re-fire an unrelated tween when currentSlide hasn't changed)
+  const settledSlideRef = useRef(0);
 
   // Reset to first slide when filter changes
   useEffect(() => {
     setCurrentSlide(0);
+    settledSlideRef.current = 0;
+    if (trackRef.current) {
+      gsap.set(trackRef.current, { x: "0%" });
+    }
   }, [activeFilter]);
 
   const goTo = useCallback(
@@ -463,45 +487,70 @@ function MobileSlides({
     [items.length]
   );
 
-  // Touch / swipe handling
+  // Touch / swipe handling — single source of truth for transform during drag
   const handleTouchStart = (e: React.TouchEvent) => {
+    // don't hijack vertical scrolling/taps mid-animation
+    gsap.killTweensOf(trackRef.current);
     startXRef.current = e.touches[0].clientX;
+    startYRef.current = e.touches[0].clientY;
+    widthRef.current = window.innerWidth || 1;
     isDraggingRef.current = true;
     dragDeltaRef.current = 0;
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDraggingRef.current) return;
-    dragDeltaRef.current = e.touches[0].clientX - startXRef.current;
+    const dx = e.touches[0].clientX - startXRef.current;
+    const dy = e.touches[0].clientY - startYRef.current;
+    // if the gesture is more vertical than horizontal, let it pass (no drag)
+    if (Math.abs(dy) > Math.abs(dx) && Math.abs(dx) < 12) return;
+
+    dragDeltaRef.current = dx;
     if (trackRef.current) {
-      const base = -currentSlide * 100;
-      const drag = (dragDeltaRef.current / window.innerWidth) * 100;
-      trackRef.current.style.transform = `translateX(calc(${base}% + ${dragDeltaRef.current}px))`;
+      const basePct = -currentSlide * 100;
+      const dragPct = (dx / widthRef.current) * 100;
+      // soft resistance at the ends so it doesn't feel like it's flying off
+      const atStart = currentSlide === 0 && dx > 0;
+      const atEnd = currentSlide === items.length - 1 && dx < 0;
+      const resisted = atStart || atEnd ? dragPct * 0.35 : dragPct;
+      gsap.set(trackRef.current, { x: `${basePct + resisted}%` });
     }
   };
 
   const handleTouchEnd = () => {
+    if (!isDraggingRef.current) return;
     isDraggingRef.current = false;
-    const threshold = window.innerWidth * 0.22;
-    if (dragDeltaRef.current < -threshold) {
-      goTo(currentSlide + 1);
-    } else if (dragDeltaRef.current > threshold) {
-      goTo(currentSlide - 1);
-    }
-    // snap back via CSS transition
-    if (trackRef.current) {
-      trackRef.current.style.transform = "";
-    }
+    const threshold = widthRef.current * 0.18;
+    let next = currentSlide;
+    if (dragDeltaRef.current < -threshold) next = currentSlide + 1;
+    else if (dragDeltaRef.current > threshold) next = currentSlide - 1;
     dragDeltaRef.current = 0;
+
+    const clamped = Math.max(0, Math.min(next, items.length - 1));
+    if (clamped === currentSlide) {
+      // snap back to where it already was — same tween path the
+      // currentSlide effect would use, so there's no visual seam
+      gsap.to(trackRef.current, {
+        x: `-${currentSlide * 100}%`,
+        duration: 0.45,
+        ease: "power2.out",
+        overwrite: true,
+      });
+    } else {
+      goTo(clamped);
+    }
   };
 
-  // Snap track to currentSlide
+  // Snap track to currentSlide — the single animation owner once a drag ends
   useEffect(() => {
     if (!trackRef.current) return;
+    if (settledSlideRef.current === currentSlide) return;
+    settledSlideRef.current = currentSlide;
     gsap.to(trackRef.current, {
       x: `-${currentSlide * 100}%`,
-      duration: 0.55,
-      ease: "power3.inOut",
+      duration: 0.5,
+      ease: "power2.out",
+      overwrite: true,
     });
   }, [currentSlide]);
 
@@ -557,8 +606,8 @@ function MobileSlides({
               >
                 {/* Image */}
                 <div
-                  className="absolute inset-0 transition-transform duration-700"
-                  style={{ transform: isActive ? "scale(1)" : "scale(1.04)" }}
+                  className="absolute inset-0 transition-transform duration-700 ease-out"
+                  style={{ transform: isActive ? "scale(1)" : "scale(1.015)" }}
                 >
                   <Image
                     src={item.imgSrc}
@@ -843,7 +892,7 @@ function Lightbox({
     const el = ref.current;
     if (el) {
       gsap.set(el, { autoAlpha: 0 });
-      gsap.to(el, { autoAlpha: 1, duration: 0.4, ease: "power2.out" });
+      gsap.to(el, { autoAlpha: 1, duration: 0.45, ease: "power2.out" });
     }
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") close();
@@ -859,7 +908,7 @@ function Lightbox({
 
   const close = () => {
     const el = ref.current;
-    if (el) gsap.to(el, { autoAlpha: 0, duration: 0.28, ease: "power2.in", onComplete: onClose });
+    if (el) gsap.to(el, { autoAlpha: 0, duration: 0.3, ease: "power2.in", onComplete: onClose });
     else onClose();
   };
 
@@ -1019,10 +1068,10 @@ function Card({
     const ctx = gsap.context(() => {
       gsap.fromTo(
         wrapRef.current,
-        { autoAlpha: 0, y: 40, clipPath: "inset(0 0 100% 0)" },
+        { autoAlpha: 0, y: 22 },
         {
-          autoAlpha: 1, y: 0, clipPath: "inset(0 0 0% 0)",
-          duration: 1.1, ease: "power4.out", delay: animDelay,
+          autoAlpha: 1, y: 0,
+          duration: 0.9, ease: "power2.out", delay: animDelay,
           scrollTrigger: { trigger: wrapRef.current, start: "top 94%", toggleActions: "play none none none" },
         }
       );
@@ -1032,19 +1081,18 @@ function Card({
 
   const onEnter = useCallback(() => {
     setHov(true);
-    gsap.to(imgRef.current, { scale: 1.07, duration: 0.9, ease: "power3.out" });
-    gsap.to(lineRef.current, { scaleX: 1, duration: 0.5, ease: "power3.out", transformOrigin: "left" });
-    gsap.to(infoRef.current, { y: 0, autoAlpha: 1, duration: 0.42, ease: "power3.out" });
-    gsap.to(numRef.current, { color: "rgba(243,121,167,0.22)", duration: 0.3 });
-    gsap.fromTo(shimRef.current, { top: "-2px", autoAlpha: 0 }, { top: "102%", autoAlpha: 0.7, duration: 1.8, ease: "none" });
+    gsap.to(imgRef.current, { scale: 1.035, duration: 0.7, ease: "power2.out", overwrite: true });
+    gsap.to(lineRef.current, { scaleX: 1, duration: 0.45, ease: "power2.out", transformOrigin: "left", overwrite: true });
+    gsap.to(infoRef.current, { y: 0, autoAlpha: 1, duration: 0.4, ease: "power2.out", overwrite: true });
+    gsap.to(numRef.current, { color: "rgba(243,121,167,0.2)", duration: 0.4, overwrite: true });
   }, []);
 
   const onLeave = useCallback(() => {
     setHov(false);
-    gsap.to(imgRef.current, { scale: 1, duration: 0.8, ease: "power3.out" });
-    gsap.to(lineRef.current, { scaleX: 0, duration: 0.38, ease: "power3.in", transformOrigin: "right" });
-    gsap.to(infoRef.current, { y: 10, autoAlpha: 0, duration: 0.32, ease: "power2.in" });
-    gsap.to(numRef.current, { color: "rgba(255,191,205,0.1)", duration: 0.3 });
+    gsap.to(imgRef.current, { scale: 1, duration: 0.6, ease: "power2.out", overwrite: true });
+    gsap.to(lineRef.current, { scaleX: 0, duration: 0.35, ease: "power2.in", transformOrigin: "right", overwrite: true });
+    gsap.to(infoRef.current, { y: 8, autoAlpha: 0, duration: 0.3, ease: "power2.in", overwrite: true });
+    gsap.to(numRef.current, { color: "rgba(255,191,205,0.1)", duration: 0.4, overwrite: true });
   }, []);
 
   return (
@@ -1074,11 +1122,6 @@ function Card({
             opacity: hov ? 1 : 0.55,
           }}
         />
-        <div
-          ref={shimRef}
-          className="absolute left-0 w-full h-[1px] pointer-events-none"
-          style={{ background: "linear-gradient(90deg, transparent, var(--primary), transparent)", top: "-2px" }}
-        />
       </div>
 
       <span
@@ -1091,7 +1134,7 @@ function Card({
 
       <div
         className="absolute top-4 right-4 z-[2] px-3 py-1.5 border border-primary/20 bg-background/70 backdrop-blur-sm pointer-events-none"
-        style={{ opacity: hov ? 1 : 0, transform: hov ? "translateX(0)" : "translateX(10px)", transition: "all 0.35s ease" }}
+        style={{ opacity: hov ? 1 : 0, transform: hov ? "translateX(0)" : "translateX(6px)", transition: "all 0.4s ease" }}
       >
         <span className="text-[8px] tracking-[0.4em] uppercase text-primary" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
           {(item.campaign as any).service?.title ?? "Campaign"}
@@ -1099,16 +1142,16 @@ function Card({
       </div>
 
       <div
-        className="absolute top-3 left-3 w-4 h-4 border-t border-l border-primary/45 transition-opacity duration-300 pointer-events-none z-[2]"
+        className="absolute top-3 left-3 w-4 h-4 border-t border-l border-primary/45 transition-opacity duration-400 pointer-events-none z-[2]"
         style={{ opacity: hov ? 1 : 0 }}
       />
       <div
-        className="absolute bottom-3 right-3 w-4 h-4 border-b border-r border-primary/45 transition-opacity duration-300 pointer-events-none z-[2]"
+        className="absolute bottom-3 right-3 w-4 h-4 border-b border-r border-primary/45 transition-opacity duration-400 pointer-events-none z-[2]"
         style={{ opacity: hov ? 1 : 0 }}
       />
 
       <div className="absolute bottom-0 left-0 right-0 z-[3] p-4">
-        <div ref={infoRef} style={{ opacity: 0, transform: "translateY(10px)" }} className="mb-2">
+        <div ref={infoRef} style={{ opacity: 0, transform: "translateY(8px)" }} className="mb-2">
           {(clientName || year) && (
             <div className="flex items-center gap-3 mb-2.5">
               {clientName && (
@@ -1262,7 +1305,7 @@ export default function CampaignsClient({ campaigns }: Props) {
                   key={`${(item.campaign as any)._id}-${i}`}
                   item={item}
                   displayIndex={displayNumber}
-                  animDelay={i * 0.06}
+                  animDelay={i * 0.04}
                   onOpen={() => openLightbox(globalFilteredIdx)}
                 />
               );
@@ -1291,7 +1334,7 @@ export default function CampaignsClient({ campaigns }: Props) {
                 </div>
               </div>
             ))}
-            <style>{`@keyframes pulsePink{0%,100%{opacity:.5}50%{opacity:.9}}`}</style>
+            <style>{`@keyframes pulsePink{0%,100%{opacity:.6}50%{opacity:.85}}`}</style>
           </div>
         )}
       </div>

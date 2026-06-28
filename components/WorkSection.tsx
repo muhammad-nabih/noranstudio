@@ -649,16 +649,17 @@ export default function WorkSection({ campaigns }: WorkSectionProps) {
         }}
       >
         <span
-          className="block font-light"
+          className="block font-light hidden sm:block"
           style={{
             fontSize: "clamp(16px,2vw,24px)",
             color: "var(--primary)",
             lineHeight: 1,
           }}
+     
         >
           {pad(current + 1)}
         </span>
-        <span className="block mt-1">/ {pad(total)}</span>
+        <span className="block mt-1 hidden sm:block">/ {pad(total)}</span>
       </div>
 
       {/* progress line */}

@@ -5,7 +5,7 @@ import { montserrat, astonScript, virust } from "./fonts";
 import "./globals.css";
 import { BarbaProvider } from "@/components/providers/BarbaProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
-import MagicWandCursor from "@/components/common/Magicwandcursor";
+
 import FullPageLoader from "@/components/FullPageLoader";
 
 
@@ -35,11 +35,11 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${montserrat.variable} ${astonScript.variable} ${virust.variable} font-montserrat antialiased`}
     >
-      <body className="cursor-none">
+      <body >
         <FullPageLoader>
           <ThemeProvider>
             <BarbaProvider>
-              <MagicWandCursor />
+           
               <main>{children}</main>
               <FooterWrapper />
             </BarbaProvider>
